@@ -1,18 +1,16 @@
 #ifndef KG_UTILITY_H
 #define KG_UTILITY_H
 
-#include <bitset>
-
-enum CipherAlgorithms
+enum CipheringMode
 {
-    ALGORITMS_ECB,
-    ALGORITMS_CBC,
-    ALGORITMS_CFB,
-    ALGORITMS_OFB,
-    ALGORITMS_CTR,
-    ALGORITMS_RD,
-    ALGORITMS_RD_H
-};
+    CipheringMode_ECB,
+    CipheringMode_CBC,
+    CipheringMode_CFB,
+    CipheringMode_OFB,
+    CipheringMode_CTR,
+    CipheringMode_RD,
+    CipheringMode_RD_H
+} Ciphering_Mode;
 
 const uint8_t S_BOXES[8][4][16] = {
         {{14, 4 , 13, 1 , 2 , 15, 11, 8 , 3 , 10, 6 , 12, 5 , 9 , 0 , 7 },
@@ -96,17 +94,17 @@ const uint8_t CP[48] = {
         14, 17, 11, 24, 1 , 5 , 3 , 28, 15, 6 , 21, 10,
         23, 19, 12, 4 , 26, 8 , 16, 7 , 27, 20, 13, 2 ,
         41, 52, 31, 37, 47, 55, 30, 40, 51, 45, 33, 48,
-        44, 49, 39, 56, 34, 53, 46, 42, 50, 36, 29, 32,
+        44, 49, 39, 56, 34, 53, 46, 42, 50, 36, 29, 32
 };
 
 using namespace std;
 
 template<typename T>
-T joinBits(const uint8_t *bytes, uint8_t bytes_length)
+T joinBits(const uint8_t *bytes)
 {
     T bits=0;
 
-    for(int i=0; i<bytes_length; i++)
+    for(int i=0; i<sizeof(T); i++)
         bits = (bits << 8) | bytes[i];
 
     return bits;
@@ -157,17 +155,47 @@ uint8_t *splitBits64To8(uint64_t bits)
     uint8_t *bits_parts=new uint8_t[8];
 
     for (uint8_t i=0; i<8; i++)
-        bits_parts[i]=(uint8_t)(bits >> ((7-i) * 8));
-
+        bits_parts[i]=bits >> (8*i) & 0xFF;
+    
     return bits_parts;
 }
 
 uint8_t getBit(const uint8_t b_number, const unsigned position)
 {
-    if (position >= 0 && position < 8 && (b_number & (1<<position))>0)
+    if (position>=0 && position<8 && (b_number & (1<<position))>0)
         return 1;
     else
         return 0;
+}
+
+void swapParts64(uint8_t *bytes)
+{
+    for(uint8_t i=0; i<4; i++)
+        swap(bytes[i], bytes[4+i]);
+}
+
+uint8_t *pad(const uint8_t *bytes, uint8_t bytes_length)
+{
+    uint8_t *bytes_padded=new uint8_t[8];
+    uint8_t value=8-bytes_length;
+    
+    for(uint8_t i=0; i<bytes_length; i++)
+        bytes_padded[i]=bytes[i];
+    for( ; bytes_length<8; bytes_length++)
+        bytes_padded[bytes_length]=value;
+    
+    return bytes_padded;
+}
+
+uint8_t *twoDimToOneDimArray(uint8_t **bytes, size_t bytes_length_blocks)
+{
+    uint8_t *bytes_joined=new uint8_t[bytes_length_blocks*8];
+    
+    for(unsigned i=0, k=0; i<bytes_length_blocks; i++)
+        for(unsigned j=0; j<8; j++, k++)
+            bytes_joined[k]=bytes[i][j];
+        
+    return bytes_joined;
 }
 
 #endif

@@ -5,12 +5,12 @@
 
 uint8_t *permute(uint8_t *input_bytes, const uint8_t *p_box)
 {
-    uint64_t input_bits=joinBits<uint64_t>(input_bytes, sizeof(uint64_t));
+    uint64_t input_bits=joinBits<uint64_t>(input_bytes);
     uint64_t output_bits=0;
 
     for(uint8_t i=0 ; i<64; i++)
         output_bits |= ((input_bits >> (64 - p_box[i])) & 0x01) << (63 - i);
-
+    
     return splitBits64To8(output_bits);
 }
 
