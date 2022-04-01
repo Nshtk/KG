@@ -1,10 +1,9 @@
 #ifndef KG_UTILITY_H
 #define KG_UTILITY_H
 
-enum CipheringMode
-{
-    CipheringMode_ECB,
-    CipheringMode_CBC,
+enum CipheringMode {
+    CipheringMode_ECB,     // message size (bits), block size (bits)
+    CipheringMode_CBC,     // message size (bits), block size (bits)
     CipheringMode_CFB,
     CipheringMode_OFB,
     CipheringMode_CTR,
@@ -75,7 +74,7 @@ const uint8_t PE[48] = {
         24, 25, 26, 27, 28, 29, 28, 29, 30, 31, 32, 1
 };
 
-const uint8_t PFF[32] = {
+const uint8_t P_FF[32] = {
         16, 7 , 20, 21, 29, 12, 28, 17, 1 , 15, 23, 26, 5 , 18, 31, 10,
         2 , 8 , 24, 14, 32, 27, 3 , 9 , 19, 13, 30, 6 , 22, 11, 4 , 25
 };
@@ -103,7 +102,7 @@ template<typename T>
 T joinBits(const uint8_t *bytes)
 {
     T bits=0;
-
+    //bits=*(T *)bytes;
     for(int i=0; i<sizeof(T); i++)
         bits = (bits << 8) | bytes[i];
 
@@ -150,12 +149,14 @@ uint8_t *splitBits48To6(uint64_t bits)
     return bits_parts;
 }
 
-uint8_t *splitBits64To8(uint64_t bits)
+template<typename T>
+uint8_t *splitBitsTo8(uint64_t bits)
 {
-    uint8_t *bits_parts=new uint8_t[8];
-
-    for (uint8_t i=0; i<8; i++)
-        bits_parts[i]=bits >> (8*i) & 0xFF;
+    uint8_t size=sizeof(T);
+    uint8_t *bits_parts=new uint8_t[size];
+    //std::copy(static_cast<const char*>(static_cast<const void*>(&bits)), static_cast<const char*>(static_cast<const void*>(&bits)) + sizeof bits, bits_parts);
+    for (uint8_t i=0; i<size; i++)
+        bits_parts[i]=(bits >> (8*((size-1)-i))) & 0xFF;
     
     return bits_parts;
 }
@@ -168,20 +169,21 @@ uint8_t getBit(const uint8_t b_number, const unsigned position)
         return 0;
 }
 
-void swapParts64(uint8_t *bytes)
+uint8_t *swapParts64(uint8_t *bytes)
 {
     for(uint8_t i=0; i<4; i++)
         swap(bytes[i], bytes[4+i]);
+    return bytes;
 }
 
-uint8_t *pad(const uint8_t *bytes, uint8_t bytes_length)
+uint8_t *pad(const uint8_t *bytes, size_t bytes_length, size_t block_length)
 {
-    uint8_t *bytes_padded=new uint8_t[8];
-    uint8_t value=8-bytes_length;
+    uint8_t *bytes_padded=new uint8_t[block_length];
+    uint8_t value=block_length-bytes_length;
     
     for(uint8_t i=0; i<bytes_length; i++)
         bytes_padded[i]=bytes[i];
-    for( ; bytes_length<8; bytes_length++)
+    for( ; bytes_length<block_length; bytes_length++)
         bytes_padded[bytes_length]=value;
     
     return bytes_padded;

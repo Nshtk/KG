@@ -45,7 +45,7 @@ public:
             for(j=key64_round=0; j<48; j++)
                 key64_round|=((bits56 >> (64-CP[j])) & 0x01) << (63-j);
 
-            keys_round[i]=splitBits64To8(key64_round);
+            keys_round[i]=splitBitsTo8<uint64_t>(key64_round);
         }
         delete key_parts;
 
@@ -63,8 +63,8 @@ private:
         for (uint8_t i=0 ; i<48; i++)
             bits_input_part_expanded48 |= (uint64_t)((bits_input_part >> (32-PE[i])) & 0x01) << (63-i);
         bits_input_part_expanded48^=key_round;
-        
-        return joinBits<uint32_t>(permute(substitute(splitBits48To6(bits_input_part_expanded48), S_BOXES, 48), PFF));
+        //printf("\nperm: %d\n", joinBits<uint32_t>(permute<uint32_t>(substitute(splitBits48To6(bits_input_part_expanded48), S_BOXES, 48), P_FF)));
+        return joinBits<uint32_t>(permute<uint32_t>(substitute(splitBits48To6(bits_input_part_expanded48), S_BOXES, 48), P_FF));
     }
     
 public:
@@ -75,7 +75,7 @@ public:
         bits_parts[1]=functionF(bits_parts[1], joinBits<uint64_t>(key_round))^bits_parts[0];
         bits_parts[0]=tmp;
         
-        return splitBits64To8(joinBitsParts32To64(bits_parts));
+        return splitBitsTo8<uint64_t>(joinBitsParts32To64(bits_parts));
     }
 };
 

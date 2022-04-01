@@ -22,15 +22,24 @@ public:
     
     void encrypt(uint8_t *bytes_input, uint8_t **bytes_output, uint8_t **keys_round) override
     {
+        /*cout<<"\nbefore:\n";
+        for(unsigned j=0; j<8; j++)
+            printf("%c", bytes_input[j]);*/
         for(uint8_t i=0; i<16; i++)
             bytes_input=round_ciphering->perform(bytes_input, keys_round[i]);
-        swapParts64(bytes_input);
+        /*cout<<"\nafter:\n";
+        for(unsigned j=0; j<8; j++)
+            printf("%c", bytes_input[j]);*/
+        *bytes_output=swapParts64(bytes_input);
+        /*cout<<"\nafter2:\n";
+        for(unsigned j=0; j<8; j++)
+            printf("%c", bytes_input[j]);*/
     }
     void decrypt(uint8_t *bytes_input, uint8_t **bytes_output, uint8_t **keys_round) override
     {
         for(int8_t i=15; i>-1; i--)
             bytes_input=round_ciphering->perform(bytes_input, keys_round[i]);
-        swapParts64(bytes_input);
+        *bytes_output=swapParts64(bytes_input);
     }
 };
 
@@ -46,18 +55,19 @@ public:
     }
     void encrypt(uint8_t *bytes_input, uint8_t **bytes_output, uint8_t **keys_round) override
     {
-        //printf("after");
-        uint8_t *p=permute(bytes_input, PI);
-        //cout<<'\n';
-        FeistelNet::encrypt(p, bytes_output, keys_round);
-        *bytes_output=permute(p, PF);
+        uint8_t *p=permute<uint64_t>(bytes_input, PI);
+        FeistelNet::encrypt(p, &p, keys_round);
+        for(unsigned j=0; j<8; j++)
+            printf("%c", p[j]);
+        *bytes_output=permute<uint64_t>(p, PF);
+        
         delete p;
     }
     void decrypt(uint8_t *bytes_input, uint8_t **bytes_output, uint8_t **keys_round) override
     {
-        uint8_t *p=permute(bytes_input, PI);
-        FeistelNet::decrypt(p, bytes_output, keys_round);
-        *bytes_output=permute(p, PF);
+        uint8_t *p=permute<uint64_t>(bytes_input, PI);
+        FeistelNet::decrypt(p, &p, keys_round);
+        *bytes_output=permute<uint64_t>(p, PF);
         delete p;
     }
 };
@@ -68,14 +78,15 @@ class AlgorithmSymmetric : public Interface_AlgorithmSymmetric
 private:
     Interface_AlgorithmSymmetric *algorithm;
     CipheringMode ciphering_mode;
-    uint8_t *key, *init_vector;
+    uint8_t *key;
+    uint64_t init_vector;
     vector<T> args;
 public:
-    AlgorithmSymmetric(Interface_AlgorithmSymmetric *algorithm, CipheringMode ciphering_mode, uint8_t *key, uint8_t *init_vector, initializer_list<T> args) : algorithm(algorithm), ciphering_mode(ciphering_mode), key(key), init_vector(init_vector), args(args)
+    AlgorithmSymmetric(Interface_AlgorithmSymmetric *algorithm, CipheringMode ciphering_mode, uint8_t *key, uint64_t init_vector, initializer_list<T> args) : algorithm(algorithm), ciphering_mode(ciphering_mode), key(key), init_vector(init_vector), args(args)
     {}
     ~AlgorithmSymmetric() override
     {
-        //delete algorithm, delete key, delete init_vector;
+        delete algorithm;
     }
     
     uint8_t **getKeysRound(uint8_t *key)
@@ -86,24 +97,47 @@ public:
     void encrypt(uint8_t *bytes_input, uint8_t **bytes_output, uint8_t **keys_round) override
     {
         unsigned i=0, j=0;
-        uint8_t *tmp=new uint8_t[8], *p;
+        uint8_t *tmp=new uint8_t[args[1]], *p;
+        uint64_t tmp_bits_1, tmp_bits_2;
+        
         switch(ciphering_mode)
         {
             case CipheringMode_ECB:
-                for( ; i<args[0]; i+=8, j++)
+                for( ; i<args[0]; i+=args[1], j++)
                 {
                     p=&bytes_input[i];
-                    for(uint8_t k=0; k<8; k++, p++)
+                    for(uint8_t k=0; k<args[1]; k++, p++)
                         tmp[k]=*p;
                     algorithm->encrypt(tmp, &bytes_output[j], keys_round);
                 }
                 if(i-args[0]>0)
                 {
-                    i-=8;
-                    algorithm->encrypt(pad(&bytes_input[i], args[0]-i), &bytes_output[j], keys_round);
+                    i-=args[1];
+                    algorithm->encrypt(pad(&bytes_input[i], args[0]-i, args[1]), &bytes_output[j], keys_round);
                 }
                 break;
+                
             case CipheringMode_CBC:
+                p=&bytes_input[i];              // first iter TODO: to funtion
+                for(uint8_t k=0; k<args[1]; k++, p++)
+                    tmp[k]=*p;
+                algorithm->encrypt(splitBitsTo8<uint64_t>(joinBits<uint64_t>(tmp)^init_vector), &bytes_output[j], keys_round);
+                tmp_bits_1=joinBits<uint64_t>(bytes_output[j]);
+                i+=args[1]; j++;
+                
+                for( ; i<args[0]; i+=args[1], j++)
+                {
+                    p=&bytes_input[i];
+                    for(uint8_t k=0; k<args[1]; k++, p++)
+                        tmp[k]=*p;
+                    algorithm->encrypt(splitBitsTo8<uint64_t>(tmp_bits_1^joinBits<uint64_t>(tmp)), &bytes_output[j], keys_round);
+                    tmp_bits_1=joinBits<uint64_t>(bytes_output[j]);
+                }
+                if(i-args[0]>0)
+                {
+                    i-=args[1];
+                    algorithm->encrypt(splitBitsTo8<uint64_t>(tmp_bits_1^joinBits<uint64_t>(pad(&bytes_input[i], args[0]-i, args[1]))), &bytes_output[j], keys_round);
+                }
                 break;
             case CipheringMode_CFB:
                 break;
@@ -120,24 +154,50 @@ public:
     void decrypt(uint8_t *bytes_input, uint8_t **bytes_output, uint8_t **keys_round) override
     {
         unsigned i=0, j=0;
-        uint8_t *tmp=new uint8_t[8], *p;
+        uint8_t *tmp=new uint8_t[args[1]], *p;
+        uint64_t tmp_bits_1, tmp_bits_2;
+        
         switch(ciphering_mode)
         {
             case CipheringMode_ECB:
-                for( ; i<args[0]; i+=8, j++)
+                for( ; i<args[0]; i+=args[1], j++)
                 {
                     p=&bytes_input[i];
-                    for(uint8_t k=0; k<8; k++, p++)
+                    for(uint8_t k=0; k<args[1]; k++, p++)
                         tmp[k]=*p;
                     algorithm->decrypt(tmp, &bytes_output[j], keys_round);
                 }
                 if(i-args[0]>0)
                 {
-                    i-=8;
-                    algorithm->decrypt(pad(&bytes_input[i], args[0]-i), &bytes_output[j], keys_round);
+                    i-=args[1];
+                    algorithm->decrypt(pad(&bytes_input[i], args[0]-i, args[1]), &bytes_output[j], keys_round);
                 }
                 break;
+                
             case CipheringMode_CBC:
+                p=&bytes_input[i];              // first iter TODO: to funtion
+                for(uint8_t k=0; k<args[1]; k++, p++)
+                    tmp[k]=*p;
+                tmp_bits_1=joinBits<uint64_t>(tmp);
+                algorithm->decrypt(tmp, &bytes_output[j], keys_round);
+                bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^init_vector);
+                i+=args[1]; j++;
+        
+                for( ; i<args[0]; i+=args[1], j++)
+                {
+                    p=&bytes_input[i];
+                    for(uint8_t k=0; k<args[1]; k++, p++)
+                        tmp[k]=*p;
+                    algorithm->decrypt(tmp, &bytes_output[j], keys_round);
+                    bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^tmp_bits_1);
+                    tmp_bits_1=joinBits<uint64_t>(tmp);
+                }
+                if(i-args[0]>0)
+                {
+                    i-=args[1];
+                    algorithm->decrypt(pad(&bytes_input[i], args[0]-i, args[1]), &bytes_output[j], keys_round);
+                    bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^tmp_bits_1);
+                }
                 break;
             case CipheringMode_CFB:
                 break;
