@@ -3,7 +3,7 @@
 
 enum CipheringMode {
     CipheringMode_ECB,     // message size (bits), block size (bits)
-    CipheringMode_CBC,     // message size (bits), block size (bits)
+    CipheringMode_CBC,
     CipheringMode_CFB,
     CipheringMode_OFB,
     CipheringMode_CTR,
@@ -159,14 +159,6 @@ uint8_t *splitBitsTo8(uint64_t bits)
         bits_parts[i]=(bits >> (8*((size-1)-i))) & 0xFF;
     
     return bits_parts;
-}
-
-uint8_t getBit(const uint8_t b_number, const unsigned position)
-{
-    if (position>=0 && position<8 && (b_number & (1<<position))>0)
-        return 1;
-    else
-        return 0;
 }
 
 uint8_t *swapParts64(uint8_t *bytes)
