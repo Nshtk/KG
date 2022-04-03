@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ctime>
 #include "algorithm.h"
 
 int main()
@@ -48,12 +49,13 @@ int main()
     //=====================SymmetricAlgorithm=======================
     uint8_t key[8]={'D', 'E', 'S', 'k', 'e', 'y', '5', '6'};
     uint8_t **keys_round;
-    size_t message_length=218; size_t message_length_blocks;
+    size_t message_length=218, message_block_length=8, message_length_blocks;
     uint8_t message[]="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin laoreet in lorem quis pretium. Aliquam maximus commodo augue, vitae pharetra risus. Ut imperdiet sapien id molestie pellentesque. Etiam vitae orci sapien.";
     uint8_t **message_encrypted, **message_decrypted;
     
-    Ciphering_Mode=CipheringMode_ECB;
-    AlgorithmSymmetric algorithm_symmetric(new AlgorithmDES(new KeyExpansionFeistel, new RoundCipheringFeistel), Ciphering_Mode, key, nullptr, {message_length});
+    srand((unsigned long)time(nullptr));
+    Ciphering_Mode=CipheringMode_RD_H;
+    AlgorithmSymmetric algorithm_symmetric(new AlgorithmDES(new KeyExpansionFeistel, new RoundCipheringFeistel), Ciphering_Mode, key, /*54735745*/(unsigned long)rand(), {message_length, message_block_length});
     keys_round=algorithm_symmetric.getKeysRound(key);
     
     if(message_length%8==0)
@@ -61,12 +63,16 @@ int main()
     else
         message_length_blocks=message_length/8+1;
     message_encrypted=new uint8_t*[message_length_blocks]; message_decrypted=new uint8_t*[message_length_blocks];
+    
+    for(unsigned i=0; i<message_length; i++)
+            printf("%c", message[i]);
+    cout<<"\n\n";
     algorithm_symmetric.encrypt(message, message_encrypted, keys_round);
     for(unsigned i=0; i<message_length_blocks; i++)
         for(unsigned j=0; j<8; j++)
-            printf("%d ", message_encrypted[i][j]);
-    algorithm_symmetric.decrypt(twoDimToOneDimArray(message_encrypted, message_length_blocks), message_decrypted, keys_round);
+            printf("%c", message_encrypted[i][j]);
     cout<<"\n\n";
+    algorithm_symmetric.decrypt(twoDimToOneDimArray(message_encrypted, message_length_blocks), message_decrypted, keys_round);
     for(unsigned i=0; i<message_length_blocks; i++)
         for(unsigned j=0; j<8; j++)
             printf("%c", message_decrypted[i][j]);

@@ -3,6 +3,9 @@
 
 #include <initializer_list>
 #include <vector>
+#include <random>
+#include <chrono>
+#include <algorithm>
 #include "i_algorithm.h"
 #include "key.h"
 
@@ -85,38 +88,31 @@ public:
     void encrypt(uint8_t *bytes_input, uint8_t **bytes_output, uint8_t **keys_round) override
     {
         unsigned i=0, j=0;
-        //uint8_t *tmp=new uint8_t[8];
-        uint64_t tmp_bits;
-        
+        uint8_t *ofb_tmp_bytes;//=new uint8_t[8];
+        uint64_t cbc_tmp_bits;
+        //vector<uint64_t> ctr_numbers; uint64_t ctr_number;
+        hash<uint64_t> h;
         switch(ciphering_mode)
         {
             case CipheringMode_ECB:
-                for( ; i<args[0]; i+=args[1], j++)
-                {
+                for( ; j<args[0]/args[1]; i+=args[1], j++)
                     algorithm->encrypt(&bytes_input[i], &bytes_output[j], keys_round);
-                }
                 if(i-args[0]>0)
-                {
-                    i-=args[1];
                     algorithm->encrypt(pad(&bytes_input[i], args[0]-i, args[1]), &bytes_output[j], keys_round);
-                }
                 break;
                 
             case CipheringMode_CBC:
                 algorithm->encrypt(splitBitsTo8<uint64_t>(joinBits<uint64_t>(&bytes_input[i])^init_vector), &bytes_output[j], keys_round);
-                tmp_bits=joinBits<uint64_t>(bytes_output[j]);
+                cbc_tmp_bits=joinBits<uint64_t>(bytes_output[j]);
                 i+=args[1]; j++;
                 
-                for( ; i<args[0]; i+=args[1], j++)
+                for( ; j<args[0]/args[1]; i+=args[1], j++)
                 {
-                    algorithm->encrypt(splitBitsTo8<uint64_t>(tmp_bits^joinBits<uint64_t>(&bytes_input[i])), &bytes_output[j], keys_round);
-                    tmp_bits=joinBits<uint64_t>(bytes_output[j]);
+                    algorithm->encrypt(splitBitsTo8<uint64_t>(cbc_tmp_bits^joinBits<uint64_t>(&bytes_input[i])), &bytes_output[j], keys_round);
+                    cbc_tmp_bits=joinBits<uint64_t>(bytes_output[j]);
                 }
                 if(i-args[0]>0)
-                {
-                    i-=args[1];
-                    algorithm->encrypt(splitBitsTo8<uint64_t>(tmp_bits^joinBits<uint64_t>(pad(&bytes_input[i], args[0]-i, args[1]))), &bytes_output[j], keys_round);
-                }
+                    algorithm->encrypt(splitBitsTo8<uint64_t>(cbc_tmp_bits^joinBits<uint64_t>(pad(&bytes_input[i], args[0]-i, args[1]))), &bytes_output[j], keys_round);
                 break;
                 
             case CipheringMode_CFB:
@@ -124,69 +120,123 @@ public:
                 bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^joinBits<uint64_t>(&bytes_input[i]));
                 i+=args[1]; j++;
         
-                for( ; i<args[0]; i+=args[1], j++)
+                for( ; j<args[0]/args[1]; i+=args[1], j++)
                 {
                     algorithm->encrypt(bytes_output[j-1], &bytes_output[j], keys_round);
                     bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^joinBits<uint64_t>(&bytes_input[i]));
                 }
                 if(i-args[0]>0)
                 {
-                    i-=args[1];
                     algorithm->encrypt(bytes_output[j-1], &bytes_output[j], keys_round);
                     bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^joinBits<uint64_t>(pad(&bytes_input[i], args[0]-i, args[1])));
                 }
                 break;
                 
             case CipheringMode_OFB:
+                algorithm->encrypt(splitBitsTo8<uint64_t>(init_vector), &bytes_output[j], keys_round);
+                ofb_tmp_bytes=bytes_output[j];
+                bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^joinBits<uint64_t>(&bytes_input[i]));
+                i+=args[1]; j++;
+        
+                for( ; j<args[0]/args[1]; i+=args[1], j++)
+                {
+                    algorithm->encrypt(ofb_tmp_bytes, &bytes_output[j], keys_round);
+                    ofb_tmp_bytes=bytes_output[j];
+                    bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^joinBits<uint64_t>(&bytes_input[i]));
+                }
+                if(i-args[0]>0)
+                {
+                    algorithm->encrypt(ofb_tmp_bytes, &bytes_output[j], keys_round);
+                    bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^joinBits<uint64_t>(pad(&bytes_input[i], args[0]-i, args[1])));
+                }
                 break;
             
             case CipheringMode_CTR:
+                /*ctr_number=args[0]/args[1];
+                cbc_tmp_bits=rand();
+                cbc_tmp_bits<=ctr_number ? cbc_tmp_bits+=ctr_number : cbc_tmp_bits-=ctr_number;
+                for(ctr_number=cbc_tmp_bits-ctr_number; ctr_number<cbc_tmp_bits; ctr_number++)
+                    ctr_numbers.push_back(ctr_number);
+                shuffle(ctr_numbers.begin(), ctr_numbers.end(), default_random_engine(chrono::system_clock::now().time_since_epoch().count()));*/
+        
+                for( ; j<args[0]/args[1]; i+=args[1], j++)
+                {
+                    algorithm->encrypt(splitBitsTo8<uint64_t>(init_vector^j), &bytes_output[j], keys_round);
+                    bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^joinBits<uint64_t>(&bytes_input[i]));
+                }
+                if(i-args[0]>0)
+                {
+                    algorithm->encrypt(splitBitsTo8<uint64_t>(init_vector^j), &bytes_output[j], keys_round);
+                    bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^joinBits<uint64_t>(pad(&bytes_input[i], args[0]-i, args[1])));
+                }
                 break;
             
             case CipheringMode_RD:
+                bytes_output[args[0]/args[1]+1]=new uint8_t[args[1]];
+                cbc_tmp_bits=init_vector;
+                algorithm->encrypt(splitBitsTo8<uint64_t>(init_vector), &bytes_output[j], keys_round);
+                j++;
+                
+                for(uint64_t delta=init_vector&0xFFFFFFFFFFFFFFFF; j<args[0]/args[1]+1; i+=args[1], j++, cbc_tmp_bits+=delta)
+                {
+                    algorithm->encrypt(splitBitsTo8<uint64_t>(joinBits<uint64_t>(&bytes_input[i])^cbc_tmp_bits), &bytes_output[j], keys_round);
+                }
+                if(i-args[0]>0)
+                {
+                    algorithm->encrypt(splitBitsTo8<uint64_t>(joinBits<uint64_t>(pad(&bytes_input[i], args[0]-i, args[1]))^cbc_tmp_bits), &bytes_output[j], keys_round);
+                }
                 break;
             
             case CipheringMode_RD_H:
+                bytes_output[args[0]/args[1]+1]=new uint8_t[args[1]];
+                bytes_output[args[0]/args[1]+2]=new uint8_t[args[1]];
+                cbc_tmp_bits=init_vector;
+                algorithm->encrypt(splitBitsTo8<uint64_t>(init_vector), &bytes_output[j], keys_round); j++;
+                algorithm->encrypt(splitBitsTo8<uint64_t>(h(init_vector)), &bytes_output[j], keys_round); j++;
+        
+                for(uint64_t delta=init_vector&0xFFFFFFFFFFFFFFFF; j<args[0]/args[1]+1; i+=args[1], j++, cbc_tmp_bits+=delta)
+                {
+                    algorithm->encrypt(splitBitsTo8<uint64_t>(joinBits<uint64_t>(&bytes_input[i])^cbc_tmp_bits), &bytes_output[j], keys_round);
+                }
+                if(i-args[0]>0)
+                {
+                    algorithm->encrypt(splitBitsTo8<uint64_t>(joinBits<uint64_t>(pad(&bytes_input[i], args[0]-i, args[1]))^cbc_tmp_bits), &bytes_output[j], keys_round);
+                }
                 break;
         }
     }
     void decrypt(uint8_t *bytes_input, uint8_t **bytes_output, uint8_t **keys_round) override
     {
         unsigned i=0, j=0;
-        //uint8_t *tmp=new uint8_t[8];
-        uint64_t tmp_bits;
+        uint8_t *ofb_tmp_bytes;
+        uint64_t cbc_tmp_bits;
+        hash<uint64_t> h;
         
         switch(ciphering_mode)
         {
             case CipheringMode_ECB:
-                for( ; i<args[0]; i+=args[1], j++)
-                {
+                for( ; j<args[0]/args[1]; i+=args[1], j++)
                     algorithm->decrypt(&bytes_input[i], &bytes_output[j], keys_round);
-                }
                 if(i-args[0]>0)
-                {
-                    i-=args[1];
-                    algorithm->decrypt(pad(&bytes_input[i], args[0]-i, args[1]), &bytes_output[j], keys_round);
-                }
+                    algorithm->decrypt(&bytes_input[i], &bytes_output[j], keys_round);
                 break;
                 
             case CipheringMode_CBC:
-                tmp_bits=joinBits<uint64_t>(&bytes_input[i]);
+                cbc_tmp_bits=joinBits<uint64_t>(&bytes_input[i]);
                 algorithm->decrypt(&bytes_input[i], &bytes_output[j], keys_round);
                 bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^init_vector);
                 i+=args[1]; j++;
         
-                for( ; i<args[0]; i+=args[1], j++)
+                for( ; j<args[0]/args[1]; i+=args[1], j++)
                 {
                     algorithm->decrypt(&bytes_input[i], &bytes_output[j], keys_round);
-                    bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^tmp_bits);
-                    tmp_bits=joinBits<uint64_t>(&bytes_input[i]);
+                    bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^cbc_tmp_bits);
+                    cbc_tmp_bits=joinBits<uint64_t>(&bytes_input[i]);
                 }
                 if(i-args[0]>0)
                 {
-                    i-=args[1];
-                    algorithm->decrypt(pad(&bytes_input[i], args[0]-i, args[1]), &bytes_output[j], keys_round);
-                    bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^tmp_bits);
+                    algorithm->decrypt(&bytes_input[i], &bytes_output[j], keys_round);
+                    bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^cbc_tmp_bits);
                 }
                 break;
                 
@@ -194,31 +244,82 @@ public:
                 algorithm->encrypt(splitBitsTo8<uint64_t>(init_vector), &bytes_output[j], keys_round);
                 bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^joinBits<uint64_t>(&bytes_input[i]));
                 i+=args[1]; j++;
-                /*for(unsigned j=0; j<8; j++)
-                    printf("%c", p[j]);*/
-                for( ; i<args[0]; i+=args[1], j++)
+                
+                for( ; j<args[0]/args[1]; i+=args[1], j++)
                 {
                     algorithm->encrypt(&bytes_input[i-args[1]], &bytes_output[j], keys_round);
                     bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^joinBits<uint64_t>(&bytes_input[i]));
                 }
                 if(i-args[0]>0)
                 {
-                    i-=args[1];
                     algorithm->encrypt(&bytes_input[i-args[1]], &bytes_output[j], keys_round);
-                    bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^joinBits<uint64_t>(pad(&bytes_input[i], args[0]-i, args[1])));
+                    bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^joinBits<uint64_t>(&bytes_input[i]));
                 }
                 break;
                 
             case CipheringMode_OFB:
+                algorithm->encrypt(splitBitsTo8<uint64_t>(init_vector), &bytes_output[j], keys_round);
+                ofb_tmp_bytes=bytes_output[j];
+                bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^joinBits<uint64_t>(&bytes_input[i]));
+                i+=args[1]; j++;
+        
+                for( ; j<args[0]/args[1]; i+=args[1], j++)
+                {
+                    algorithm->encrypt(ofb_tmp_bytes, &bytes_output[j], keys_round);
+                    ofb_tmp_bytes=bytes_output[j];
+                    bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^joinBits<uint64_t>(&bytes_input[i]));
+                }
+                if(i-args[0]>0)
+                {
+                    algorithm->encrypt(ofb_tmp_bytes, &bytes_output[j], keys_round);
+                    bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^joinBits<uint64_t>(&bytes_input[i]));
+                }
                 break;
             
             case CipheringMode_CTR:
+                for( ; j<args[0]/args[1]; i+=args[1], j++)
+                {
+                    algorithm->encrypt(splitBitsTo8<uint64_t>(init_vector^j), &bytes_output[j], keys_round);
+                    bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^joinBits<uint64_t>(&bytes_input[i]));
+                }
+                if(i-args[0]>0)
+                {
+                    algorithm->encrypt(splitBitsTo8<uint64_t>(init_vector^j), &bytes_output[j], keys_round);
+                    bytes_output[j]=splitBitsTo8<uint64_t>(joinBits<uint64_t>(bytes_output[j])^joinBits<uint64_t>(&bytes_input[i]));
+                }
                 break;
             
             case CipheringMode_RD:
+                bytes_output[args[0]/args[1]+1]=new uint8_t[args[1]];
+                cbc_tmp_bits=init_vector;
+                algorithm->encrypt(splitBitsTo8<uint64_t>(init_vector), &bytes_output[j], keys_round);
+                j++;
+
+                for(uint64_t delta=init_vector&0xFFFFFFFFFFFFFFFF; j<args[0]/args[1]+1; i+=args[1], j++, cbc_tmp_bits+=delta)
+                {
+                    algorithm->encrypt(splitBitsTo8<uint64_t>(joinBits<uint64_t>(&bytes_input[i])^cbc_tmp_bits), &bytes_output[j], keys_round);
+                }
+                if(i-args[0]>0)
+                {
+                    algorithm->encrypt(splitBitsTo8<uint64_t>(joinBits<uint64_t>(&bytes_input[i])^cbc_tmp_bits), &bytes_output[j], keys_round);
+                }
                 break;
             
             case CipheringMode_RD_H:
+                bytes_output[args[0]/args[1]+1]=new uint8_t[args[1]];
+                bytes_output[args[0]/args[1]+2]=new uint8_t[args[1]];
+                cbc_tmp_bits=init_vector;
+                algorithm->encrypt(splitBitsTo8<uint64_t>(init_vector), &bytes_output[j], keys_round); j++;
+                algorithm->encrypt(splitBitsTo8<uint64_t>(h(init_vector)), &bytes_output[j], keys_round); j++;
+        
+                for(uint64_t delta=init_vector&0xFFFFFFFFFFFFFFFF; j<args[0]/args[1]+1; i+=args[1], j++, cbc_tmp_bits+=delta)
+                {
+                    algorithm->encrypt(splitBitsTo8<uint64_t>(joinBits<uint64_t>(&bytes_input[i])^cbc_tmp_bits), &bytes_output[j], keys_round);
+                }
+                if(i-args[0]>0)
+                {
+                    algorithm->encrypt(splitBitsTo8<uint64_t>(joinBits<uint64_t>(&bytes_input[i])^cbc_tmp_bits), &bytes_output[j], keys_round);
+                }
                 break;
         }
     }
