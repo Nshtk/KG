@@ -11,7 +11,7 @@ uint8_t *permute(uint8_t *input_bytes, const uint8_t *p_box)
     uint8_t size_bits=sizeof(T)*8;
     
     for(uint8_t i=0 ; i<size_bits; i++)
-        output_bits |= ((input_bits >> (size_bits - p_box[i])) & 0x01) << ((size_bits-1) - i);
+        output_bits |= ((input_bits >> (size_bits - p_box[i]))&0x01) << ((size_bits-1) - i);
     
     return splitBitsTo8<T>(output_bits);
 }
@@ -20,32 +20,29 @@ uint8_t *substitute(const uint8_t *bytes, const uint8_t s_boxes[8][4][16], uint8
 {
     k/=6;
     uint8_t first_last, middle;
-    uint8_t *bytes_s = new uint8_t[4]();
-
-    for(uint8_t i=0, j=0, w; j<k; i++, j+=2)
-    {
-        first_last=((bytes[j] >> 6) & 0x2) | ((bytes[j] >> 2) & 0x1);
-        middle=(bytes[j] >> 3) & 0xF;
-        bytes_s[i]=s_boxes[j][first_last][middle];
+    uint8_t *bytes_s=new uint8_t[4]();
+    thread threads[k];
     
-        first_last=((bytes[j+1] >> 6) & 0x2) | ((bytes[j+1] >> 2) & 0x1);
-        middle=(bytes[j+1] >> 3) & 0xF;
-        bytes_s[i]=(bytes_s[i]<<4) | s_boxes[j+1][first_last][middle];
-        
-        /*first_last=getBit(bytes[j], 0) << 1 | getBit(bytes[j], 5); middle = 0;
-        for(w=1; w<5; w++)
-            middle=(middle | getBit(bytes[j], w)) << 1;
-        bytes_s[i]=s_boxes[j][first_last][middle];
-
-        first_last=getBit(bytes[j+1], 0) << 1 | getBit(bytes[j+1], 5); middle = 0;
-        for(w=1; w<5; w++)
-            middle=(middle | getBit(bytes[j+1], w)) << 1;
-        bytes_s[i]=(bytes_s[i]<<4) | s_boxes[j+1][first_last][middle];*/
+    
+    for(uint8_t i=0, j=0; j<k; i++, j+=2)
+    {
+        threads[j]=thread([&](uint8_t i_t, uint8_t j_t)
+        {
+            first_last=((bytes[j_t] >> 6) & 0x2) | ((bytes[j_t] >> 2) & 0x1);
+            middle=(bytes[j_t] >> 3) & 0xF;
+            bytes_s[i_t]=s_boxes[j_t][first_last][middle];
+        }, i, j);
+    
+        threads[j+1]=thread([&](uint8_t i_t, uint8_t j_t)
+        {
+            first_last=((bytes[j_t] >> 6) & 0x2) | ((bytes[j_t] >> 2) & 0x1);
+            middle=(bytes[j_t] >> 3) & 0xF;
+            bytes_s[i_t]=(bytes_s[i_t]<<4) | s_boxes[j_t][first_last][middle];
+        }, i, j+1);
     }
-    /*cout<<'\n';
-    for(int i=0; i<4; i++)
-        printf("%d ", bytes_s[i]);
-    cout<<'\n';*/
+    for(uint8_t w=0; w<k; w++)
+        threads[w].join();
+    
     return bytes_s;
     /*const unsigned length = k / 8;
     uint8_t *bytes_s = new uint8_t[length];

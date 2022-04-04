@@ -10,23 +10,30 @@ private:
     uint32_t *getKeyParts28(uint64_t key)
     {
         uint32_t *key_parts = new uint32_t[2]();
-
-        for (uint8_t i = 0; i < 28; ++i)
+        thread threads[28];
+        
+        for(uint8_t i=0; i<28; ++i)
         {
-            key_parts[0] |= ((key >> (64-KP1[i])) & 0x01) << (31-i);
-            key_parts[1] |= ((key >> (64-KP2[i])) & 0x01) << (31-i);
+            threads[i]=thread([&](uint8_t i)
+            {
+                key_parts[0]|=((key >> (64-KP1[i]))&0x01) << (31-i);
+                key_parts[1]|=((key >> (64-KP2[i]))&0x01) << (31-i);
+            }, i);
         }
-
+        for(uint8_t w=0; w<28; w++)
+            threads[w].join();
+        
         return key_parts;
     }
     void shiftKeyParts(uint32_t *key_parts, uint8_t bits_shifting)
     {
-        key_parts[0]=(((key_parts[0]) << (bits_shifting)) | ((key_parts[0]) >> (-(bits_shifting)&27))) & (((uint64_t)1 << 32)-1);
-        key_parts[1]=(((key_parts[1]) << (bits_shifting)) | ((key_parts[1]) >> (-(bits_shifting)&27))) & (((uint64_t)1 << 32)-1);
+        key_parts[0]=(((key_parts[0]) << (bits_shifting)) | ((key_parts[0]) >> (-(bits_shifting)&27))) & (((uint64_t)1<<32)-1);
+        key_parts[1]=(((key_parts[1]) << (bits_shifting)) | ((key_parts[1]) >> (-(bits_shifting)&27))) & (((uint64_t)1<<32)-1);
     }
 public:
     KeyExpansionFeistel(){}
-    ~KeyExpansionFeistel(){}
+    ~KeyExpansionFeistel() override
+    {}
 
     uint8_t **generateKeysRound(uint8_t *key) override
     {
@@ -63,7 +70,7 @@ private:
         for (uint8_t i=0 ; i<48; i++)
             bits_input_part_expanded48 |= (uint64_t)((bits_input_part >> (32-PE[i])) & 0x01) << (63-i);
         bits_input_part_expanded48^=key_round;
-        //printf("\nperm: %d\n", joinBits<uint32_t>(permute<uint32_t>(substitute(splitBits48To6(bits_input_part_expanded48), S_BOXES, 48), P_FF)));
+
         return joinBits<uint32_t>(permute<uint32_t>(substitute(splitBits48To6(bits_input_part_expanded48), S_BOXES, 48), P_FF));
     }
     

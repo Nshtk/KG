@@ -52,10 +52,11 @@ int main()
     size_t message_length=218, message_block_length=8, message_length_blocks;
     uint8_t message[]="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin laoreet in lorem quis pretium. Aliquam maximus commodo augue, vitae pharetra risus. Ut imperdiet sapien id molestie pellentesque. Etiam vitae orci sapien.";
     uint8_t **message_encrypted, **message_decrypted;
+    thread threads[1];
     
     srand((unsigned long)time(nullptr));
-    Ciphering_Mode=CipheringMode_RD_H;
-    AlgorithmSymmetric algorithm_symmetric(new AlgorithmDES(new KeyExpansionFeistel, new RoundCipheringFeistel), Ciphering_Mode, key, /*54735745*/(unsigned long)rand(), {message_length, message_block_length});
+    Ciphering_Mode=CipheringMode_CTR;
+    AlgorithmSymmetric algorithm_symmetric(new AlgorithmDES(new KeyExpansionFeistel, new RoundCipheringFeistel), Ciphering_Mode, key, 54735745/*(unsigned long)rand()*/, {message_length, message_block_length});
     keys_round=algorithm_symmetric.getKeysRound(key);
     
     if(message_length%8==0)
@@ -68,6 +69,8 @@ int main()
             printf("%c", message[i]);
     cout<<"\n\n";
     algorithm_symmetric.encrypt(message, message_encrypted, keys_round);
+    /*threads[0]=thread(&Interface_AlgorithmSymmetric::encrypt, algorithm_symmetric, message, ref(message_encrypted), keys_round);
+    threads[0].join();*/
     for(unsigned i=0; i<message_length_blocks; i++)
         for(unsigned j=0; j<8; j++)
             printf("%c", message_encrypted[i][j]);

@@ -1,6 +1,8 @@
 #ifndef KG_UTILITY_H
 #define KG_UTILITY_H
 
+#include <thread>
+
 enum CipheringMode {
     CipheringMode_ECB,     // message size (bits), block size (bits)
     CipheringMode_CBC,
@@ -109,7 +111,7 @@ T joinBits(const uint8_t *bytes)
     return bits;
 }
 
-uint64_t joinBitsParts32To64(uint32_t *bits_parts)
+uint64_t joinBitsParts32To64(const uint32_t *bits_parts)
 {
     uint64_t bits;
 
@@ -119,7 +121,7 @@ uint64_t joinBitsParts32To64(uint32_t *bits_parts)
     return bits;
 }
 
-uint64_t joinBitsParts28To56(uint32_t *bits_parts)
+uint64_t joinBitsParts28To56(const uint32_t *bits_parts)
 {
     uint64_t bits;
 
