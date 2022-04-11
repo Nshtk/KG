@@ -1,11 +1,12 @@
 #include <iostream>
 #include <ctime>
 #include "algorithm.h"
+#include "prime.h"
 
 int main()
 {
-/*
     //=====================Pbox=======================
+/*
     unsigned int p_box = 241635;
     uint8_t b_numbers[10] = {50, 63, 0, 1, 5, 8, 13, 32, 29, 45};
     uint8_t *bp_numbers;
@@ -26,7 +27,6 @@ int main()
 */
     //=====================DES=======================
 /*
-
     AlgorithmDES des(new KeyExpansionFeistel, new RoundCipheringFeistel);
     uint8_t message[8]={'q', 'w', 'e', 'r', 't', 'y', 'u', 'i'};
     uint8_t key[8]={'D', 'E', 'S', 'k', 'e', 'y', '5', '6'};
@@ -45,18 +45,19 @@ int main()
         delete keys_round[i];
     delete message_encrypted, delete message_decrypted; delete[] keys_round;
 */
-
-    //=====================SymmetricAlgorithm=======================
+    //=====================DES=======================
+/*
     uint8_t key[8]={'D', 'E', 'S', 'k', 'e', 'y', '5', '6'};
     uint8_t **keys_round;
     size_t message_length=218, message_block_length=8, message_length_blocks;
     uint8_t message[]="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin laoreet in lorem quis pretium. Aliquam maximus commodo augue, vitae pharetra risus. Ut imperdiet sapien id molestie pellentesque. Etiam vitae orci sapien.";
     uint8_t **message_encrypted, **message_decrypted;
-    thread threads[1];
+    //thread threads[1];
     
     srand((unsigned long)time(nullptr));
+    
     Ciphering_Mode=CipheringMode_CTR;
-    AlgorithmSymmetric algorithm_symmetric(new AlgorithmDES(new KeyExpansionFeistel, new RoundCipheringFeistel), Ciphering_Mode, key, 54735745/*(unsigned long)rand()*/, {message_length, message_block_length});
+    AlgorithmSymmetric algorithm_symmetric(new AlgorithmDES(new KeyExpansionFeistel, new RoundCipheringFeistel), Ciphering_Mode, key, 54735745*//*(unsigned long)rand()*//*, {message_length, message_block_length});
     keys_round=algorithm_symmetric.getKeysRound(key);
     
     if(message_length%8==0)
@@ -69,17 +70,21 @@ int main()
             printf("%c", message[i]);
     cout<<"\n\n";
     algorithm_symmetric.encrypt(message, message_encrypted, keys_round);
-    /*threads[0]=thread(&Interface_AlgorithmSymmetric::encrypt, algorithm_symmetric, message, ref(message_encrypted), keys_round);
-    threads[0].join();*/
+    *//*threads[0]=thread(&Interface_AlgorithmSymmetric::encrypt, algorithm_symmetric, message, ref(message_encrypted), keys_round);
+    threads[0].join();*//*
     for(unsigned i=0; i<message_length_blocks; i++)
         for(unsigned j=0; j<8; j++)
             printf("%c", message_encrypted[i][j]);
     cout<<"\n\n";
-    algorithm_symmetric.decrypt(twoDimToOneDimArray(message_encrypted, message_length_blocks), message_decrypted, keys_round);
+    algorithm_symmetric.decrypt(twoToOneDimArray(message_encrypted, message_length_blocks), message_decrypted, keys_round);
     for(unsigned i=0; i<message_length_blocks; i++)
         for(unsigned j=0; j<8; j++)
             printf("%c", message_decrypted[i][j]);
-            
+*/
+    //=====================RSA=======================
+    Primality_MillerRabinTest t;
+    
+    cout<<t.test(13, 0.999);
 
     return 0;
 }

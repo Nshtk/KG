@@ -1,5 +1,5 @@
-#ifndef KG_BOX_H
-#define KG_BOX_H
+#ifndef KG_FUNCTION_H
+#define KG_FUNCTION_H
 
 #include "utility.h"
 
@@ -90,5 +90,75 @@ uint8_t *substitute(const uint8_t *bytes, const uint8_t s_boxes[8][4][16], uint8
     }
     return bytes_s;*/
 }
+
+/*int getGCD(int a, int b)
+{
+    return b ? gcd(b, a % b) : a;
+}*/
+
+int8_t getJacobiSymbol(long long a, long long b)
+{
+    if(gcd(a, b)!=1)
+        return 0;
+    
+    int8_t r=1;
+    
+    a%=b;
+    for(long long t; a!=0; a%=b)
+    {
+        while(a%2==0)
+        {
+            t=b%8;
+            a/=2;
+            if(t==3 || t==5)
+                r*=-1;
+        }
+        swap(a, b);
+        if(a%4==3 && b%4==3)
+            r*=-1;
+    }
+
+    return b==1 ? r : 0;
+}
+
+/*int8_t getJacobiSymbol(long long a, long long b)
+{
+    if(gcd(a, b)!=1)
+        return 0;
+    
+    unsigned t=0;
+    int8_t r=1;
+    
+    if(a<0)
+    {
+        a=-a;
+        if(b%4==3)
+            r*=-1;
+    }
+    while(a!=0)
+    {
+        while(a%2==0)
+        {
+            t++;
+            a/=2;
+        }
+        
+        if(t%2==1)
+            if(b%8==3 || b%8==5)
+                r*=-1;
+        
+        if(a%4==3 && a%4==b%4)
+            r*=-1;
+    }
+    
+    return r;
+}*/
+
+/*int8_t getLegendreSymbol(int a, int b)
+{
+    if(b==2 && !isPrime(b))
+        return 0;
+    return getJacobiSymbol(a, b);
+}*/
 
 #endif

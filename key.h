@@ -2,7 +2,7 @@
 #define KG_KEY_H
 
 #include "i_key.h"
-#include "box.h"
+#include "function.h"
 
 class KeyExpansionFeistel : public Interface_KeyExpansion
 {

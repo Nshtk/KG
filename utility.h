@@ -183,7 +183,7 @@ uint8_t *pad(const uint8_t *bytes, size_t bytes_length, size_t block_length)
     return bytes_padded;
 }
 
-uint8_t *twoDimToOneDimArray(uint8_t **bytes, size_t bytes_length_blocks)
+uint8_t *twoToOneDimArray(uint8_t **bytes, size_t bytes_length_blocks)
 {
     uint8_t *bytes_joined=new uint8_t[bytes_length_blocks*8];
     
@@ -192,6 +192,19 @@ uint8_t *twoDimToOneDimArray(uint8_t **bytes, size_t bytes_length_blocks)
             bytes_joined[k]=bytes[i][j];
         
     return bytes_joined;
+}
+
+long long pow_long(long long number, long long power, long long modulo) {
+    long long result=1;
+    
+    for (number=number%modulo; power>0; power/=2)
+    {
+        if (power%2==1)
+            result=(result*number)%modulo;
+        number=(number*number) % modulo;
+    }
+    
+    return result;
 }
 
 #endif
