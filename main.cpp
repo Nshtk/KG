@@ -1,7 +1,6 @@
 #include <iostream>
 #include <ctime>
 #include "algorithm.h"
-#include "prime.h"
 
 int main()
 {
@@ -70,7 +69,7 @@ int main()
             printf("%c", message[i]);
     cout<<"\n\n";
     algorithm_symmetric.encrypt(message, message_encrypted, keys_round);
-    *//*threads[0]=thread(&Interface_AlgorithmSymmetric::encrypt, algorithm_symmetric, message, ref(message_encrypted), keys_round);
+    *//*threads[0]=thread(&Interface_Algorithm::encrypt, algorithm_symmetric, message, ref(message_encrypted), keys_round);
     threads[0].join();*//*
     for(unsigned i=0; i<message_length_blocks; i++)
         for(unsigned j=0; j<8; j++)
@@ -84,7 +83,9 @@ int main()
     //=====================RSA=======================
     Primality_MillerRabinTest t;
     
-    cout<<t.test(13, 0.999);
+    //cout<<t.performTest(13, 0.999);
+    //cout<<InfInt("010101111");
+    InfInt a=432432;
 
     return 0;
 }

@@ -4,7 +4,7 @@
 #include <thread>
 
 enum CipheringMode {
-    CipheringMode_ECB,     // message size (bits), block size (bits)
+    CipheringMode_ECB,     // arguments: message size (bits), block size (bits)
     CipheringMode_CBC,
     CipheringMode_CFB,
     CipheringMode_OFB,
@@ -12,6 +12,12 @@ enum CipheringMode {
     CipheringMode_RD,
     CipheringMode_RD_H
 } Ciphering_Mode;
+
+enum PrimalityTestingMode {
+    PrimeTestingMode_Fermat,
+    PrimeTestingMode_SolovayStrassen,
+    PrimeTestingMode_MillerRabin
+} Prime_Testing_Mode;
 
 const uint8_t S_BOXES[8][4][16] = {
         {{14, 4 , 13, 1 , 2 , 15, 11, 8 , 3 , 10, 6 , 12, 5 , 9 , 0 , 7 },
@@ -194,6 +200,11 @@ uint8_t *twoToOneDimArray(uint8_t **bytes, size_t bytes_length_blocks)
     return bytes_joined;
 }
 
+int gcd(int a, int b)
+{
+    return b ? gcd(b, a % b) : a;
+}
+
 long long pow_long(long long number, long long power, long long modulo) {
     long long result=1;
     
@@ -205,6 +216,11 @@ long long pow_long(long long number, long long power, long long modulo) {
     }
     
     return result;
+}
+
+long long getNBitNumber(unsigned n)
+{
+    return rand()%(1<<n);
 }
 
 #endif

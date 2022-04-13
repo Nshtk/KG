@@ -3,11 +3,11 @@
 
 #include "i_key.h"
 
-class Interface_AlgorithmSymmetric
+class Interface_Algorithm
 {
 public:
-    Interface_AlgorithmSymmetric(){}
-    virtual ~Interface_AlgorithmSymmetric() = 0;
+    Interface_Algorithm(){}
+    virtual ~Interface_Algorithm() = 0;
     
     virtual uint8_t **getKeysRound(uint8_t *key) = 0;
     virtual void encrypt(uint8_t *bytes_input, uint8_t **bytes_output, uint8_t **keys_round) = 0;

@@ -2,14 +2,16 @@
 #define KG_ALGORITHM_H
 
 #include <initializer_list>
-#include <vector>
-#include <random>
-#include <chrono>
+//#include <vector>
+//#include <random>
+//#include <chrono>
 #include <algorithm>
+#include "InfInt.h"
 #include "i_algorithm.h"
+#include "prime.h"
 #include "key.h"
 
-class FeistelNet : public Interface_AlgorithmSymmetric
+class FeistelNet : public Interface_Algorithm
 {
 protected:
     Interface_KeyExpansion *key_expansion;
@@ -63,18 +65,37 @@ public:
     }
 };
 
-template<class T>
-class AlgorithmSymmetric : public Interface_AlgorithmSymmetric
+class AlgorithmRSA : public Interface_Algorithm
 {
 private:
-    Interface_AlgorithmSymmetric *algorithm;
+    KeyExpansionRSA key_expansion;
+    
+public:
+    AlgorithmRSA(PrimalityTestingMode primality_testing_mode, float probability_minimal, size_t prime_numbers_length_bits) : key_expansion(primality_testing_mode, probability_minimal, prime_numbers_length_bits)
+    {}
+    
+    void encrypt(uint8_t *bytes_input, uint8_t **bytes_output, uint8_t **keys_round) override
+    {
+    
+    }
+    void decrypt(uint8_t *bytes_input, uint8_t **bytes_output, uint8_t **keys_round) override
+    {
+    
+    }
+};
+
+template<class T>
+class AlgorithmSymmetric : public Interface_Algorithm
+{
+private:
+    Interface_Algorithm *algorithm;
     CipheringMode ciphering_mode;
     uint8_t *key;
     uint64_t init_vector;
     vector<T> args;
     
 public:
-    AlgorithmSymmetric(Interface_AlgorithmSymmetric *algorithm, CipheringMode ciphering_mode, uint8_t *key, uint64_t init_vector, initializer_list<T> args) : algorithm(algorithm), ciphering_mode(ciphering_mode), key(key), init_vector(init_vector), args(args)
+    AlgorithmSymmetric(Interface_Algorithm *algorithm, CipheringMode ciphering_mode, uint8_t *key, uint64_t init_vector, initializer_list<T> args) : algorithm(algorithm), ciphering_mode(ciphering_mode), key(key), init_vector(init_vector), args(args)
     {}
     ~AlgorithmSymmetric() override
     {
@@ -100,7 +121,7 @@ public:
         {
             case CipheringMode_ECB:
                 for( ; j<bytes_full_blocks_number; i+=args[1], j++)
-                    threads[j]=thread(&Interface_AlgorithmSymmetric::encrypt, algorithm, &bytes_input[i], &bytes_output[j], keys_round);
+                    threads[j]=thread(&Interface_Algorithm::encrypt, algorithm, &bytes_input[i], &bytes_output[j], keys_round);
                 if(i-args[0]>0)
                     algorithm->encrypt(pad(&bytes_input[i], args[0]-i, args[1]), &bytes_output[j], keys_round);
                 
@@ -199,7 +220,7 @@ public:
                 
                 for(uint64_t delta=init_vector&0xFFFFFFFFFFFFFFFF; j<bytes_full_blocks_number+1; i+=args[1], j++, cbc_tmp_bits+=delta)
                 {
-                    threads[j]=thread(&Interface_AlgorithmSymmetric::encrypt, algorithm, splitBitsTo8<uint64_t>(joinBits<uint64_t>(&bytes_input[i])^cbc_tmp_bits), &bytes_output[j], keys_round);
+                    threads[j]=thread(&Interface_Algorithm::encrypt, algorithm, splitBitsTo8<uint64_t>(joinBits<uint64_t>(&bytes_input[i])^cbc_tmp_bits), &bytes_output[j], keys_round);
                 }
                 if(i-args[0]>0)
                 {
@@ -219,7 +240,7 @@ public:
         
                 for(uint64_t delta=init_vector&0xFFFFFFFFFFFFFFFF; j<bytes_full_blocks_number+1; i+=args[1], j++, cbc_tmp_bits+=delta)
                 {
-                    threads[j]=thread(&Interface_AlgorithmSymmetric::encrypt, algorithm, splitBitsTo8<uint64_t>(joinBits<uint64_t>(&bytes_input[i])^cbc_tmp_bits), &bytes_output[j], keys_round);
+                    threads[j]=thread(&Interface_Algorithm::encrypt, algorithm, splitBitsTo8<uint64_t>(joinBits<uint64_t>(&bytes_input[i])^cbc_tmp_bits), &bytes_output[j], keys_round);
                 }
                 if(i-args[0]>0)
                 {
@@ -245,7 +266,7 @@ public:
         {
             case CipheringMode_ECB:
                 for( ; j<bytes_full_blocks_number; i+=args[1], j++)
-                    threads[j]=thread(&Interface_AlgorithmSymmetric::decrypt, algorithm, &bytes_input[i], &bytes_output[j], keys_round);
+                    threads[j]=thread(&Interface_Algorithm::decrypt, algorithm, &bytes_input[i], &bytes_output[j], keys_round);
                 if(i-args[0]>0)
                     algorithm->decrypt(&bytes_input[i], &bytes_output[j], keys_round);
         
@@ -341,7 +362,7 @@ public:
 
                 for(uint64_t delta=init_vector&0xFFFFFFFFFFFFFFFF; j<bytes_full_blocks_number+1; i+=args[1], j++, cbc_tmp_bits+=delta)
                 {
-                    threads[j]=thread(&Interface_AlgorithmSymmetric::encrypt, algorithm, splitBitsTo8<uint64_t>(joinBits<uint64_t>(&bytes_input[i])^cbc_tmp_bits), &bytes_output[j], keys_round);
+                    threads[j]=thread(&Interface_Algorithm::encrypt, algorithm, splitBitsTo8<uint64_t>(joinBits<uint64_t>(&bytes_input[i])^cbc_tmp_bits), &bytes_output[j], keys_round);
                 }
                 if(i-args[0]>0)
                 {
@@ -361,7 +382,7 @@ public:
         
                 for(uint64_t delta=init_vector&0xFFFFFFFFFFFFFFFF; j<bytes_full_blocks_number+1; i+=args[1], j++, cbc_tmp_bits+=delta)
                 {
-                    threads[j]=thread(&Interface_AlgorithmSymmetric::encrypt, algorithm, splitBitsTo8<uint64_t>(joinBits<uint64_t>(&bytes_input[i])^cbc_tmp_bits), &bytes_output[j], keys_round);
+                    threads[j]=thread(&Interface_Algorithm::encrypt, algorithm, splitBitsTo8<uint64_t>(joinBits<uint64_t>(&bytes_input[i])^cbc_tmp_bits), &bytes_output[j], keys_round);
                 }
                 if(i-args[0]>0)
                 {

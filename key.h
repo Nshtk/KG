@@ -1,6 +1,7 @@
 #ifndef KG_KEY_H
 #define KG_KEY_H
 
+#include <string>
 #include "i_key.h"
 #include "function.h"
 
@@ -83,6 +84,45 @@ public:
         bits_parts[0]=tmp;
         
         return splitBitsTo8<uint64_t>(joinBitsParts32To64(bits_parts));
+    }
+};
+
+class KeyExpansionRSA : public Interface_KeyExpansion
+{
+private:
+    Interface_Primality *primality_test;
+    float probability_minimal;
+    size_t prime_numbers_length_bits;
+public:
+    KeyExpansionRSA(PrimalityTestingMode primality_testing_mode, float probability_minimal, size_t prime_numbers_length_bits) : probability_minimal(probability_minimal), prime_numbers_length_bits(prime_numbers_length_bits)
+    {
+        switch(primality_testing_mode)
+        {
+            case PrimeTestingMode_Fermat:
+                primality_test=new Primality_FermatTest;
+                break;
+            case PrimeTestingMode_SolovayStrassen:
+                primality_test=new Primality_SolovayStrassenTest;
+                break;
+            case PrimeTestingMode_MillerRabin:
+                primality_test=new Primality_MillerRabinTest;
+                break;
+        }
+    }
+    ~KeyExpansionRSA() override
+    {
+        delete primality_test;
+    }
+    
+    uint8_t ** generateKeysRound(uint8_t *key) override
+    {
+        InfInt p=0, q=0;
+        string p_str, q_str;
+        for(size_t i=0; i<prime_numbers_length_bits; i++)
+        {
+            p_str.push_back(rand()%10);
+            q_str.push_back(rand()%10);
+        }
     }
 };
 

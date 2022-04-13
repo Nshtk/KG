@@ -2,15 +2,17 @@
 #define KG_PRIME_H
 
 #include "i_prime.h"
+#include "utility.h"
+#include "function.h"
 #include <cmath>
 
-class Primality_PhermaTest : public Interface_Primality
+class Primality_FermatTest : public Interface_Primality
 {
 public:
-    Primality_PhermaTest()
+    Primality_FermatTest()
     {}
     
-    bool test(long long number, float probability_minimal) override
+    bool performTest(long long number, float probability_minimal) override
     {
         if(number==1)
             return true;
@@ -26,13 +28,13 @@ public:
     }
 };
 
-class Primality_SoloveiStrassenTest : public Interface_Primality
+class Primality_SolovayStrassenTest : public Interface_Primality
 {
 public:
-    Primality_SoloveiStrassenTest()
+    Primality_SolovayStrassenTest()
     {}
     
-    bool test(long long number, float probability_minimal) override
+    bool performTest(long long number, float probability_minimal) override
     {
         if(number==1)
             return true;
@@ -55,7 +57,7 @@ public:
     Primality_MillerRabinTest()
     {}
     
-    bool test(long long number, float probability_minimal) override
+    bool performTest(long long number, float probability_minimal) override
     {
         if(number==1)
             return true;
