@@ -4,6 +4,20 @@
 
 int main()
 {
+    size_t message_length=218, message_block_length=8, message_length_blocks;
+    uint8_t message[]="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin laoreet in lorem quis pretium. Aliquam maximus commodo augue, vitae pharetra risus. Ut imperdiet sapien id molestie pellentesque. Etiam vitae orci sapien.";
+    /*size_t message_length=12, message_block_length=8, message_length_blocks;
+    uint8_t message[]="Lorem ipsum";*/
+    uint8_t **message_encrypted=nullptr, **message_decrypted=nullptr;
+    //thread threads[1];
+    
+    //srand((unsigned long)time(nullptr));
+    
+    if(message_length%8==0)
+        message_length_blocks=message_length/8;
+    else
+        message_length_blocks=message_length/8+1;
+    
     //=====================Pbox=======================
 /*
     unsigned int p_box = 241635;
@@ -44,26 +58,15 @@ int main()
         delete keys_round[i];
     delete message_encrypted, delete message_decrypted; delete[] keys_round;
 */
-    //=====================DES=======================
+    //=====================SymmetricAlgorithm=======================
 /*
     uint8_t key[8]={'D', 'E', 'S', 'k', 'e', 'y', '5', '6'};
     uint8_t **keys_round;
-    size_t message_length=218, message_block_length=8, message_length_blocks;
-    uint8_t message[]="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin laoreet in lorem quis pretium. Aliquam maximus commodo augue, vitae pharetra risus. Ut imperdiet sapien id molestie pellentesque. Etiam vitae orci sapien.";
-    uint8_t **message_encrypted, **message_decrypted;
-    //thread threads[1];
-    
-    srand((unsigned long)time(nullptr));
     
     Ciphering_Mode=CipheringMode_CTR;
     AlgorithmSymmetric algorithm_symmetric(new AlgorithmDES(new KeyExpansionFeistel, new RoundCipheringFeistel), Ciphering_Mode, key, 54735745*//*(unsigned long)rand()*//*, {message_length, message_block_length});
     keys_round=algorithm_symmetric.getKeysRound(key);
-    
-    if(message_length%8==0)
-        message_length_blocks=message_length/8;
-    else
-        message_length_blocks=message_length/8+1;
-    message_encrypted=new uint8_t*[message_length_blocks]; message_decrypted=new uint8_t*[message_length_blocks];
+    message_encrypted=new uint8_t*[message_length_blocks](); message_decrypted=new uint8_t*[message_length_blocks]();
     
     for(unsigned i=0; i<message_length; i++)
             printf("%c", message[i]);
@@ -81,11 +84,25 @@ int main()
             printf("%c", message_decrypted[i][j]);
 */
     //=====================RSA=======================
-    Primality_MillerRabinTest t;
+    AlgorithmRSA algorithm_rsa(PrimeTestingMode_MillerRabin, message_length, 0.999, 4);
+    uint8_t **keys_round=algorithm_rsa.getKeysRound(nullptr);
     
-    //cout<<t.performTest(13, 0.999);
-    //cout<<InfInt("010101111");
-    InfInt a=432432;
-
+    message_encrypted=new uint8_t*[message_length](); message_decrypted=new uint8_t*[message_length]();
+    
+    for(unsigned i=0; i<message_length; i++)
+        printf("%c", message[i]);
+    cout<<"\n\n";
+    
+    algorithm_rsa.encrypt(message, message_encrypted, keys_round);
+    for(unsigned i=0; i<message_length; i++)
+        for(unsigned j=0; j<8; j++)
+            printf("%c", message_encrypted[i][j]);
+    cout<<"\n\n";
+    
+    algorithm_rsa.decrypt(twoToOneDimArray(message_encrypted, message_length), message_decrypted, keys_round);
+    for(unsigned i=0; i<message_length; i++)
+        for(unsigned j=0; j<1; j++)
+            printf("%c", message_decrypted[i][j]);
+    
     return 0;
 }

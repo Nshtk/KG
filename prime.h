@@ -5,22 +5,27 @@
 #include "utility.h"
 #include "function.h"
 #include <cmath>
+//#include <boost/random.hpp>
 
-class Primality_FermatTest : public Interface_Primality
+template<typename T>
+class Primality_FermatTest : public Interface_Primality<T>
 {
 public:
     Primality_FermatTest()
     {}
     
-    bool performTest(long long number, float probability_minimal) override
+    bool performTest(T number, float probability_minimal) override
     {
+        if(number==0)
+            return false;
         if(number==1)
             return true;
         
-        for(long long i=1, a; (1-pow(0.5, i))<=probability_minimal; i++)
+        long long i=1;
+        for(T a; (1-pow(0.5, i))<=probability_minimal; i++)
         {
             a=2+rand()%(number-4);
-            if(gcd(a, number)!=1 || pow_long(a, number-1, number)!=1)
+            if(gcd_utility(a, number) != 1 || pow_big_modulo<T>(a, number - 1, number) != 1)
                 return false;
         }
         
@@ -28,22 +33,26 @@ public:
     }
 };
 
-class Primality_SolovayStrassenTest : public Interface_Primality
+template<typename T>
+class Primality_SolovayStrassenTest : public Interface_Primality<T>
 {
 public:
     Primality_SolovayStrassenTest()
     {}
     
-    bool performTest(long long number, float probability_minimal) override
+    bool performTest(T number, float probability_minimal) override
     {
+        if(number==0)
+            return false;
         if(number==1)
             return true;
-
-        for(long long i=1, a, j; (1-pow(0.5, i))<=probability_minimal; i++)
+    
+        long long i=1;
+        for(T a, j; (1-pow(0.5, i))<=probability_minimal; i++)
         {
-            a=rand() % (number-1)+1;
-            j=(number+getJacobiSymbol(a, number))%number;
-            if(!j || pow_long(a, (number-1)/2, number)!=j)
+            a=rand()%(number-1)+1;
+            j=(number+getJacobiSymbol<T>(a, number))%number;
+            if(!j || pow_big_modulo<T>(a, (number - 1) / 2, number) != j)
                 return false;
         }
         
@@ -51,27 +60,31 @@ public:
     }
 };
 
-class Primality_MillerRabinTest : public Interface_Primality
+template<typename T>
+class Primality_MillerRabinTest : public Interface_Primality<T>
 {
 public:
     Primality_MillerRabinTest()
     {}
     
-    bool performTest(long long number, float probability_minimal) override
+    bool performTest(T number, float probability_minimal) override
     {
-        if(number==1)
+        if(number<=1 || number==4)
+            return false;
+        if(number<=3)
             return true;
-        
-        long long d=number-1;
+
+        T d=number-1;
         while(d%2==0)
             d/=2;
-        
-        for(long long i=1, a, x; (1-pow(0.5, i))<=probability_minimal; i++)
+    
+        long long i=1;
+        for(T a, x; (1-pow(0.5, i))<=probability_minimal; i++)
         {
             a=2+rand()%(number-4);
-            x=pow_long(a, d, number);
+            x=pow_big_modulo<T>(a, d, number);
             if(x==1 || x==number-1)
-                return true;
+                continue;
             
             for( ; d!=number-1; d*=2)
             {
@@ -79,8 +92,12 @@ public:
                 if(x==1)
                     return false;
                 if(x==number-1)
-                    return true;
+                    break;
             }
+            if(x==number-1)
+                continue;
+            
+            return false;
         }
         
         return true;

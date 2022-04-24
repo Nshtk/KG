@@ -2,11 +2,10 @@
 #define KG_ALGORITHM_H
 
 #include <initializer_list>
-//#include <vector>
+#include <vector>
 //#include <random>
 //#include <chrono>
 #include <algorithm>
-#include "InfInt.h"
 #include "i_algorithm.h"
 #include "prime.h"
 #include "key.h"
@@ -69,18 +68,40 @@ class AlgorithmRSA : public Interface_Algorithm
 {
 private:
     KeyExpansionRSA key_expansion;
+    const size_t message_length;
+    const size_t prime_numbers_length_bits;
     
 public:
-    AlgorithmRSA(PrimalityTestingMode primality_testing_mode, float probability_minimal, size_t prime_numbers_length_bits) : key_expansion(primality_testing_mode, probability_minimal, prime_numbers_length_bits)
+    AlgorithmRSA(PrimalityTestingMode primality_testing_mode, const size_t message_length, float probability_minimal, const size_t prime_numbers_length_bits) : key_expansion(primality_testing_mode, probability_minimal, prime_numbers_length_bits), message_length(message_length), prime_numbers_length_bits(prime_numbers_length_bits)
     {}
-    
+
+    uint8_t **getKeysRound(uint8_t *key) override
+    {
+        return key_expansion.generateKeysRound(key);
+    }
     void encrypt(uint8_t *bytes_input, uint8_t **bytes_output, uint8_t **keys_round) override
     {
-    
+        cpp_int e=joinBits_cppInt(keys_round[0]), n=joinBits_cppInt(keys_round[2]);//, bits_input=joinBits<cpp_int>(bytes_input, message_length);
+        
+        for(size_t i=0; i<message_length; i++)
+            bytes_output[i]=splitBitsTo8_cppInt(pow_big_modulo<cpp_int>(bytes_input[i], e, n));
+        
+        //cout<<"bits_input:"<<bits_input<<endl<<"pow:"<<pow_big_modulo<cpp_int>(bits_input, e, n)<<endl;
+        //*bytes_output=splitBitsTo8_cppInt(pow_big_modulo<cpp_int>(bits_input, e, n));
     }
     void decrypt(uint8_t *bytes_input, uint8_t **bytes_output, uint8_t **keys_round) override
     {
-    
+        cpp_int d=joinBits_cppInt(keys_round[1]), n=joinBits_cppInt(keys_round[2]), tmp;//, bits_input=joinBits_cppInt(bytes_input);
+        uint8_t *p;
+        //cout<<"bits_input:"<<bits_input<<endl<<"pow:"<<pow_big_modulo<cpp_int>(bits_input, d, n)<<endl;
+        for(size_t i=0, k=0; k<message_length; i+=8, k++)
+        {
+            p=&bytes_input[i];
+            tmp=pow_big_modulo<cpp_int>(joinBits_cppInt(p), d, n);
+            bytes_output[k]=splitBitsTo8<cpp_int>(tmp, getLength_bytes(tmp));
+        }
+        
+        //*bytes_output=splitBitsTo8<cpp_int>(pow_big_modulo<cpp_int>(bits_input, d, n), message_length);
     }
 };
 

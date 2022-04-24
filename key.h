@@ -1,9 +1,8 @@
 #ifndef KG_KEY_H
 #define KG_KEY_H
 
-#include <string>
-#include "i_key.h"
-#include "function.h"
+#include <boost/random.hpp>
+#include <boost/integer/extended_euclidean.hpp>
 
 class KeyExpansionFeistel : public Interface_KeyExpansion
 {
@@ -90,22 +89,23 @@ public:
 class KeyExpansionRSA : public Interface_KeyExpansion
 {
 private:
-    Interface_Primality *primality_test;
+    Interface_Primality<cpp_int> *primality_test;
     float probability_minimal;
-    size_t prime_numbers_length_bits;
+    const size_t prime_numbers_length_bits;
+
 public:
-    KeyExpansionRSA(PrimalityTestingMode primality_testing_mode, float probability_minimal, size_t prime_numbers_length_bits) : probability_minimal(probability_minimal), prime_numbers_length_bits(prime_numbers_length_bits)
+    KeyExpansionRSA(PrimalityTestingMode primality_testing_mode, float probability_minimal, const size_t prime_numbers_length_bits) : probability_minimal(probability_minimal), prime_numbers_length_bits(prime_numbers_length_bits)
     {
         switch(primality_testing_mode)
         {
             case PrimeTestingMode_Fermat:
-                primality_test=new Primality_FermatTest;
+                primality_test=new Primality_FermatTest<cpp_int>;
                 break;
             case PrimeTestingMode_SolovayStrassen:
-                primality_test=new Primality_SolovayStrassenTest;
+                primality_test=new Primality_SolovayStrassenTest<cpp_int>;
                 break;
             case PrimeTestingMode_MillerRabin:
-                primality_test=new Primality_MillerRabinTest;
+                primality_test=new Primality_MillerRabinTest<cpp_int>;
                 break;
         }
     }
@@ -114,15 +114,37 @@ public:
         delete primality_test;
     }
     
-    uint8_t ** generateKeysRound(uint8_t *key) override
+    uint8_t **generateKeysRound(uint8_t *key) override
     {
-        InfInt p=0, q=0;
-        string p_str, q_str;
-        for(size_t i=0; i<prime_numbers_length_bits; i++)
-        {
-            p_str.push_back(rand()%10);
-            q_str.push_back(rand()%10);
-        }
+        cpp_int prime_numbers[2];
+        cpp_int n, euler_f, e, d;
+        uint8_t **edn=new uint8_t*[3];
+        
+        for(uint8_t i=0; i<2; )
+            if(primality_test->performTest((prime_numbers[i]=getNBitNumber<cpp_int>(prime_numbers_length_bits)), probability_minimal))
+                i++;
+        cout<<"p:"<<prime_numbers[0]<<endl<<"q:"<<prime_numbers[1]<<endl;
+        n=prime_numbers[0]*prime_numbers[1];
+        euler_f=(prime_numbers[0]-1)*(prime_numbers[1]-1);
+
+        do
+            e=rand()%(euler_f-2)+2;
+        while(gcd_utility<cpp_int>(e, euler_f)!=1);
+        d=boost::integer::extended_euclidean<cpp_int>(e, euler_f).x;
+        cout<<"euler_f:"<<euler_f<<endl<<"e:"<<e<<endl<<"d:"<<d<<endl<<"n:"<<n<<endl<<"mod:"<<(d*e)%euler_f<<endl;
+    
+        edn[0]=splitBitsTo8_cppInt(e);
+        edn[1]=splitBitsTo8_cppInt(d);
+        edn[2]=splitBitsTo8_cppInt(n);
+        /*edn[0]=splitBitsTo8_cppInt(e, prime_numbers_length_bits);
+        edn[1]=splitBitsTo8_cppInt(d, prime_numbers_length_bits);
+        edn[2]=splitBitsTo8_cppInt(n, prime_numbers_length_bits);*/
+        /*vector<vector<uint8_t>> edn_v;
+        export_bits(e, back_inserter(edn_v[0]), 8);
+        export_bits(d, back_inserter(edn_v[1]), 8);
+        export_bits(n, back_inserter(edn_v[2]), 8);*/
+        
+        return edn;
     }
 };
 

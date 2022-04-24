@@ -24,7 +24,7 @@ uint8_t *substitute(const uint8_t *bytes, const uint8_t s_boxes[8][4][16], uint8
     thread threads[k];
     
     
-    for(uint8_t i=0, j=0; j<k; i++, j+=2)
+    for(uint8_t i=0, j=0; j<k; i++, j+=2)           // TODO add additional vars first_last, middle to handle false sharing
     {
         threads[j]=thread([&](uint8_t i_t, uint8_t j_t)
         {
@@ -93,18 +93,19 @@ uint8_t *substitute(const uint8_t *bytes, const uint8_t s_boxes[8][4][16], uint8
 
 /*int getGCD(int a, int b)
 {
-    return b ? gcd(b, a % b) : a;
+    return b ? gcd_utility(b, a % b) : a;
 }*/
 
-int8_t getJacobiSymbol(long long a, long long b)
+template <typename T>
+int8_t getJacobiSymbol(T a, T b)
 {
-    if(gcd(a, b)!=1)
+    if(gcd_utility<T>(a, b) != 1)
         return 0;
     
     int8_t r=1;
     
     a%=b;
-    for(long long t; a!=0; a%=b)
+    for(T t; a!=0; a%=b)
     {
         while(a%2==0)
         {
@@ -113,7 +114,7 @@ int8_t getJacobiSymbol(long long a, long long b)
             if(t==3 || t==5)
                 r*=-1;
         }
-        swap(a, b);
+        swap<T>(a, b);
         if(a%4==3 && b%4==3)
             r*=-1;
     }
@@ -123,7 +124,7 @@ int8_t getJacobiSymbol(long long a, long long b)
 
 /*int8_t getJacobiSymbol(long long a, long long b)
 {
-    if(gcd(a, b)!=1)
+    if(gcd_utility(a, b)!=1)
         return 0;
     
     unsigned t=0;
