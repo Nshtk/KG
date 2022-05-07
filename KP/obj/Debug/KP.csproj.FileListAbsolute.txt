@@ -1,0 +1,15 @@
+C:\Users\Root\Documents\Labs\KG\KP\bin\Debug\KP.exe.config
+C:\Users\Root\Documents\Labs\KG\KP\bin\Debug\KP.exe
+C:\Users\Root\Documents\Labs\KG\KP\bin\Debug\KP.pdb
+C:\Users\Root\Documents\Labs\KG\KP\obj\Debug\KP.csproj.AssemblyReference.cache
+C:\Users\Root\Documents\Labs\KG\KP\obj\Debug\MainWindow.g.cs
+C:\Users\Root\Documents\Labs\KG\KP\obj\Debug\App.g.cs
+C:\Users\Root\Documents\Labs\KG\KP\obj\Debug\KP_MarkupCompile.cache
+C:\Users\Root\Documents\Labs\KG\KP\obj\Debug\KP_MarkupCompile.lref
+C:\Users\Root\Documents\Labs\KG\KP\obj\Debug\MainWindow.baml
+C:\Users\Root\Documents\Labs\KG\KP\obj\Debug\KP.g.resources
+C:\Users\Root\Documents\Labs\KG\KP\obj\Debug\KP.Properties.Resources.resources
+C:\Users\Root\Documents\Labs\KG\KP\obj\Debug\KP.csproj.GenerateResource.cache
+C:\Users\Root\Documents\Labs\KG\KP\obj\Debug\KP.csproj.CoreCompileInputs.cache
+C:\Users\Root\Documents\Labs\KG\KP\obj\Debug\KP.exe
+C:\Users\Root\Documents\Labs\KG\KP\obj\Debug\KP.pdb
