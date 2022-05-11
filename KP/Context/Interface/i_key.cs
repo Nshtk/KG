@@ -2,12 +2,12 @@ namespace KP.Context.Interface
 {
     public interface IKeyExpansion
     {
-        public ulong[] generateKeysRound(byte[] key);
+        public byte[][] getKeysRound(byte[] key);
     }
 
     public interface IRoundCiphering
     {
-        public uint functionF(uint bits_input_part, ulong key_round);
-        public byte[] perform(byte[] bytes, byte[] key_round);
+        public ulong functionF(ulong bits_input_part, ulong key_round, RoundCipheringCamelia.FunctionFModes mode); // TODO bits_input_part change type to byte[]
+        public byte[] performRound(byte[] bytes, byte[] key_round);
     }
 }

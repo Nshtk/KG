@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace KP.Context
 {
     public static class Utility
@@ -11,13 +13,13 @@ namespace KP.Context
             CipheringMode_CTR,
             CipheringMode_RD,
             CipheringMode_RD_H
-        }
+        } public static CipheringMode Ciphering_Mode;
         
-        public class Bits
+        public static bitsSplit128To64(ulong[] bits_input)
         {
+            BigInteger bits = new BigInteger(128);
             
+            bits
         }
-
-        public static CipheringMode Ciphering_Mode;
     }
 }
