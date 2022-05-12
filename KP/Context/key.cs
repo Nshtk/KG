@@ -278,4 +278,61 @@ namespace KP.Context
             return BitConverter.GetBytes(bits_parts[1]);
         }
     }
+
+    public class KeyExpansionElGamal : IKeyExpansion
+    {
+        public enum PrimalityTestingMode
+        {
+            Fermat,
+            SolovayStrassen,
+            MillerRabin
+        }
+
+        private PrimalityTestingMode _primality_testing_mode;
+        private readonly float _probability_minimal;
+        private readonly int _prime_numbers_length_bits;
+
+        public KeyExpansionElGamal(PrimalityTestingMode primality_testing_mode, float probability_minimal, int prime_numbers_length_bits)
+        {
+            _primality_testing_mode=primality_testing_mode;
+            _probability_minimal=probability_minimal;
+            _prime_numbers_length_bits=prime_numbers_length_bits;
+        }
+
+        private BigInteger getPrimeNumber()
+        {
+            BigInteger number=Utility.getRandomNBitNumber(_prime_numbers_length_bits);
+            
+            switch(_primality_testing_mode)
+            {
+                case PrimalityTestingMode.Fermat:
+                    while(!Primality.performFermatTest(number, _probability_minimal))
+                        number=Utility.getRandomNBitNumber(_prime_numbers_length_bits);
+                    break; 
+                case PrimalityTestingMode.SolovayStrassen:
+                    while(!Primality.performSolovayStrassenTest(number, _probability_minimal))
+                        number=Utility.getRandomNBitNumber(_prime_numbers_length_bits);
+                    break;
+                case PrimalityTestingMode.MillerRabin:
+                    while(!Primality.performMillerRabinTest(number, _probability_minimal))
+                        number=Utility.getRandomNBitNumber(_prime_numbers_length_bits);
+                    break;
+            }
+
+            return number;
+        }
+        public byte[][] getKeysRound(byte[] key)
+        {
+            BigInteger p=getPrimeNumber(), p_minus_one=p-1, q=p_minus_one/2, g=2, x, y;
+
+            for( ; g<p_minus_one; g++)
+                if(BigInteger.ModPow(g, 2, p)!=1 && BigInteger.ModPow(g, q, p)!=1)
+                    break;
+
+            x=Utility.getRandomBigInteger(p_minus_one, 1);
+            y=BigInteger.ModPow(g, x, p);
+
+            return new byte[][] {p.ToByteArray(), p_minus_one.ToByteArray(), g.ToByteArray(), y.ToByteArray(), x.ToByteArray()};
+        }
+    }
 }

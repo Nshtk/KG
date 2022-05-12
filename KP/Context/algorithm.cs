@@ -13,7 +13,7 @@ namespace KP.Context
             _round_ciphering=round_ciphering;
         }
         
-        public void encrypt(byte[] bytes_input, ref byte[] bytes_output, byte[][] keys_round) //kw, ke, k
+        public void encrypt(byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round) //kw, ke, k
         {
             ulong[] keys_round_converted=new ulong[keys_round.Length];
             byte i=0;
@@ -54,7 +54,7 @@ namespace KP.Context
             
             bytes_output=(((BigInteger)bits_input_parts[1]<<64)|bits_input_parts[0]).ToByteArray();
         }
-        public void decrypt(byte[] bytes_input, ref byte[] bytes_output, byte[][] keys_round) 
+        public void decrypt(byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round) 
         {
             ulong[] keys_round_converted=new ulong[keys_round.Length];
             byte i=0;
@@ -104,7 +104,7 @@ namespace KP.Context
     {
         private readonly IKeyExpansion _key_expansion;
         private Utility.CipheringMode _ciphering_mode;
-        private byte[][] keys_round;
+        private byte[][] _keys_round;
         private byte[] _key;
         private ulong _init_vector;
         
@@ -114,34 +114,62 @@ namespace KP.Context
             _ciphering_mode = ciphering_mode;
             _key = key;
             _init_vector = init_vector;
-            keys_round=_key_expansion.getKeysRound(_key);
+            _keys_round=_key_expansion.getKeysRound(_key);
         }
 
-        public void encrypt(byte[] bytes_input, ref byte[] bytes_output)
+        public void encrypt(byte[] bytes_input, out byte[] bytes_output)
         {
-            base.encrypt(bytes_input, ref bytes_output, keys_round);
+            base.encrypt(bytes_input, out bytes_output, _keys_round);
         }
-        public void decrypt(byte[] bytes_input, ref byte[] bytes_output)
+        public void decrypt(byte[] bytes_input, out byte[] bytes_output)
         {
-            base.decrypt(bytes_input, ref bytes_output, keys_round);
+            base.decrypt(bytes_input, out bytes_output, _keys_round);
         }
     }
     public sealed class ElGamal : IAlgorithm
     {
-        public IKeyExpansion key_expansion;
-
-        public ElGamal()
+        private readonly IKeyExpansion _key_expansion;
+        private Utility.CipheringMode _ciphering_mode;
+        private byte[][] _keys_round;
+        private byte[] _key;
+        private ulong _init_vector;
+        
+        public ElGamal(Utility.CipheringMode ciphering_mode, byte[] key, ulong init_vector)
         {
-            
+            _key_expansion=new KeyExpansionCamellia();
+            _ciphering_mode = ciphering_mode;
+            _key = key;
+            _init_vector = init_vector;
+            _keys_round=_key_expansion.getKeysRound(_key);
         }
         
-        public void encrypt(byte[] bytes_input, ref byte[] bytes_output, byte[][] keys_round)
+        public void encrypt(byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round)
         {
+            int message_size=_keys_round[0].Length-1, cipher_length=0;
+            byte[][] bytes_output_2d =new byte[bytes_input.Length/message_size+1][];
+            byte[] tmp;
+            BigInteger p=new BigInteger(_keys_round[0]), p_minus_one = new BigInteger(_keys_round[1]), k;
             
+            do
+                k=Utility.getRandomBigInteger(p_minus_one, 1);
+            while(BigInteger.GreatestCommonDivisor(k, p_minus_one)!=1);
+            bytes_output_2d[2]=BigInteger.ModPow(new BigInteger(_keys_round[2]), k, p).ToByteArray();
+            bytes_output_2d[0]=new byte[] {(byte)bytes_output_2d[1].Length};
+            
+            for(int i=0, j=3; i<bytes_input.Length; i+=message_size, j++)
+            {
+                tmp=(BigInteger.ModPow(new BigInteger(_keys_round[3]), k, p)*Utility.bytesConvertToBigInteger(bytes_input, i, i+message_size)).ToByteArray();
+                cipher_length+=tmp.Length;
+                bytes_output_2d[j]=tmp;
+            }
+            bytes_output_2d[1]=new byte[] {(byte)cipher_length};
+            
+            Buffer.BlockCopy(bytes_output_2d, 0, bytes_output=new byte[cipher_length+bytes_output_2d[1].Length+1], 0, bytes_output_2d.Length);
         }
-        public void decrypt(byte[] bytes_input, ref byte[] bytes_output, byte[][] keys_round)
+        public void decrypt(byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round)
         {
-            
+            BigInteger a=Utility.bytesConvertToBigInteger(bytes_input, 2, 2+bytes_input[0]), b=Utility.bytesConvertToBigInteger(bytes_input, 2+bytes_input[0], 2+bytes_input[1]);
+            bytes_output=(b*BigInteger.ModPow(a, new BigInteger(_keys_round[1])-new BigInteger(_keys_round[3]), new BigInteger(_keys_round[0]))).ToByteArray();
         }
     }
 }

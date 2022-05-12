@@ -4,6 +4,6 @@ namespace KP.Context
 {
     public class Function
     {
-        
+
     }
 }
