@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KP", "KP.csproj", "{9F3F75CA-7BF3-49B6-A049-A45A1310727D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soldatov.Wpf.MVVM.Core", "..\..\RPKS\RPKS_lab1,2\Soldatov.Wpf.MVVM.Core\Soldatov.Wpf.MVVM.Core.csproj", "{70392552-D528-4B9B-A03E-051C77B22FF6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soldatov.Wpf.MVVM", "..\..\RPKS\RPKS_lab1,2\Soldatov.Wpf.MVVM\Soldatov.Wpf.MVVM.csproj", "{79E2EC58-F4A1-468D-AA8C-D8970C7A1431}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{9F3F75CA-7BF3-49B6-A049-A45A1310727D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F3F75CA-7BF3-49B6-A049-A45A1310727D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F3F75CA-7BF3-49B6-A049-A45A1310727D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70392552-D528-4B9B-A03E-051C77B22FF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70392552-D528-4B9B-A03E-051C77B22FF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70392552-D528-4B9B-A03E-051C77B22FF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70392552-D528-4B9B-A03E-051C77B22FF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79E2EC58-F4A1-468D-AA8C-D8970C7A1431}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79E2EC58-F4A1-468D-AA8C-D8970C7A1431}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79E2EC58-F4A1-468D-AA8C-D8970C7A1431}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79E2EC58-F4A1-468D-AA8C-D8970C7A1431}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
