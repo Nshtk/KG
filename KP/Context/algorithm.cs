@@ -18,6 +18,10 @@ namespace KP.Context
             _round_ciphering=round_ciphering;
         }
         
+        public byte[][] getKeysRound(byte[] key)
+        {
+            return null;
+        }
         public void encrypt(byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round) //kw, ke, k
         {
             ulong[] keys_round_converted=new ulong[keys_round.Length];
@@ -117,6 +121,10 @@ namespace KP.Context
             _key_expansion=new KeyExpansionCamellia();
         }
 
+        public byte[][] getKeysRound(byte[] key)
+        {
+            return _key_expansion.getKeysRound(key);
+        }
         public void encrypt(byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round)
         {
             base.encrypt(bytes_input, out bytes_output, keys_round);
@@ -128,18 +136,22 @@ namespace KP.Context
     }
     public sealed class ElGamal : IAlgorithm
     {
+        private readonly IKeyExpansion _key_expansion;
+
         public string Name
         {
             get {return "ElGamal"; }
         }
         
-        private readonly IKeyExpansion _key_expansion;
-
         public ElGamal()
         {
             _key_expansion=new KeyExpansionElGamal(KeyExpansionElGamal.PrimalityTestingMode.Fermat, (float)0.999, 64);
         }
-        
+
+        public byte[][] getKeysRound(byte[] key)
+        {
+            return _key_expansion.getKeysRound(key);
+        }
         public void encrypt(byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round)
         {
             int message_size=keys_round[0].Length-1, cipher_length=0;

@@ -35,15 +35,27 @@
 
         <DockPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Stretch" LastChildFill="True">
             <TextBlock Text="Preview" DockPanel.Dock="Top" HorizontalAlignment="Center"></TextBlock>
-            <TextBox x:Name="TextBox_file_preview" Text="{Binding Content_String}" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True"></TextBox>
-        </DockPanel>
+            <TabControl>
+                <TabItem Header="Input file">
+                    <TabItem.Content>
+                        <TextBox x:Name="TextBox_input_file" Text="{Binding FileInfo_Input_Content_String}" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True"></TextBox>
+                    </TabItem.Content>
+                </TabItem>
+                <TabItem Header="Output file" Visibility="{Binding File_Output_Visibility}">
+                    <TabItem.Content>
+                        <TextBox x:Name="TextBox_output_file" Text="{Binding FileInfo_Output_Content_String}" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True"></TextBox>
+                    </TabItem.Content>
+                </TabItem>
+            </TabControl>
+            
+            </DockPanel>
 
         <GridSplitter Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="False" Height="5"></GridSplitter>
 
         <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Top">
             <TextBlock Text="Settings"></TextBlock>
             <StackPanel Orientation="Horizontal">
-                <TextBlock x:Name="TextBlock_file_name" Text="File: " Margin="0,0,5,0"></TextBlock>
+                <TextBlock Text="{Binding FileInfo_Input_Name}" Margin="0,0,5,0"></TextBlock>
                 <Button Content="Open file" Command="{Binding CommandOpenFile}" Visibility="Visible"></Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
@@ -60,19 +72,19 @@
                 <TextBlock Text="Ciphering Mode: "></TextBlock>
                 <ComboBox Width="60" ItemsSource="{Binding Source={StaticResource data_from_enum}}" SelectedItem="{Binding Algorithm_Model.Ciphering}"></ComboBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal">           <!--visibility collapsed if elgamal-->
                 <TextBlock Text="Key: "></TextBlock>
                 <TextBox Width="200" Text="{Binding Algorithm_Model.Key}"></TextBox>
             </StackPanel>
             
             <RadioButton Content="Encryption" IsChecked="{Binding Cryption, Converter={StaticResource enum_bool_converter}, ConverterParameter={x:Static Local:ViewModelMain+CryptionMode.Encryption}}"></RadioButton>
             <RadioButton Content="Decryption" IsChecked="{Binding Cryption, Converter={StaticResource enum_bool_converter}, ConverterParameter={x:Static Local:ViewModelMain+CryptionMode.Decryption}}"></RadioButton>
-            <Button Content="Start" IsEnabled="True"></Button>
+            <Button Content="Start" IsEnabled="True" Command="{Binding CommandCrypt}"></Button>
             <Button Content="Stop" IsEnabled="False"></Button>
             <Button Content="Show log" IsEnabled="False"></Button>
         </StackPanel>
         
-        <!--<RichTextBox x:Name="TextBox_output_box" Grid.Row="3" Grid.Column="1" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" Visibility="Collapsed">
-        </RichTextBox>-->
+        <RichTextBox x:Name="TextBox_log_file" Grid.Row="3" Grid.Column="1" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" Visibility="{Binding File_Log_Visibility}">
+        </RichTextBox>
     </Grid>
 </Window>

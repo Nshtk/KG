@@ -7,13 +7,13 @@ namespace KP.Context
     {
         public enum CipheringMode
         {
-            CipheringMode_ECB,
-            CipheringMode_CBC,
-            CipheringMode_CFB,
-            CipheringMode_OFB,
-            CipheringMode_CTR,
-            CipheringMode_RD,
-            CipheringMode_RD_H
+            ECB,
+            CBC,
+            CFB,
+            OFB,
+            CTR,
+            RD,
+            RD_H
         } public static CipheringMode Ciphering_Mode;
         
         public static Random random;
