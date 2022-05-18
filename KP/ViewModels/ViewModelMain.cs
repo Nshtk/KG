@@ -1,4 +1,8 @@
+using System;
+using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Windows;
 using KP.Models;
@@ -18,8 +22,8 @@ namespace KP.ViewModels
         private FileInfo _fileinfo_input, _fileinfo_output;
         private AlgorithmModel _algorithm_model;
         private CryptionMode _cryption_mode;
-        private byte[] _fileinfo_input_content_bytes;
-        private string _fileinfo_input_content_string, _fileinfo_output_content_string;
+        private byte[] _fileinfo_input_content_bytes, _fileinfo_output_content_bytes;
+        private string _fileinfo_input_content_string, _fileinfo_output_content_string, _fileinfo_output_name;
 
         private Visibility _file_output_visiblity;
         private Visibility _file_log_visiblity;
@@ -29,7 +33,7 @@ namespace KP.ViewModels
         public FileInfo FileInfo_Input
         {
             get {return _fileinfo_input;}
-            set {_fileinfo_input=value; invokePropertiesChanged("FileInfo_Input", "FileInfo_Input_Name");}
+            set {_fileinfo_input=value; FileInfo_Output=null; invokePropertiesChanged("FileInfo_Input", "FileInfo_Input_Name");}
         }
         public string FileInfo_Input_Name
         {
@@ -43,7 +47,12 @@ namespace KP.ViewModels
         public FileInfo FileInfo_Output
         {
             get {return _fileinfo_output;}
-            set {_fileinfo_output=value; invokePropertiesChanged("FileInfo_Output", "FileInfo_Output_Name");}
+            set {_fileinfo_output=value; File_Output_Visibility=Visibility.Hidden; invokePropertyChanged("FileInfo_Output");}
+        }
+        public string FileInfo_Output_Name
+        {
+            get {return FileInfo_Output==null ? "File: " : "File: "+FileInfo_Input.Name;}
+            set {_fileinfo_output_name=value; invokePropertyChanged("FileInfo_Output_Name");}
         }
         public string FileInfo_Output_Content_String
         {
@@ -71,7 +80,6 @@ namespace KP.ViewModels
             get {return _file_log_visiblity;}
             set {_file_log_visiblity=value; invokePropertyChanged("File_Log_Visibility");}
         }
-        
         public RelayCommand CommandOpenFile
         {
             get {return _command_open_file??=new RelayCommand(openFile_execute, openFile_canExecute);}
@@ -119,16 +127,27 @@ namespace KP.ViewModels
         }
         private void crypt_execute(object parameter)
         {
-            switch(_cryption_mode)
+            byte[][] bytes_output;
+            string file_extension=".encrypted";
+            
+            if(_cryption_mode==CryptionMode.Encryption)
             {
-                case CryptionMode.Encryption:
-                    _algorithm_model.encrypt(_fileinfo_input_content_bytes, );
-                    break;
-                case CryptionMode.Decryption:
-                    _algorithm_model.decrypt(_fileinfo_input_content_bytes, );
-                    break;
+                _algorithm_model.encrypt(_fileinfo_input_content_bytes, out bytes_output);
+                FileInfo_Output??=new FileInfo(FileInfo_Input.FullName+file_extension);
             }
-            FileInfo_Output_Content_String=Encoding.UTF8.GetString(_fileinfo_output_content_bytes);
+            else
+            {
+                _algorithm_model.decrypt(_fileinfo_input_content_bytes, out bytes_output);
+                FileInfo_Output??=new FileInfo(FileInfo_Input.FullName+".decrypted");
+                //FileInfo_Output??=new FileInfo(FileInfo_Input.FullName.Replace(file_extension, ""));
+            }
+
+            _fileinfo_output_content_bytes=bytes_output.SelectMany(a => a).ToArray();
+            FileInfo_Output_Content_String=Encoding.ASCII.GetString(_fileinfo_output_content_bytes);
+            using (FileStream file_stream=_fileinfo_output.Create())
+            {
+                file_stream.Write(_fileinfo_output_content_bytes, 0, _fileinfo_output_content_bytes.Length);
+            }
             File_Output_Visibility=Visibility.Visible;
         }
         private bool crypt_canExecute(object parameter)

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Numerics;
 using KP.Context.Interface;
 
@@ -18,93 +19,104 @@ namespace KP.Context
             _round_ciphering=round_ciphering;
         }
         
-        public byte[][] getKeysRound(byte[] key)
+        public virtual byte[][] getKeysRound(byte[] key)
         {
             return null;
         }
-        public void encrypt(byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round) //kw, ke, k
+        public virtual void encrypt(byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round) //kw, ke, k
         {
             ulong[] keys_round_converted=new ulong[keys_round.Length];
             byte i=0;
             for( ; i<keys_round.Length; i++)
                 keys_round_converted[i]=BitConverter.ToUInt64(keys_round[i], 0);
             
-            BigInteger bits_input=new BigInteger(bytes_input);
-            ulong[] bits_input_parts=new ulong[2] {((ulong)(bits_input>>64))^keys_round_converted[0], ((ulong)(bits_input&1UL))^keys_round_converted[1]};
-
-            byte iterations=0, cycles=6;
+            ulong[] bits_input_parts=new ulong[2] {BitConverter.ToUInt64(bytes_input, 8)^keys_round_converted[0], BitConverter.ToUInt64(bytes_input, 0)^keys_round_converted[1]};
+            byte iterations=0, iteration_rounds=6, k, e=4;
+            Array.Copy(BitConverter.GetBytes(bits_input_parts[0]), 0, bytes_input, 0, 8);
+            Array.Copy(BitConverter.GetBytes(bits_input_parts[1]), 0, bytes_input, 8, 8);
             i=0;
             if(keys_round_converted.Length==26)
             {
-                for(byte j=0; iterations<2; iterations++, cycles+=6)
+                k=8;                                                            // TODO to function
+                for( ; iterations<2; iterations++, iteration_rounds+=6, e++)            
                 {
-                    for( ; i<cycles; i++)
-                        bytes_input=_round_ciphering.performRound(bytes_input, keys_round[i]);
-                    bits_input_parts[0]=_round_ciphering.functionF(bits_input_parts[0], keys_round_converted[j], RoundCipheringCamelia.FunctionFModes.FL);
-                    bits_input_parts[1]=_round_ciphering.functionF(bits_input_parts[1], keys_round_converted[++j], RoundCipheringCamelia.FunctionFModes.FL_INVERSE);
+                    for(; i<iteration_rounds; i++, k++)
+                        bytes_input=_round_ciphering.performRound(bytes_input, keys_round[k]);
+                    bits_input_parts[0]=_round_ciphering.functionF(BitConverter.ToUInt64(bytes_input, 0), keys_round_converted[e], RoundCipheringCamelia.FunctionFModes.FL);
+                    bits_input_parts[1]=_round_ciphering.functionF(BitConverter.ToUInt64(bytes_input, 8), keys_round_converted[++e], RoundCipheringCamelia.FunctionFModes.FL_INVERSE);
+                    Array.Copy(BitConverter.GetBytes(bits_input_parts[0]), 0, bytes_input, 0, 8);
+                    Array.Copy(BitConverter.GetBytes(bits_input_parts[1]), 0, bytes_input, 8, 8);
                 }
-                for( ; i<cycles; i++)
-                    bytes_input=_round_ciphering.performRound(bytes_input, keys_round[i]);
+                for( ; i<iteration_rounds; i++, k++)
+                    bytes_input=_round_ciphering.performRound(bytes_input, keys_round[k]);
             }
             else
             {
-                for(byte j=0; iterations<3; iterations++, cycles+=6)
+                k=10;
+                for( ; iterations<3; iterations++, iteration_rounds+=6, e++)
                 {
-                    for( ; i<cycles; i++)
-                        bytes_input=_round_ciphering.performRound(bytes_input, keys_round[i]);
-                    bits_input_parts[0]=_round_ciphering.functionF(bits_input_parts[0], keys_round_converted[j], RoundCipheringCamelia.FunctionFModes.FL);
-                    bits_input_parts[1]=_round_ciphering.functionF(bits_input_parts[1], keys_round_converted[++j], RoundCipheringCamelia.FunctionFModes.FL_INVERSE);
+                    for(; i<iteration_rounds; i++, k++)
+                        bytes_input=_round_ciphering.performRound(bytes_input, keys_round[k]);
+                    bits_input_parts[0]=_round_ciphering.functionF(BitConverter.ToUInt64(bytes_input, 0), keys_round_converted[e], RoundCipheringCamelia.FunctionFModes.FL);
+                    bits_input_parts[1]=_round_ciphering.functionF(BitConverter.ToUInt64(bytes_input, 8), keys_round_converted[++e], RoundCipheringCamelia.FunctionFModes.FL_INVERSE);
+                    Array.Copy(BitConverter.GetBytes(bits_input_parts[0]), 0, bytes_input, 0, 8);
+                    Array.Copy(BitConverter.GetBytes(bits_input_parts[1]), 0, bytes_input, 8, 8);
                 }
-                for( ; i<cycles; i++)
-                    bytes_input=_round_ciphering.performRound(bytes_input, keys_round[i]);
+                for( ; i<iteration_rounds; i++, k++)
+                    bytes_input=_round_ciphering.performRound(bytes_input, keys_round[k]);
             }
-            bits_input_parts[1]^=keys_round_converted[2];
-            bits_input_parts[0]^=keys_round_converted[3];
+            bits_input_parts[1]=BitConverter.ToUInt64(bytes_input, 8)^keys_round_converted[2];
+            bits_input_parts[0]=BitConverter.ToUInt64(bytes_input, 0)^keys_round_converted[3];
+
+            bytes_output=(((BigInteger)bits_input_parts[1]<<64)|bits_input_parts[0]).ToByteArray().Where((source, index) =>index != 16).ToArray();
             
-            bytes_output=(((BigInteger)bits_input_parts[1]<<64)|bits_input_parts[0]).ToByteArray();
         }
-        public void decrypt(byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round) 
+        public virtual void decrypt(byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round) 
         {
             ulong[] keys_round_converted=new ulong[keys_round.Length];
             byte i=0;
             for( ; i<keys_round.Length; i++)
                 keys_round_converted[i]=BitConverter.ToUInt64(keys_round[i], 0);
             
-            BigInteger bits_input=new BigInteger(bytes_input);
-            ulong[] bits_input_parts=new ulong[2] {((ulong)(bits_input>>64))^keys_round_converted[2], ((ulong)(bits_input&1UL))^keys_round_converted[3]};
-
-            byte iterations=0, cycles;
+            ulong[] bits_input_parts=new ulong[2] {BitConverter.ToUInt64(bytes_input, 8)^keys_round_converted[2], BitConverter.ToUInt64(bytes_input, 0)^keys_round_converted[3]};
+            byte iterations=0, iteration_rounds=6, k, e;
+            Array.Copy(BitConverter.GetBytes(bits_input_parts[0]), 0, bytes_input, 0, 8);
+            Array.Copy(BitConverter.GetBytes(bits_input_parts[1]), 0, bytes_input, 8, 8);
+            i=0;
             if(keys_round_converted.Length==26)
             {
-                i=18; cycles=12;
-                for(byte j=4; iterations<2; iterations++, cycles-=6)
+                k=25; e=7;
+                for( ; iterations<2; iterations++, iteration_rounds+=6, e--)
                 {
-                    for( ; i>cycles; i--)
-                        bytes_input=_round_ciphering.performRound(bytes_input, keys_round[i]);
-                    bits_input_parts[0]=_round_ciphering.functionF(bits_input_parts[0], keys_round_converted[j], RoundCipheringCamelia.FunctionFModes.FL);
-                    bits_input_parts[1]=_round_ciphering.functionF(bits_input_parts[1], keys_round_converted[--j], RoundCipheringCamelia.FunctionFModes.FL_INVERSE);
+                    for(; i<iteration_rounds; i++, k--)
+                        bytes_input=_round_ciphering.performRound(bytes_input, keys_round[k]);
+                    bits_input_parts[0]=_round_ciphering.functionF(BitConverter.ToUInt64(bytes_input, 0), keys_round_converted[e], RoundCipheringCamelia.FunctionFModes.FL);
+                    bits_input_parts[1]=_round_ciphering.functionF(BitConverter.ToUInt64(bytes_input, 8), keys_round_converted[--e], RoundCipheringCamelia.FunctionFModes.FL_INVERSE);
+                    Array.Copy(BitConverter.GetBytes(bits_input_parts[0]), 0, bytes_input, 0, 8);
+                    Array.Copy(BitConverter.GetBytes(bits_input_parts[1]), 0, bytes_input, 8, 8);
                 }
-                for( ; i>cycles; i--)
-                    bytes_input=_round_ciphering.performRound(bytes_input, keys_round[i]);
+                for( ; i<iteration_rounds; i++, k--)
+                    bytes_input=_round_ciphering.performRound(bytes_input, keys_round[k]);
             }
             else
             {
-                i=24; cycles=18;
-                for(byte j=6; iterations<3; iterations++, cycles+=6)
+                k=33; e=9;
+                for( ; iterations<3; iterations++, iteration_rounds+=6, e--)
                 {
-                    for( ; i<cycles; i++)
-                        bytes_input=_round_ciphering.performRound(bytes_input, keys_round[i]);
-                    bits_input_parts[0]=_round_ciphering.functionF(bits_input_parts[0], keys_round_converted[j], RoundCipheringCamelia.FunctionFModes.FL);
-                    bits_input_parts[1]=_round_ciphering.functionF(bits_input_parts[1], keys_round_converted[++j], RoundCipheringCamelia.FunctionFModes.FL_INVERSE);
+                    for(; i<iteration_rounds; i++, k--)
+                        bytes_input=_round_ciphering.performRound(bytes_input, keys_round[k]);
+                    bits_input_parts[0]=_round_ciphering.functionF(BitConverter.ToUInt64(bytes_input, 0), keys_round_converted[e], RoundCipheringCamelia.FunctionFModes.FL);
+                    bits_input_parts[1]=_round_ciphering.functionF(BitConverter.ToUInt64(bytes_input, 8), keys_round_converted[--e], RoundCipheringCamelia.FunctionFModes.FL_INVERSE);
+                    Array.Copy(BitConverter.GetBytes(bits_input_parts[0]), 0, bytes_input, 0, 8);
+                    Array.Copy(BitConverter.GetBytes(bits_input_parts[1]), 0, bytes_input, 8, 8);
                 }
-                for( ; i<cycles; i++)
-                    bytes_input=_round_ciphering.performRound(bytes_input, keys_round[i]);
+                for( ; i<iteration_rounds; i++, k--)
+                    bytes_input=_round_ciphering.performRound(bytes_input, keys_round[k]);
             }
-            bits_input_parts[1]^=keys_round_converted[0];
-            bits_input_parts[0]^=keys_round_converted[1];
+            bits_input_parts[1]=BitConverter.ToUInt64(bytes_input, 8)^keys_round_converted[0];
+            bits_input_parts[0]=BitConverter.ToUInt64(bytes_input, 0)^keys_round_converted[1];
             
-            bytes_output=(((BigInteger)bits_input_parts[1]<<64)|bits_input_parts[0]).ToByteArray();
-            
+            bytes_output=(((BigInteger)bits_input_parts[1]<<64)|bits_input_parts[0]).ToByteArray().Where((source, index) =>index != 16).ToArray();;
         }
     }
     
@@ -121,15 +133,17 @@ namespace KP.Context
             _key_expansion=new KeyExpansionCamellia();
         }
 
-        public byte[][] getKeysRound(byte[] key)
+        public override byte[][] getKeysRound(byte[] key)
         {
             return _key_expansion.getKeysRound(key);
         }
-        public void encrypt(byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round)
+
+        public override void encrypt(byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round)
         {
             base.encrypt(bytes_input, out bytes_output, keys_round);
         }
-        public void decrypt(byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round)
+
+        public override void decrypt(byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round)
         {
             base.decrypt(bytes_input, out bytes_output, keys_round);
         }
@@ -167,7 +181,7 @@ namespace KP.Context
             
             for(int i=0, j=3; i<bytes_input.Length; i+=message_size, j++)
             {
-                tmp=(BigInteger.ModPow(new BigInteger(keys_round[3]), k, p)*Utility.bytesConvertToBigInteger(bytes_input, i, i+message_size)).ToByteArray();
+                tmp=(BigInteger.ModPow(new BigInteger(keys_round[3]), k, p)*Utility.byteArrayConvertToBigInteger(bytes_input, i, i+message_size)).ToByteArray();
                 cipher_length+=tmp.Length;
                 bytes_output_2d[j]=tmp;
             }
@@ -177,7 +191,7 @@ namespace KP.Context
         }
         public void decrypt(byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round)
         {
-            BigInteger a=Utility.bytesConvertToBigInteger(bytes_input, 2, 2+bytes_input[0]), b=Utility.bytesConvertToBigInteger(bytes_input, 2+bytes_input[0], 2+bytes_input[1]);
+            BigInteger a=Utility.byteArrayConvertToBigInteger(bytes_input, 2, 2+bytes_input[0]), b=Utility.byteArrayConvertToBigInteger(bytes_input, 2+bytes_input[0], 2+bytes_input[1]);
             bytes_output=(b*BigInteger.ModPow(a, new BigInteger(keys_round[1])-new BigInteger(keys_round[3]), new BigInteger(keys_round[0]))).ToByteArray();
         }
     }

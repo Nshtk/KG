@@ -17,7 +17,8 @@
                 <x:Type TypeName="Context:Utility+CipheringMode"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
-        <MVVM:EnumBoolConverter x:Key="enum_bool_converter"/>
+        <MVVM:ConverterEnumBool x:Key="converter_enum_bool"/>
+        <MVVM:ConverterByteArrayString x:Key="byte_array_string_converter"/>
     </Window.Resources>
     
     <Grid>
@@ -72,13 +73,13 @@
                 <TextBlock Text="Ciphering Mode: "></TextBlock>
                 <ComboBox Width="60" ItemsSource="{Binding Source={StaticResource data_from_enum}}" SelectedItem="{Binding Algorithm_Model.Ciphering}"></ComboBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">           <!--visibility collapsed if elgamal-->
+            <StackPanel Orientation="Horizontal">           <!--TODO visibility collapsed if elgamal-->
                 <TextBlock Text="Key: "></TextBlock>
-                <TextBox Width="200" Text="{Binding Algorithm_Model.Key}"></TextBox>
+                <TextBox Width="200" Text="{Binding Algorithm_Model.Key, Converter={StaticResource byte_array_string_converter}}"></TextBox>
             </StackPanel>
             
-            <RadioButton Content="Encryption" IsChecked="{Binding Cryption, Converter={StaticResource enum_bool_converter}, ConverterParameter={x:Static Local:ViewModelMain+CryptionMode.Encryption}}"></RadioButton>
-            <RadioButton Content="Decryption" IsChecked="{Binding Cryption, Converter={StaticResource enum_bool_converter}, ConverterParameter={x:Static Local:ViewModelMain+CryptionMode.Decryption}}"></RadioButton>
+            <RadioButton Content="Encryption" IsChecked="{Binding Cryption, Converter={StaticResource converter_enum_bool}, ConverterParameter={x:Static Local:ViewModelMain+CryptionMode.Encryption}}"></RadioButton>
+            <RadioButton Content="Decryption" IsChecked="{Binding Cryption, Converter={StaticResource converter_enum_bool}, ConverterParameter={x:Static Local:ViewModelMain+CryptionMode.Decryption}}"></RadioButton>
             <Button Content="Start" IsEnabled="True" Command="{Binding CommandCrypt}"></Button>
             <Button Content="Stop" IsEnabled="False"></Button>
             <Button Content="Show log" IsEnabled="False"></Button>

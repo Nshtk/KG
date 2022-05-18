@@ -12,7 +12,6 @@ namespace KP.Views
         {
             InitializeComponent();
             DataContext=new ViewModelMain();
-            //System.Diagnostics.Trace.WriteLine("text");
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using KP.Context;
 using KP.Context.Interface;
@@ -51,27 +52,32 @@ namespace KP.Models
         {
             if(Algorithm==Algorithms[0] && Key==null)
             {
-                byte[] number_bytes_possible=new byte[] {16, 24, 32};
-                _key=new byte[number_bytes_possible[Utility.random.Next(3)]];
-                Utility.random.NextBytes(Key);
+                byte[] number_bytes_possible=new byte[] {16, 24, 32}, tmp=new byte[number_bytes_possible[Utility.random.Next(3)]];
+
+                Utility.random.NextBytes(tmp);
+                Key=tmp; //System.Diagnostics.Trace.WriteLine($"AAAAAA: {}");
             }
         }
-        public void encrypt(byte[] bytes_input, byte[][] bytes_output)
+        public void encrypt(byte[] bytes_input, out byte[][] bytes_output)
         {
             initialize();
 
             int block_length=16;
             byte[] bytes_input_part=new byte[block_length];
-            int bytes_number_full_blocks=bytes_input.Length/block_length;
+            int bytes_number_full_blocks=(bytes_input.Length+block_length-1)/block_length;
             int i=0, j=0;
             Task[] tasks=new Task[bytes_number_full_blocks];
+
+            bytes_output=new byte[bytes_number_full_blocks][];
+            if(bytes_input.Length%block_length!=0)
+                PaddingMode                             //TODO pad
             
             switch (Ciphering)
             {
                 case Utility.CipheringMode.ECB:
                     for(; i<bytes_number_full_blocks; i++, j+=block_length)
                     {
-                        Array.Copy(bytes_input, j, bytes_input_part, j, block_length);
+                        Array.Copy(bytes_input, j, bytes_input_part, 0, block_length);
                         Algorithm.encrypt(bytes_input_part, out bytes_output[i], _keys_round);
                     }
                     break;
@@ -89,12 +95,26 @@ namespace KP.Models
                     break;
             }
         }
-        public void decrypt(byte[] bytes_input, byte[][] bytes_output)
+        public void decrypt(byte[] bytes_input, out byte[][] bytes_output)
         {
             initialize();
+            
+            int block_length=16;
+            byte[] bytes_input_part=new byte[block_length];
+            int bytes_number_full_blocks=(bytes_input.Length+block_length-1)/block_length;
+            int i=0, j=0;
+            Task[] tasks=new Task[bytes_number_full_blocks];
+            
+            bytes_output=new byte[bytes_number_full_blocks][];
+            
             switch (Ciphering)
             {
                 case Utility.CipheringMode.ECB:
+                    for(; i<bytes_number_full_blocks; i++, j+=block_length)
+                    {
+                        Array.Copy(bytes_input, j, bytes_input_part, 0, block_length);
+                        Algorithm.decrypt(bytes_input_part, out bytes_output[i], _keys_round);
+                    }
                     break;
                 case Utility.CipheringMode.CBC:
                     break;
