@@ -57,7 +57,6 @@
             <SubType>Code</SubType>
         </Compile>
         <Compile Include="Context\algorithm.cs" />
-        <Compile Include="Context\function.cs" />
         <Compile Include="Context\Interface\i_algorithm.cs" />
         <Compile Include="Context\Interface\i_key.cs" />
         <Compile Include="Context\Interface\i_prime.cs" />

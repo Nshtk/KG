@@ -1,8 +1,5 @@
-using System;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 using System.Windows;
 using KP.Models;
@@ -15,8 +12,8 @@ namespace KP.ViewModels
     {
         public enum CryptionMode
         {
-            Encryption,
-            Decryption
+            ENCRYPTION,
+            DECRYPTION
         }
 
         private FileInfo _fileinfo_input, _fileinfo_output;
@@ -130,7 +127,7 @@ namespace KP.ViewModels
             byte[][] bytes_output;
             string file_extension=".encrypted";
             
-            if(_cryption_mode==CryptionMode.Encryption)
+            if(_cryption_mode==CryptionMode.ENCRYPTION)
             {
                 _algorithm_model.encrypt(_fileinfo_input_content_bytes, out bytes_output);
                 FileInfo_Output??=new FileInfo(FileInfo_Input.FullName+file_extension);

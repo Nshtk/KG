@@ -78,8 +78,8 @@
                 <TextBox Width="200" Text="{Binding Algorithm_Model.Key, Converter={StaticResource byte_array_string_converter}}"></TextBox>
             </StackPanel>
             
-            <RadioButton Content="Encryption" IsChecked="{Binding Cryption, Converter={StaticResource converter_enum_bool}, ConverterParameter={x:Static Local:ViewModelMain+CryptionMode.Encryption}}"></RadioButton>
-            <RadioButton Content="Decryption" IsChecked="{Binding Cryption, Converter={StaticResource converter_enum_bool}, ConverterParameter={x:Static Local:ViewModelMain+CryptionMode.Decryption}}"></RadioButton>
+            <RadioButton Content="ENCRYPTION" IsChecked="{Binding Cryption, Converter={StaticResource converter_enum_bool}, ConverterParameter={x:Static Local:ViewModelMain+CryptionMode.ENCRYPTION}}"></RadioButton>
+            <RadioButton Content="DECRYPTION" IsChecked="{Binding Cryption, Converter={StaticResource converter_enum_bool}, ConverterParameter={x:Static Local:ViewModelMain+CryptionMode.DECRYPTION}}"></RadioButton>
             <Button Content="Start" IsEnabled="True" Command="{Binding CommandCrypt}"></Button>
             <Button Content="Stop" IsEnabled="False"></Button>
             <Button Content="Show log" IsEnabled="False"></Button>

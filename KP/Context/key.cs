@@ -180,14 +180,14 @@ namespace KP.Context
 
             d[0]=(key_part_l_bits^key_part_r_bits) >> 64;      // TODO to function
             d[1]=(key_part_l_bits^key_part_r_bits) & Utility.MASK64;
-            d[1]^=_round_ciphering.functionF(Utility.BigIntegerConvertToUlong(d[0]), (ulong)_constants[0]);        // why casting from biginteger is so broken
-            d[0]^=_round_ciphering.functionF(Utility.BigIntegerConvertToUlong(d[1]), (ulong)_constants[1]);
+            d[1]^=_round_ciphering.functionF(Utility.bigIntegerConvertToUlong(d[0]), (ulong)_constants[0]);        // why casting from biginteger is so broken
+            d[0]^=_round_ciphering.functionF(Utility.bigIntegerConvertToUlong(d[1]), (ulong)_constants[1]);
             d[0]^=key_part_l_bits>>64;
             d[1]^=key_part_l_bits&Utility.MASK64;
             try
             {
-                d[1]^=_round_ciphering.functionF(Utility.BigIntegerConvertToUlong(d[0]), (ulong)_constants[2]);
-                d[0]^=_round_ciphering.functionF(Utility.BigIntegerConvertToUlong(d[1]), (ulong)_constants[3]);
+                d[1]^=_round_ciphering.functionF(Utility.bigIntegerConvertToUlong(d[0]), (ulong)_constants[2]);
+                d[0]^=_round_ciphering.functionF(Utility.bigIntegerConvertToUlong(d[1]), (ulong)_constants[3]);
             }
             catch
             {
@@ -197,8 +197,8 @@ namespace KP.Context
             ka = ((BigInteger)d[0] << 64) | d[1];
             d[0] = ((ka ^ key_part_r_bits) >> 64);
             d[1] = ((ka ^ key_part_r_bits) & Utility.MASK64);
-            d[1] ^= _round_ciphering.functionF(Utility.BigIntegerConvertToUlong(d[0]), (ulong)_constants[4]);
-            d[0] ^= _round_ciphering.functionF(Utility.BigIntegerConvertToUlong(d[1]), (ulong)_constants[5]);
+            d[1] ^= _round_ciphering.functionF(Utility.bigIntegerConvertToUlong(d[0]), (ulong)_constants[4]);
+            d[0] ^= _round_ciphering.functionF(Utility.bigIntegerConvertToUlong(d[1]), (ulong)_constants[5]);
             kb = ((BigInteger)d[0] << 64) | d[1];
 
             if(key.Length==16)                                          // TODO to function
