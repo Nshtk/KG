@@ -124,7 +124,7 @@ namespace KP.Context
             bits_input_parts[1]=BitConverter.ToUInt64(bytes_input_local, 8)^keys_round_converted[0];
             bits_input_parts[0]=BitConverter.ToUInt64(bytes_input_local, 0)^keys_round_converted[1];
             
-            bytes_output=(((BigInteger)bits_input_parts[1]<<64)|bits_input_parts[0]).ToByteArray().Where((source, index) =>index != 16).ToArray();;
+            bytes_output=(((BigInteger)bits_input_parts[1]<<64)|bits_input_parts[0]).ToByteArray().Where((source, index) =>index!=16).ToArray();
         }
     }
     
@@ -162,12 +162,12 @@ namespace KP.Context
 
         public string Name
         {
-            get {return "ElGamal"; }
+            get {return "ElGamal";}
         }
         
-        public ElGamal()
+        public ElGamal(KeyExpansionElGamal.PrimalityTestingMode primality_testing_mode=KeyExpansionElGamal.PrimalityTestingMode.Fermat, double probability_minimal=0.999, int prime_numbers_length_bits=64)
         {
-            _key_expansion=new KeyExpansionElGamal(KeyExpansionElGamal.PrimalityTestingMode.Fermat, (float)0.999, 64);
+            _key_expansion=new KeyExpansionElGamal(primality_testing_mode, probability_minimal, prime_numbers_length_bits);
         }
 
         public byte[][] getKeysRound(byte[] key)
@@ -176,20 +176,20 @@ namespace KP.Context
         }
         public void encrypt(in byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round)
         {
-            int message_size=keys_round[0].Length-1, cipher_length=0;
-            byte[][] bytes_output_2d =new byte[bytes_input.Length/message_size+1][];
+            int message_length=keys_round[0].Length-1, cipher_length=0;
+            byte[][] bytes_output_2d=bytes_input.toArray2D(message_length);//new byte[bytes_input.Length/message_length+1][];
             byte[] tmp;
             BigInteger p=new BigInteger(keys_round[0]), p_minus_one = new BigInteger(keys_round[1]), k;
             
             do
-                k=Utility.getRandomBigInteger(p_minus_one, 1);
+                k=Utility.getRandomBigInteger(1, p_minus_one);
             while(BigInteger.GreatestCommonDivisor(k, p_minus_one)!=1);
-            bytes_output_2d[2]=BigInteger.ModPow(new BigInteger(keys_round[2]), k, p).ToByteArray();
+            bytes_output_2d[1]=BigInteger.ModPow(new BigInteger(keys_round[2]), k, p).ToByteArray();
             bytes_output_2d[0]=new byte[] {(byte)bytes_output_2d[1].Length};
             
-            for(int i=0, j=3; i<bytes_input.Length; i+=message_size, j++)
+            for(int i=0, j=3; i<bytes_input.Length; i+=message_length, j++)
             {
-                tmp=(BigInteger.ModPow(new BigInteger(keys_round[3]), k, p)*Utility.byteArrayConvertToBigInteger(bytes_input, i, i+message_size)).ToByteArray();
+                tmp=(BigInteger.ModPow(new BigInteger(keys_round[3]), k, p)*Utility.byteArrayConvertToBigInteger(bytes_input, i, i+message_length)).ToByteArray();
                 cipher_length+=tmp.Length;
                 bytes_output_2d[j]=tmp;
             }
@@ -203,4 +203,11 @@ namespace KP.Context
             bytes_output=(b*BigInteger.ModPow(a, new BigInteger(keys_round[1])-new BigInteger(keys_round[3]), new BigInteger(keys_round[0]))).ToByteArray();
         }
     }
+
+    /*class AlgorithmSymmetric      // TODO neccessity?
+    {
+        private IAlgorithm _algorithm;
+        public Utility.CipheringMode ciphering_mode;
+        
+    }*/
 }

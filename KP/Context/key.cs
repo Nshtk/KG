@@ -447,10 +447,10 @@ namespace KP.Context
         }
 
         private PrimalityTestingMode _primality_testing_mode;
-        private readonly float _probability_minimal;
+        private readonly double _probability_minimal;
         private readonly int _prime_numbers_length_bits;
 
-        public KeyExpansionElGamal(PrimalityTestingMode primality_testing_mode, float probability_minimal, int prime_numbers_length_bits)
+        public KeyExpansionElGamal(PrimalityTestingMode primality_testing_mode, double probability_minimal, int prime_numbers_length_bits)
         {
             _primality_testing_mode=primality_testing_mode;
             _probability_minimal=probability_minimal;

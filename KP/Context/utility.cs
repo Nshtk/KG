@@ -26,7 +26,7 @@ namespace KP.Context
             RKCS7
         }
         
-        public const ulong MASK8=0xff;
+        public const ulong MASK8 =0xff;
         public const ulong MASK32=0xffffffff;
         public const ulong MASK64=0xffffffffffffffff;
         
@@ -36,14 +36,18 @@ namespace KP.Context
         {
             Rng=new Random();
         }
-        
+
+        public static BigInteger getNBitMask(int n)
+        {
+            return BigInteger.One<<n-1;
+        }
         public static BigInteger getRandomNBitNumber(int n)
         {
             BigInteger t=1;
             n--;
             return (t<<n)|(Rng.Next()%(t<<n));
         }
-        public static BigInteger getRandomBigInteger(BigInteger max, BigInteger min)
+        public static BigInteger getRandomBigInteger(BigInteger min, BigInteger max)
         {
             byte[] max_bytes=max.ToByteArray();
             
