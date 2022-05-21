@@ -33,7 +33,7 @@ namespace KP.Context
         
         public static bool performFermatTest(BigInteger number, double probability_minimal)
         {
-            if(number==0)
+            if(number==0 || number==4)
                 return false;
         
             ulong i=1;

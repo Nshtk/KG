@@ -20,7 +20,7 @@ namespace KP.ViewModels
         private AlgorithmModel _algorithm_model;
         private CryptionMode _cryption_mode;
         private byte[] _fileinfo_input_content_bytes, _fileinfo_output_content_bytes;
-        private string _fileinfo_input_content_string, _fileinfo_output_content_string, _fileinfo_output_name;
+        private string _fileinfo_input_content_string, _fileinfo_output_content_string;
 
         private Visibility _file_output_visiblity;
         private Visibility _file_log_visiblity;
@@ -45,11 +45,6 @@ namespace KP.ViewModels
         {
             get {return _fileinfo_output;}
             set {_fileinfo_output=value; File_Output_Visibility=Visibility.Hidden; invokePropertyChanged("FileInfo_Output");}
-        }
-        public string FileInfo_Output_Name
-        {
-            get {return FileInfo_Output==null ? "File: " : "File: "+FileInfo_Input.Name;}
-            set {_fileinfo_output_name=value; invokePropertyChanged("FileInfo_Output_Name");}
         }
         public string FileInfo_Output_Content_String
         {
@@ -129,12 +124,12 @@ namespace KP.ViewModels
             
             if(_cryption_mode==CryptionMode.ENCRYPTION)
             {
-                _algorithm_model.encrypt(_fileinfo_input_content_bytes, out bytes_output);
+                bytes_output=_algorithm_model.encrypt(_fileinfo_input_content_bytes);
                 FileInfo_Output??=new FileInfo(FileInfo_Input.FullName+file_extension);
             }
             else
             {
-                _algorithm_model.decrypt(_fileinfo_input_content_bytes, out bytes_output);
+                bytes_output=_algorithm_model.decrypt(_fileinfo_input_content_bytes);
                 FileInfo_Output??=new FileInfo(FileInfo_Input.FullName+".decrypted");
                 //FileInfo_Output??=new FileInfo(FileInfo_Input.FullName.Replace(file_extension, ""));
             }

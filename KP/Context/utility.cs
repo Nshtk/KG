@@ -60,7 +60,7 @@ namespace KP.Context
         {
             BigInteger result=0;
 
-            for(int i=start; i<end; i++)
+            for(int i=end-1; i>start-1; i--)
                 result=(result<<8)|bytes[i];
 
             return result;
@@ -69,6 +69,22 @@ namespace KP.Context
         {
             return number<<shift_bits | number>>(number.ToByteArray().Length*8-shift_bits);
         }
+        public static BigInteger modMultiplyBigInteger(BigInteger a, BigInteger b, BigInteger modulo)
+        {
+            BigInteger res=0;
+            a%=modulo;
+ 
+            while(b>0)
+            {
+                if((b&1)>0)
+                    res=(res+a)%modulo;
+                a=(2*a)%modulo;
+                b>>=1;
+            }
+ 
+            return res;
+        }
+
         public static ulong bigIntegerConvertToUlong(BigInteger number)
         {
             return number<0 ? (ulong)Int64.Parse(number.ToString()) : UInt64.Parse(number.ToString());
@@ -127,9 +143,9 @@ namespace KP.Context
         }
     }
 
-    /*public static class BigIntegerExtensions
+    public static class BigIntegerExtensions
     {
-        public static string ToStringBinary(this BigInteger bigint)
+        /*public static string ToStringBinary(this BigInteger bigint)
         {
             var bytes=bigint.ToByteArray();
             var idx=bytes.Length-1;
@@ -143,6 +159,21 @@ namespace KP.Context
                 base2.Append(Convert.ToString(bytes[idx], 2).PadLeft(8, '0'));
 
             return base2.ToString();
+        }*/
+        
+        public static BigInteger powBigInteger(this BigInteger number, BigInteger exponent) 
+        {
+            BigInteger result=BigInteger.One;
+            
+            while(exponent.Sign>0) 
+            {
+                if(!exponent.IsEven)
+                    result*=number;
+                number*=number;
+                exponent>>=1;
+            }
+            
+            return result;
         }
-    }*/
+    }
 }

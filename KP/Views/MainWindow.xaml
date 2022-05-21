@@ -69,11 +69,11 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" Visibility="{Binding Algorithm_Model.Cryption_Mode_Visibility}">
                 <TextBlock Text="Ciphering Mode: "></TextBlock>
                 <ComboBox Width="60" ItemsSource="{Binding Source={StaticResource data_from_enum}}" SelectedItem="{Binding Algorithm_Model.Ciphering}"></ComboBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">           <!--TODO visibility collapsed if elgamal-->
+            <StackPanel Orientation="Horizontal" Visibility="{Binding Algorithm_Model.Key_Visibility}">
                 <TextBlock Text="Key: "></TextBlock>
                 <TextBox Width="200" Text="{Binding Algorithm_Model.Key, Converter={StaticResource byte_array_string_converter}}"></TextBox>
             </StackPanel>

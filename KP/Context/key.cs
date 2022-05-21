@@ -441,9 +441,9 @@ namespace KP.Context
     {
         public enum PrimalityTestingMode
         {
-            Fermat,
-            SolovayStrassen,
-            MillerRabin
+            FERMAT,
+            SOLOVAY_STRASSEN,
+            MILLER_RABIN
         }
 
         private PrimalityTestingMode _primality_testing_mode;
@@ -457,23 +457,23 @@ namespace KP.Context
             _prime_numbers_length_bits=prime_numbers_length_bits;
         }
 
-        private BigInteger getPrimeNumber()
+        private BigInteger getPrimeNumber(int min, int max)
         {
-            BigInteger number=Utility.getRandomNBitNumber(_prime_numbers_length_bits);
+            BigInteger number=Utility.getRandomNBitNumber(Utility.Rng.Next(min, max));
             
             switch(_primality_testing_mode)
             {
-                case PrimalityTestingMode.Fermat:
+                case PrimalityTestingMode.FERMAT:
                     while(!Primality.performFermatTest(number, _probability_minimal))
-                        number=Utility.getRandomNBitNumber(_prime_numbers_length_bits);
+                        number=Utility.getRandomNBitNumber(Utility.Rng.Next(min, max));
                     break; 
-                case PrimalityTestingMode.SolovayStrassen:
+                case PrimalityTestingMode.SOLOVAY_STRASSEN:
                     while(!Primality.performSolovayStrassenTest(number, _probability_minimal))
-                        number=Utility.getRandomNBitNumber(_prime_numbers_length_bits);
+                        number=Utility.getRandomNBitNumber(Utility.Rng.Next(min, max));
                     break;
-                case PrimalityTestingMode.MillerRabin:
+                case PrimalityTestingMode.MILLER_RABIN:
                     while(!Primality.performMillerRabinTest(number, _probability_minimal))
-                        number=Utility.getRandomNBitNumber(_prime_numbers_length_bits);
+                        number=Utility.getRandomNBitNumber(Utility.Rng.Next(min, max));
                     break;
             }
 
@@ -481,16 +481,16 @@ namespace KP.Context
         }
         public byte[][] getKeysRound(byte[] key)
         {
-            BigInteger p=getPrimeNumber(), p_minus_one=p-1, q=p_minus_one/2, g=2, x, y;
+            BigInteger p=getPrimeNumber(_prime_numbers_length_bits, _prime_numbers_length_bits), p_minus_one=p-1, q=p_minus_one/2, g=1, x, y; //g=2
 
             for( ; g<p_minus_one; g++)
                 if(BigInteger.ModPow(g, 2, p)!=1 && BigInteger.ModPow(g, q, p)!=1)
                     break;
-
-            x=Utility.getRandomBigInteger(p_minus_one, 1);
+            
+            x=Utility.getRandomBigInteger(1, p_minus_one);
             y=BigInteger.ModPow(g, x, p);
 
-            return new byte[][] {p.ToByteArray(), p_minus_one.ToByteArray(), g.ToByteArray(), y.ToByteArray(), x.ToByteArray()};
+            return new byte[][] {p.ToByteArray(), g.ToByteArray(), y.ToByteArray(), x.ToByteArray()};
         }
     }
 }

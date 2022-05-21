@@ -13,6 +13,14 @@ namespace KP.Context
         {
             get;
         }
+        public int MessageLength
+        {
+            get {return 16;}
+        }
+        public bool IsSymmetric
+        {
+            get {return true;}
+        }
         
         public FeistelNet(IRoundCiphering round_ciphering)
         {
@@ -23,7 +31,7 @@ namespace KP.Context
         {
             return null;
         }
-        public virtual void encrypt(in byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round) //kw, ke, k
+        public virtual void encrypt(in byte[] bytes_input, ref byte[] bytes_output, byte[][] keys_round) //kw, ke, k
         {
             ulong[] keys_round_converted=new ulong[keys_round.Length];
             byte[] bytes_input_local;
@@ -64,7 +72,7 @@ namespace KP.Context
                     bits_input_parts[0]=_round_ciphering.functionF(BitConverter.ToUInt64(bytes_input_local, 0), keys_round_converted[e],   RoundCipheringCamelia.FunctionFModes.FL);
                     bits_input_parts[1]=_round_ciphering.functionF(BitConverter.ToUInt64(bytes_input_local, 8), keys_round_converted[++e], RoundCipheringCamelia.FunctionFModes.FL_INVERSE);
                     Array.Copy(BitConverter.GetBytes(bits_input_parts[0]), 0, bytes_input_local, 0, 8);
-                    Array.Copy(BitConverter.GetBytes(bits_input_parts[1]), 0, bytes_input_local,       8, 8);
+                    Array.Copy(BitConverter.GetBytes(bits_input_parts[1]), 0, bytes_input_local, 8, 8);
                 }
                 for( ; i<iteration_rounds; i++, k++)
                     bytes_input_local=_round_ciphering.performRound(bytes_input_local, keys_round[k]);
@@ -75,7 +83,7 @@ namespace KP.Context
             bytes_output=(((BigInteger)bits_input_parts[1]<<64)|bits_input_parts[0]).ToByteArray().Where((source, index) =>index != 16).ToArray();
             
         }
-        public virtual void decrypt(in byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round) 
+        public virtual void decrypt(in byte[] bytes_input, ref byte[] bytes_output, byte[][] keys_round) 
         {
             ulong[] keys_round_converted=new ulong[keys_round.Length];
             byte[] bytes_input_local;
@@ -136,6 +144,14 @@ namespace KP.Context
         {
             get {return "Camellia"; }
         }
+        public int MessageLength
+        {
+            get {return 16;}
+        }
+        public bool IsSymmetric
+        {
+            get {return true;}
+        }
         public Camellia() : base(new RoundCipheringCamelia())
         {
             _key_expansion=new KeyExpansionCamellia();
@@ -146,14 +162,14 @@ namespace KP.Context
             return _key_expansion.getKeysRound(key);
         }
 
-        public override void encrypt(in byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round)
+        public override void encrypt(in byte[] bytes_input, ref byte[] bytes_output, byte[][] keys_round)
         {
-            base.encrypt(in bytes_input, out bytes_output, keys_round);
+            base.encrypt(in bytes_input, ref bytes_output, keys_round);
         }
 
-        public override void decrypt(in byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round)
+        public override void decrypt(in byte[] bytes_input, ref byte[] bytes_output, byte[][] keys_round)
         {
-            base.decrypt(in bytes_input, out bytes_output, keys_round);
+            base.decrypt(in bytes_input, ref bytes_output, keys_round);
         }
     }
     public sealed class ElGamal : IAlgorithm
@@ -164,43 +180,44 @@ namespace KP.Context
         {
             get {return "ElGamal";}
         }
-        
-        public ElGamal(KeyExpansionElGamal.PrimalityTestingMode primality_testing_mode=KeyExpansionElGamal.PrimalityTestingMode.Fermat, double probability_minimal=0.999, int prime_numbers_length_bits=64)
+        public int MessageLength
+        {
+            get;
+        }
+        public bool IsSymmetric
+        {
+            get {return false;}
+        }
+        public ElGamal(KeyExpansionElGamal.PrimalityTestingMode primality_testing_mode=KeyExpansionElGamal.PrimalityTestingMode.FERMAT, double probability_minimal=0.999, int prime_numbers_length_bits=64)
         {
             _key_expansion=new KeyExpansionElGamal(primality_testing_mode, probability_minimal, prime_numbers_length_bits);
+            MessageLength=prime_numbers_length_bits/8;
         }
 
         public byte[][] getKeysRound(byte[] key)
         {
             return _key_expansion.getKeysRound(key);
         }
-        public void encrypt(in byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round)
+        public void encrypt(in byte[] bytes_input, ref byte[] bytes_output, byte[][] keys_round)
         {
-            int message_length=keys_round[0].Length-1, cipher_length=0;
-            byte[][] bytes_output_2d=bytes_input.toArray2D(message_length);//new byte[bytes_input.Length/message_length+1][];
+            BigInteger p=new BigInteger(keys_round[0]), p_minus_one=p-1, k;
             byte[] tmp;
-            BigInteger p=new BigInteger(keys_round[0]), p_minus_one = new BigInteger(keys_round[1]), k;
-            
+
             do
-                k=Utility.getRandomBigInteger(1, p_minus_one);
+                k=Utility.getRandomBigInteger(2, p_minus_one-1);
             while(BigInteger.GreatestCommonDivisor(k, p_minus_one)!=1);
-            bytes_output_2d[1]=BigInteger.ModPow(new BigInteger(keys_round[2]), k, p).ToByteArray();
-            bytes_output_2d[0]=new byte[] {(byte)bytes_output_2d[1].Length};
             
-            for(int i=0, j=3; i<bytes_input.Length; i+=message_length, j++)
-            {
-                tmp=(BigInteger.ModPow(new BigInteger(keys_round[3]), k, p)*Utility.byteArrayConvertToBigInteger(bytes_input, i, i+message_length)).ToByteArray();
-                cipher_length+=tmp.Length;
-                bytes_output_2d[j]=tmp;
-            }
-            bytes_output_2d[1]=new byte[] {(byte)cipher_length};
-            
-            Buffer.BlockCopy(bytes_output_2d, 0, bytes_output=new byte[cipher_length+bytes_output_2d[1].Length+1], 0, bytes_output_2d.Length);
+            bytes_output=new byte[MessageLength*2];
+            tmp=BigInteger.ModPow(new BigInteger(keys_round[1]), k, p).ToByteArray();
+            tmp.CopyTo(bytes_output, 0);
+
+            tmp=Utility.modMultiplyBigInteger(BigInteger.ModPow(new BigInteger(keys_round[2]), k, p), new BigInteger(bytes_input), p).ToByteArray().Where((source, index) => index!=9).ToArray();
+            tmp.CopyTo(bytes_output, MessageLength);
         }
-        public void decrypt(in byte[] bytes_input, out byte[] bytes_output, byte[][] keys_round)
+        public void decrypt(in byte[] bytes_input, ref byte[] bytes_output, byte[][] keys_round)
         {
-            BigInteger a=Utility.byteArrayConvertToBigInteger(bytes_input, 2, 2+bytes_input[0]), b=Utility.byteArrayConvertToBigInteger(bytes_input, 2+bytes_input[0], 2+bytes_input[1]);
-            bytes_output=(b*BigInteger.ModPow(a, new BigInteger(keys_round[1])-new BigInteger(keys_round[3]), new BigInteger(keys_round[0]))).ToByteArray();
+            BigInteger p=new BigInteger(keys_round[0]);
+            bytes_output=Utility.modMultiplyBigInteger(Utility.byteArrayConvertToBigInteger(bytes_input, MessageLength, MessageLength*2), BigInteger.ModPow(Utility.byteArrayConvertToBigInteger(bytes_input, 0, MessageLength), p-1-new BigInteger(keys_round[3]), p), p).ToByteArray();
         }
     }
 
