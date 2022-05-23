@@ -17,6 +17,7 @@
                 <x:Type TypeName="Context:Utility+CipheringMode"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+        <MVVM:EnumConverter x:Key="converter_enum"/>
         <MVVM:ConverterEnumBool x:Key="converter_enum_bool"/>
         <MVVM:ConverterByteArrayString x:Key="byte_array_string_converter"/>
     </Window.Resources>
@@ -39,25 +40,24 @@
             <TabControl>
                 <TabItem Header="Input file">
                     <TabItem.Content>
-                        <TextBox x:Name="TextBox_input_file" Text="{Binding FileInfo_Input_Content_String}" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True"></TextBox>
+                        <TextBox x:Name="TextBox_input_file" Text="{Binding FileInfo_Input_Content_String, IsAsync=True, ValidatesOnDataErrors=False}" TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True"></TextBox>
                     </TabItem.Content>
                 </TabItem>
                 <TabItem Header="Output file" Visibility="{Binding File_Output_Visibility}">
                     <TabItem.Content>
-                        <TextBox x:Name="TextBox_output_file" Text="{Binding FileInfo_Output_Content_String}" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True"></TextBox>
+                        <TextBox x:Name="TextBox_output_file" Text="{Binding FileInfo_Output_Content_String, IsAsync=True}" TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True"></TextBox>
                     </TabItem.Content>
                 </TabItem>
             </TabControl>
             
             </DockPanel>
-
         <GridSplitter Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="False" Height="5"></GridSplitter>
 
         <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Top">
             <TextBlock Text="Settings"></TextBlock>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="{Binding FileInfo_Input_Name}" Margin="0,0,5,0"></TextBlock>
-                <Button Content="Open file" Command="{Binding CommandOpenFile}" Visibility="Visible"></Button>
+                <Button Content="Open file" Command="{Binding CommandOpenFile, IsAsync=True}" Visibility="Visible"></Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Algorithm: "></TextBlock>
@@ -80,8 +80,8 @@
             
             <RadioButton Content="ENCRYPTION" IsChecked="{Binding Cryption, Converter={StaticResource converter_enum_bool}, ConverterParameter={x:Static Local:ViewModelMain+CryptionMode.ENCRYPTION}}"></RadioButton>
             <RadioButton Content="DECRYPTION" IsChecked="{Binding Cryption, Converter={StaticResource converter_enum_bool}, ConverterParameter={x:Static Local:ViewModelMain+CryptionMode.DECRYPTION}}"></RadioButton>
-            <Button Content="Start" IsEnabled="True" Command="{Binding CommandCrypt}"></Button>
-            <Button Content="Stop" IsEnabled="False"></Button>
+            <Button Content="Start" Command="{Binding CommandCryptStart}"></Button>
+            <Button Content="Stop" Command="{Binding CommandCryptStop}"></Button>
             <Button Content="Show log" IsEnabled="False"></Button>
         </StackPanel>
         

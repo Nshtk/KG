@@ -137,7 +137,7 @@ namespace KP.Models
                 _algorithm.encrypt(in context._bytes_input, ref context._bytes_output[context._i], _keys_round);
             }
         }
-        public byte[][] encrypt(byte[] bytes_input) // TODO refactor
+        public async Task<byte[][]> encrypt(byte[] bytes_input, CancellationToken token) // TODO refactor
         {
             initialize();
 
@@ -268,7 +268,7 @@ namespace KP.Models
             }
             return bytes_output;
         }
-        public byte[][] decrypt(byte[] bytes_input)                      // TODO refactor
+        public async Task<byte[][]> decrypt(byte[] bytes_input, CancellationToken token)                      // TODO refactor
         {
             initialize();
 
@@ -286,7 +286,7 @@ namespace KP.Models
                         _bytes_input_parts=bytes_input.toArray2D(_message_length);
                         Parallel.For(_i, _bytes_number_messages, i => 
                         {
-                            _algorithm.encrypt(in _bytes_input_parts[i], ref bytes_output[i], _keys_round);
+                            _algorithm.decrypt(in _bytes_input_parts[i], ref bytes_output[i], _keys_round);
                         });
                         /*for(; _i<_bytes_number_messages; _i++)
                         {
