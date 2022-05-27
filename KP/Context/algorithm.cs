@@ -221,7 +221,7 @@ namespace KP.Context
         }
     }
 
-    /*class AlgorithmSymmetric      // TODO neccessity?
+    /*class AlgorithmSymmetric
     {
         private IAlgorithm _algorithm;
         public Utility.CipheringMode ciphering_mode;

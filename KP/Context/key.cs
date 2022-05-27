@@ -22,129 +22,7 @@ namespace KP.Context
         {
             _round_ciphering=new RoundCipheringCamelia();
         }
-        
-        /*public byte[][] getKeysRound(byte[] key)
-        {
-            BigInteger key_bits=new BigInteger(key), key_part_l_bits, key_part_r_bits;
-            BigInteger ka, kb;
-            ulong[] kw=new ulong[4], ke=new ulong[6], k=new ulong[24], d=new ulong[2];
-            byte[][] keys_round;
 
-            switch(key.Length)
-            {
-                case 16:
-                    keys_round=new byte[26][];
-                    key_part_l_bits=key_bits;
-                    key_part_r_bits=0;
-                    break;
-                case 24:
-                    keys_round=new byte[34][];
-                    key_part_l_bits=key_bits>>64;
-                    key_part_r_bits=((key_bits&Utility.MASK64)<<64) | (~(key_bits&Utility.MASK64));
-                    break;
-                case 32:
-                    keys_round=new byte[34][];
-                    key_part_l_bits=key_bits>>128;
-                    key_part_r_bits=key_bits&BigInteger.Parse("10000000000000000000000000000000");
-                    break;
-                default:
-                    /*key_part_l_bits=key_bits;             //dummy
-                    key_part_r_bits=0;#1#
-                    return null;
-            }
-
-            d[0] = BitConverter.ToUInt64(((key_part_l_bits ^ key_part_r_bits) >> 64).ToByteArray(), 0);      // TODO place inside functoion
-            d[1] = BitConverter.ToUInt64(((key_part_l_bits ^ key_part_r_bits) & Utility.MASK64).ToByteArray(), 0);
-            d[1] ^= _round_ciphering.functionF(d[0], (ulong)_constants[0]);
-            d[0] ^= _round_ciphering.functionF(d[1], (ulong)_constants[1]);
-            d[0] ^= BitConverter.ToUInt64((key_part_l_bits >> 64).ToByteArray(), 0);
-            d[1] ^= BitConverter.ToUInt64((key_part_l_bits & Utility.MASK64).ToByteArray(), 0);
-            d[1] ^= _round_ciphering.functionF(d[0], (ulong)_constants[2]);
-            d[0] ^= _round_ciphering.functionF(d[1], (ulong)_constants[3]);
-            ka = ((BigInteger)d[0] << 64) | d[1];
-            d[0] = BitConverter.ToUInt64(((ka ^ key_part_r_bits) >> 64).ToByteArray(), 0);
-            d[1] = BitConverter.ToUInt64(((ka ^ key_part_r_bits) & Utility.MASK64).ToByteArray(), 0);
-            d[1] ^= _round_ciphering.functionF(d[0], (ulong)_constants[4]);
-            d[0] ^= _round_ciphering.functionF(d[1], (ulong)_constants[5]);
-            kb = ((BigInteger)d[0] << 64) | d[1];
-
-            if(key.Length==16)                                          // TODO place inside functoion
-            {
-                kw[0] = BitConverter.ToUInt64(((key_part_l_bits << 0) >> 64).ToByteArray(), 0);
-                kw[1] = BitConverter.ToUInt64(((key_part_l_bits << 0) & Utility.MASK64).ToByteArray(), 0);
-                k[0]  = BitConverter.ToUInt64(((ka << 0) >> 64).ToByteArray(), 0);
-                k[1]  = BitConverter.ToUInt64(((ka << 0) & Utility.MASK64).ToByteArray(), 0);
-                k[2]  = BitConverter.ToUInt64(((key_part_l_bits << 15 | key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-15)) >> 64).ToByteArray(), 0);
-                k[3]  = BitConverter.ToUInt64(((key_part_l_bits <<  15 | key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-15)) & Utility.MASK64).ToByteArray(), 0);
-                k[4]  = BitConverter.ToUInt64(((ka <<  15 | ka>>(ka.ToByteArray().Length-15)) >> 64).ToByteArray(), 0);
-                k[5]  = BitConverter.ToUInt64(((ka <<  15| ka>>(ka.ToByteArray().Length-15)) & Utility.MASK64).ToByteArray(), 0);
-                k[6]  = BitConverter.ToUInt64(((key_part_l_bits <<  45| key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-45)) >> 64).ToByteArray(), 0);
-                k[7]  = BitConverter.ToUInt64(((key_part_l_bits <<  45| key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-45)) & Utility.MASK64).ToByteArray(), 0);
-                k[8]  = BitConverter.ToUInt64(((ka <<  45| ka>>(ka.ToByteArray().Length-45)) >> 64).ToByteArray(), 0);
-                k[9] = BitConverter.ToUInt64(((key_part_l_bits <<  60| key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-60)) & Utility.MASK64).ToByteArray(), 0);
-                k[10] =BitConverter.ToUInt64(( (ka <<  60| ka>>(ka.ToByteArray().Length-60)) >> 64).ToByteArray(), 0);
-                k[11] =BitConverter.ToUInt64(( (ka <<  60| ka>>(ka.ToByteArray().Length-60)) & Utility.MASK64).ToByteArray(), 0);
-                k[12] =BitConverter.ToUInt64(( (key_part_l_bits <<  94| key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-94)) >> 64).ToByteArray(), 0);
-                k[13] =BitConverter.ToUInt64(( (key_part_l_bits <<  94| key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-94)) & Utility.MASK64).ToByteArray(), 0);
-                k[14] =BitConverter.ToUInt64(( (ka <<  94| ka>>(ka.ToByteArray().Length-94)) >> 64).ToByteArray(), 0);
-                k[15] =BitConverter.ToUInt64(( (ka <<  94| ka>>(ka.ToByteArray().Length-94)) & Utility.MASK64).ToByteArray(), 0);
-                k[16] = BitConverter.ToUInt64(((key_part_l_bits << 111| key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-111)) >> 64).ToByteArray(), 0);
-                k[17] = BitConverter.ToUInt64(((key_part_l_bits << 111| key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-111)) & Utility.MASK64).ToByteArray(), 0);
-                ke[0] =BitConverter.ToUInt64(( (ka <<  30| ka>>(ka.ToByteArray().Length-30)) >> 64).ToByteArray(), 0);
-                ke[1] = BitConverter.ToUInt64(((ka <<  30| ka>>(ka.ToByteArray().Length-30)) & Utility.MASK64).ToByteArray(), 0);
-                ke[2] =BitConverter.ToUInt64(( (key_part_l_bits <<  77| key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-77)) >> 64).ToByteArray(), 0);
-                ke[3] =BitConverter.ToUInt64(( (key_part_l_bits <<  77| key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-77)) & Utility.MASK64).ToByteArray(), 0);
-                kw[2] = BitConverter.ToUInt64(((ka << 111| ka>>(ka.ToByteArray().Length-111)) >> 64).ToByteArray(), 0);
-                kw[3] = BitConverter.ToUInt64(((ka << 111| ka>>(ka.ToByteArray().Length-111)) & Utility.MASK64).ToByteArray(), 0);
-            }
-            else
-            {
-                kw[0] = BitConverter.ToUInt64(((key_part_l_bits << 0) >> 64).ToByteArray(), 0);
-                kw[1] = BitConverter.ToUInt64(((key_part_l_bits << 0) & Utility.MASK64).ToByteArray(), 0);
-                k[0]  = BitConverter.ToUInt64(((kb <<   0) >> 64).ToByteArray(), 0);
-                k[1]  = BitConverter.ToUInt64(((kb <<   0) & Utility.MASK64).ToByteArray(), 0);
-                k[2]  = BitConverter.ToUInt64(((key_part_r_bits <<  15| key_part_r_bits>>(key_part_r_bits.ToByteArray().Length-15)) >> 64).ToByteArray(), 0);
-                k[3]  =BitConverter.ToUInt64(( (key_part_r_bits <<  15| key_part_r_bits>>(key_part_r_bits.ToByteArray().Length-15)) & Utility.MASK64).ToByteArray(), 0);
-                k[4]  =BitConverter.ToUInt64(( (ka <<  15| ka>>(ka.ToByteArray().Length-15)) >> 64).ToByteArray(), 0);
-                k[5]  =BitConverter.ToUInt64(( (ka <<  15| ka>>(ka.ToByteArray().Length-15)) & Utility.MASK64).ToByteArray(), 0);
-                k[6]  =BitConverter.ToUInt64(( (kb <<  30| kb>>(kb.ToByteArray().Length-30)) >> 64).ToByteArray(), 0);
-                k[7]  = BitConverter.ToUInt64(((kb <<  30| kb>>(kb.ToByteArray().Length-30)) & Utility.MASK64).ToByteArray(), 0);
-                k[8]  =BitConverter.ToUInt64(( (key_part_l_bits <<  45| key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-45)) >> 64).ToByteArray(), 0);
-                k[9] =BitConverter.ToUInt64(( (key_part_l_bits <<  45| key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-45)) & Utility.MASK64).ToByteArray(), 0);
-                k[10] =BitConverter.ToUInt64(( (ka <<  45| ka>>(ka.ToByteArray().Length-45)) >> 64).ToByteArray(), 0);
-                k[11] =BitConverter.ToUInt64(( (ka <<  45| ka>>(ka.ToByteArray().Length-45)) & Utility.MASK64).ToByteArray(), 0);
-                k[12] =BitConverter.ToUInt64(( (key_part_r_bits <<  60| key_part_r_bits>>(key_part_r_bits.ToByteArray().Length-60)) >> 64).ToByteArray(), 0);
-                k[13] =BitConverter.ToUInt64(( (key_part_r_bits <<  60| key_part_r_bits>>(key_part_r_bits.ToByteArray().Length-60)) & Utility.MASK64).ToByteArray(), 0);
-                k[14] =BitConverter.ToUInt64(( (kb <<  60| kb>>(kb.ToByteArray().Length-60)) >> 64).ToByteArray(), 0);
-                k[15] =BitConverter.ToUInt64(( (kb <<  60| kb>>(kb.ToByteArray().Length-60)) & Utility.MASK64).ToByteArray(), 0);
-                k[16] =BitConverter.ToUInt64(( (key_part_l_bits <<  77| key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-77)) >> 64).ToByteArray(), 0);
-                k[17] =BitConverter.ToUInt64(( (key_part_l_bits <<  77| key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-77)) & Utility.MASK64).ToByteArray(), 0);
-                k[18] = BitConverter.ToUInt64(((key_part_r_bits <<  94| key_part_r_bits>>(key_part_r_bits.ToByteArray().Length-94)) >> 64).ToByteArray(), 0);
-                k[19] = BitConverter.ToUInt64(((key_part_r_bits <<  94| key_part_r_bits>>(key_part_r_bits.ToByteArray().Length-94)) & Utility.MASK64).ToByteArray(), 0);
-                k[20] =BitConverter.ToUInt64(( (ka <<  94| ka>>(ka.ToByteArray().Length-94)) >> 64).ToByteArray(), 0);
-                k[21] =BitConverter.ToUInt64(( (ka <<  94| ka>>(ka.ToByteArray().Length-94)) & Utility.MASK64).ToByteArray(), 0);
-                k[22] =BitConverter.ToUInt64(( (key_part_l_bits << 111| key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-111)) >> 64).ToByteArray(), 0);
-                k[23] = BitConverter.ToUInt64(((key_part_l_bits << 111| key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-111)) & Utility.MASK64).ToByteArray(), 0);
-                ke[0] = BitConverter.ToUInt64(((key_part_r_bits <<  30| key_part_r_bits>>(key_part_r_bits.ToByteArray().Length-30)) >> 64).ToByteArray(), 0);
-                ke[1] = BitConverter.ToUInt64(((key_part_r_bits <<  30| key_part_r_bits>>(key_part_r_bits.ToByteArray().Length-30)) & Utility.MASK64).ToByteArray(), 0);
-                ke[2] = BitConverter.ToUInt64(((key_part_l_bits <<  60| key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-60)) >> 64).ToByteArray(), 0);
-                ke[3] =BitConverter.ToUInt64(( (key_part_l_bits <<  60| key_part_l_bits>>(key_part_l_bits.ToByteArray().Length-60)) & Utility.MASK64).ToByteArray(), 0);
-                ke[4] =BitConverter.ToUInt64(( (ka <<  77| ka>>(ka.ToByteArray().Length-77)) >> 64).ToByteArray(), 0);
-                ke[5] =BitConverter.ToUInt64(( (ka <<  77| ka>>(ka.ToByteArray().Length-77)) & Utility.MASK64).ToByteArray(), 0);
-                kw[2] = BitConverter.ToUInt64(((kb << 111| kb>>(kb.ToByteArray().Length-111)) >> 64).ToByteArray(), 0);
-                kw[3] = BitConverter.ToUInt64(((kb << 111| kb>>(kb.ToByteArray().Length-111)) & Utility.MASK64).ToByteArray(), 0);
-            }
-            
-            byte i=0, j;
-            for(j=0; j<kw.Length; i++, j++) // TODO Utility.toArray()
-                keys_round[i]=BitConverter.GetBytes(kw[i]);
-            for(j=0; j<ke.Length; i++, j++)        // i<i+ke.length
-                keys_round[i]=BitConverter.GetBytes(ke[j]);
-            for(j=0; j<k.Length; i++, j++)
-                keys_round[i]=BitConverter.GetBytes(k[j]);
-            
-            return keys_round;
-        }*/
         public byte[][] getKeysRound(byte[] key)
         {
             BigInteger key_bits=new BigInteger(key), key_part_l_bits, key_part_r_bits;
@@ -173,14 +51,12 @@ namespace KP.Context
                     key_part_r_bits=key_bits&BigInteger.Parse("10000000000000000000000000000000");
                     break;
                 default:
-                    /*key_part_l_bits=key_bits;             //dummy
-                    key_part_r_bits=0;*/
                     return null;
             }
 
             d[0]=(key_part_l_bits^key_part_r_bits) >> 64;      // TODO to function
             d[1]=(key_part_l_bits^key_part_r_bits) & Utility.MASK64;
-            d[1]^=_round_ciphering.functionF(Utility.bigIntegerConvertToUlong(d[0]), (ulong)_constants[0]);        // why casting from biginteger is so broken
+            d[1]^=_round_ciphering.functionF(Utility.bigIntegerConvertToUlong(d[0]), (ulong)_constants[0]);
             d[0]^=_round_ciphering.functionF(Utility.bigIntegerConvertToUlong(d[1]), (ulong)_constants[1]);
             d[0]^=key_part_l_bits>>64;
             d[1]^=key_part_l_bits&Utility.MASK64;
@@ -208,27 +84,27 @@ namespace KP.Context
                 k[2] =Utility.circularShiftBigInteger(key_part_l_bits, 15)>>64&Utility.MASK64;
                 k[3] =Utility.circularShiftBigInteger(key_part_l_bits, 15)&Utility.MASK64;
                 k[4] =Utility.circularShiftBigInteger(ka, 15)>>64&Utility.MASK64;
-                k[5] =Utility.circularShiftBigInteger(ka, 15)&Utility.MASK64;           //неверно
+                k[5] =Utility.circularShiftBigInteger(ka, 15)&Utility.MASK64;
                 k[6] =Utility.circularShiftBigInteger(key_part_l_bits, 45)>>64&Utility.MASK64;
                 k[7] =Utility.circularShiftBigInteger(key_part_l_bits, 45)&Utility.MASK64;
                 k[8] =Utility.circularShiftBigInteger(ka, 45)>>64&Utility.MASK64;
                 k[9] =Utility.circularShiftBigInteger(key_part_l_bits, 60)&Utility.MASK64;
                 k[10]=Utility.circularShiftBigInteger(ka, 60)>>64&Utility.MASK64;
-                k[11]=Utility.circularShiftBigInteger(ka, 60)&Utility.MASK64;           //неверно
+                k[11]=Utility.circularShiftBigInteger(ka, 60)&Utility.MASK64;
                 k[12]=Utility.circularShiftBigInteger(key_part_l_bits, 94)>>64&Utility.MASK64; 
                 k[13]=Utility.circularShiftBigInteger(key_part_l_bits, 94)&Utility.MASK64;
-                k[14]=Utility.circularShiftBigInteger(ka, 94)>>64&Utility.MASK64;       //неверно
+                k[14]=Utility.circularShiftBigInteger(ka, 94)>>64&Utility.MASK64;
                 k[15]=Utility.circularShiftBigInteger(ka, 94)&Utility.MASK64;
                 k[16]=Utility.circularShiftBigInteger(key_part_l_bits, 111)>>64&Utility.MASK64;
                 k[17]=Utility.circularShiftBigInteger(key_part_l_bits, 111)&Utility.MASK64;
                 ke[0]=Utility.circularShiftBigInteger(ka, 30)>>64&Utility.MASK64;
-                ke[1]=Utility.circularShiftBigInteger(ka, 30)&Utility.MASK64;           //неверно
+                ke[1]=Utility.circularShiftBigInteger(ka, 30)&Utility.MASK64;
                 ke[2]=Utility.circularShiftBigInteger(key_part_l_bits, 77)>>64&Utility.MASK64;
                 ke[3]=Utility.circularShiftBigInteger(key_part_l_bits, 77)&Utility.MASK64;
                 kw[0]=key_part_l_bits>>64;
                 kw[1]=key_part_l_bits&Utility.MASK64;
-                kw[2]=Utility.circularShiftBigInteger(ka, 111)>>64&Utility.MASK64;      //неверно
-                kw[3]=Utility.circularShiftBigInteger(ka, 111)&Utility.MASK64;          //неверно
+                kw[2]=Utility.circularShiftBigInteger(ka, 111)>>64&Utility.MASK64;
+                kw[3]=Utility.circularShiftBigInteger(ka, 111)&Utility.MASK64;
             }
             else
             {
@@ -276,7 +152,6 @@ namespace KP.Context
                 keys_round[i]=new byte[9] {0, 0, 0, 0, 0, 0, 0, 0, 0};
                 Array.Copy(tmp, 0, keys_round[i], 0, tmp.Length);
             }
-            //keys_round[i]=kw[i].ToByteArray();
             for(j=0; j<ke.Length; i++, j++)
             {
                 tmp=ke[j].ToByteArray();

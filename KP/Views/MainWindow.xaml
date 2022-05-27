@@ -13,7 +13,7 @@
     
     <Window.Resources>
         <ObjectDataProvider x:Key="data_from_enum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>           <!--TODO Converter-->
+            <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="Context:Utility+CipheringMode"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
@@ -40,12 +40,12 @@
             <TabControl>
                 <TabItem Header="Input file">
                     <TabItem.Content>
-                        <TextBox x:Name="TextBox_input_file" Text="{Binding FileInfo_Input_Content_String, IsAsync=True, ValidatesOnDataErrors=False}" TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True"></TextBox>
+                        <TextBox Text="{Binding FileInfo_Input_Content_String, IsAsync=True, ValidatesOnDataErrors=False}" TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True"></TextBox>
                     </TabItem.Content>
                 </TabItem>
                 <TabItem Header="Output file" Visibility="{Binding File_Output_Visibility}">
                     <TabItem.Content>
-                        <TextBox x:Name="TextBox_output_file" Text="{Binding FileInfo_Output_Content_String, IsAsync=True}" TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True"></TextBox>
+                        <TextBox Text="{Binding FileInfo_Output_Content_String, IsAsync=True}" TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True"></TextBox>
                     </TabItem.Content>
                 </TabItem>
             </TabControl>
@@ -78,14 +78,16 @@
                 <TextBox Width="200" Text="{Binding Algorithm_Model.Key, Converter={StaticResource byte_array_string_converter}}"></TextBox>
             </StackPanel>
             
+            
             <RadioButton Content="ENCRYPTION" IsChecked="{Binding Cryption, Converter={StaticResource converter_enum_bool}, ConverterParameter={x:Static Local:ViewModelMain+CryptionMode.ENCRYPTION}}"></RadioButton>
             <RadioButton Content="DECRYPTION" IsChecked="{Binding Cryption, Converter={StaticResource converter_enum_bool}, ConverterParameter={x:Static Local:ViewModelMain+CryptionMode.DECRYPTION}}"></RadioButton>
+            <ProgressBar Value="{Binding Algorithm_Model.Bytes_Current_Message_Number, UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="{Binding Algorithm_Model.Bytes_Number_Messages, UpdateSourceTrigger=PropertyChanged}" Height="15"></ProgressBar>
             <Button Content="Start" Command="{Binding CommandCryptStart}"></Button>
             <Button Content="Stop" Command="{Binding CommandCryptStop}"></Button>
             <Button Content="Show log" IsEnabled="False"></Button>
         </StackPanel>
         
-        <RichTextBox x:Name="TextBox_log_file" Grid.Row="3" Grid.Column="1" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" Visibility="{Binding File_Log_Visibility}">
+        <RichTextBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" Visibility="{Binding File_Log_Visibility}">
         </RichTextBox>
     </Grid>
 </Window>

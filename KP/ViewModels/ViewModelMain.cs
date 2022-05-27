@@ -19,11 +19,6 @@ namespace KP.ViewModels
             ENCRYPTION,
             DECRYPTION
         }
-        /*public enum ButtonIsEnabled
-        {
-            ENABLED=1,
-            DISABLED=0
-        }*/
 
         private FileInfo _fileinfo_input, _fileinfo_output;
         private AlgorithmModel _algorithm_model;
@@ -34,9 +29,7 @@ namespace KP.ViewModels
 
         private Visibility _file_output_visiblity;
         private Visibility _file_log_visiblity;
-        /*private ButtonIsEnabled _button_start_condition;
-        private ButtonIsEnabled _button_stop_condition;*/
-        
+
         //private RelayCommand _command_open_file;
         private RelayCommandAsync _command_open_file;
         private RelayCommandAsync _command_crypt_start;
@@ -88,20 +81,7 @@ namespace KP.ViewModels
             get {return _file_log_visiblity;}
             set {_file_log_visiblity=value; invokePropertyChanged("File_Log_Visibility");}
         }
-        /*public ButtonIsEnabled Button_Start_Condition
-        {
-            get {return _button_start_condition;}
-            set {_button_start_condition=value; invokePropertyChanged("Button_Start_Condition");}
-        }
-        public ButtonIsEnabled Button_Stop_Condition
-        {
-            get {return _button_stop_condition;}
-            set {_button_stop_condition=value; invokePropertyChanged("Button_Stop_Condition");}
-        }*/
-        /*public RelayCommand CommandOpenFile
-        {
-            get {return _command_open_file??=new RelayCommand(openFile_execute, openFile_canExecute);}
-        }*/
+
         public RelayCommandAsync CommandOpenFile
         {
             get {return _command_open_file??=new RelayCommandAsync(openFile_execute, null, (ex) => {return;});}
@@ -125,8 +105,6 @@ namespace KP.ViewModels
             _token_source=new CancellationTokenSource();
             File_Output_Visibility=Visibility.Hidden;
             File_Log_Visibility=Visibility.Hidden;
-            /*Button_Start_Condition=ButtonIsEnabled.DISABLED;
-            Button_Stop_Condition=ButtonIsEnabled.ENABLED;*/
         }
 
         private async Task<byte[]> fileRead_async()
@@ -151,7 +129,7 @@ namespace KP.ViewModels
         {
             return str.Substring(i, chunkSize);
         }
-        private async void writeTextBoxAsync(string str)
+        private async void writeTextBoxAsync(string str)                    //TODO FlowDocumentReader instead of textbox
         {
             int chunkSize = 100;
             int stringLength = str.Length;
@@ -200,24 +178,21 @@ namespace KP.ViewModels
             byte[][] bytes_output;
             string file_extension=".encrypted";
 
-            /*Button_Start_Condition=ButtonIsEnabled.DISABLED;
-            Button_Stop_Condition=ButtonIsEnabled.ENABLED;*/
-            
             if(_cryption_mode==CryptionMode.ENCRYPTION)
             {
-                Task<byte[][]> tsk=Task.Run(()=>_algorithm_model.encrypt(_fileinfo_input_content_bytes, _token_source.Token));
-                bytes_output=tsk.Result;
+                /*Task<byte[][]> tsk=Task.Run(()=>_algorithm_model.encrypt(_fileinfo_input_content_bytes, _token_source.Token));
+                bytes_output=tsk.Result;*/
+                bytes_output=await Task.Run(()=>_algorithm_model.encrypt(_fileinfo_input_content_bytes, _token_source.Token));
                 FileInfo_Output??=new FileInfo(FileInfo_Input.FullName+file_extension);
             }
             else
             {
-                bytes_output=await _algorithm_model.decrypt(_fileinfo_input_content_bytes, _token_source.Token);
+                bytes_output=await Task.Run(()=>_algorithm_model.decrypt(_fileinfo_input_content_bytes, _token_source.Token));
                 FileInfo_Output??=new FileInfo(FileInfo_Input.FullName+".decrypted");
                 //FileInfo_Output??=new FileInfo(FileInfo_Input.FullName.Replace(file_extension, ""));
             }
 
             _fileinfo_output_content_bytes=bytes_output.SelectMany(a => a).ToArray();
-            //FileInfo_Output_Content_String=Encoding.ASCII.GetString(_fileinfo_output_content_bytes);
             await Task.Run(()=>writeTextBoxAsync2(Encoding.ASCII.GetString(_fileinfo_output_content_bytes)));
             using (FileStream file_stream=_fileinfo_output.Create())
             {
@@ -227,7 +202,7 @@ namespace KP.ViewModels
         }
         private bool cryptStart_canExecute(object parameter)
         {
-            return _fileinfo_input_content_bytes!=null;
+            return _fileinfo_input_content_bytes!=null && !CommandOpenFile.IsExecuting;
         }
         
         private void cryptStop_execute(object parameter)
