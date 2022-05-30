@@ -1,0 +1,3 @@
+obj\Debug\net6.0/Authentication.cs \
+obj\Debug\net6.0/AuthenticationGrpc.cs: ../KP_Server/Protos/common.proto\
+ ../KP_Server/Protos/authentication.proto

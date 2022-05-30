@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Google.Protobuf" Version="3.21.1" />
+      <PackageReference Include="Grpc.Net.Client" Version="2.46.0" />
+      <PackageReference Include="Grpc.Tools" Version="2.46.3">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Protobuf Include="..\KP_Server\Protos\common.proto" GrpcServices="Client">
+        <Link>Protos\common.proto</Link>
+      </Protobuf>
+      <Protobuf Include="..\KP_Server\Protos\authentication.proto" GrpcServices="Client">
+        <Link>Protos\authentication.proto</Link>
+      </Protobuf>
+      <Protobuf Include="..\KP_Server\Protos\file_storage.proto" GrpcServices="Client">
+        <Link>Protos\file_storage.proto</Link>
+      </Protobuf>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\KP.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="PresentationCore">
+        <HintPath>..\..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\5.0.17\PresentationCore.dll</HintPath>
+      </Reference>
+      <Reference Include="PresentationFramework">
+        <HintPath>..\..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\5.0.17\PresentationFramework.dll</HintPath>
+      </Reference>
+      <Reference Include="System.Xaml">
+        <HintPath>..\..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\5.0.17\System.Xaml.dll</HintPath>
+      </Reference>
+      <Reference Include="WindowsBase">
+        <HintPath>..\..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App\5.0.17\WindowsBase.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>

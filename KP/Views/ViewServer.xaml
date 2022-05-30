@@ -1,0 +1,52 @@
+<UserControl x:Class="KP.Views.ViewServer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:KP.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="500" d:DesignWidth="500">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        
+        <ListBox Grid.Column="1" ItemsSource="{Binding}">
+            <ScrollViewer.VerticalScrollBarVisibility>Auto</ScrollViewer.VerticalScrollBarVisibility>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" x:Name="stack_panel_files">
+                        <TextBlock Text="{Binding File_Name}" Width="100"/>
+                        <Button Content="Download" Command="{Binding CommandDownload}">
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMouseOver, ElementName=stack_panel_files}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        
+        <StackPanel Grid.Row="1" Grid.Column="1">
+            <TextBlock Text="{Binding GRPC_Info}"></TextBlock>
+            <Button Content="Connect to server" Command="{Binding CommandConnectToServer}"></Button>
+            <Button Content="Upload opened file" Command="{Binding CommandUploadFileToServer}"></Button>
+        </StackPanel>
+        
+    </Grid>
+</UserControl>

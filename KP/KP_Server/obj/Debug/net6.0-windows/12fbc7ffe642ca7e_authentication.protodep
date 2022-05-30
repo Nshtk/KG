@@ -1,0 +1,3 @@
+obj\Debug\net6.0-windows/Authentication.cs \
+obj\Debug\net6.0-windows/AuthenticationGrpc.cs: Protos/common.proto\
+ Protos/authentication.proto

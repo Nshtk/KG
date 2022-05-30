@@ -1,226 +1,68 @@
 using System;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using KP.Models;
-using Microsoft.Win32;
 using Soldatov.Wpf.MVVM.Core;
 
 namespace KP.ViewModels
 {
     public class ViewModelMain : ViewModelBase
     {
-        public enum CryptionMode
+        #region Types
+        public enum ViemodelName
         {
-            ENCRYPTION,
-            DECRYPTION
+            CLIENT,
+            SERVER
         }
+        #endregion
 
-        private FileInfo _fileinfo_input, _fileinfo_output;
-        private AlgorithmModel _algorithm_model;
-        private CryptionMode _cryption_mode;
-        private byte[] _fileinfo_input_content_bytes, _fileinfo_output_content_bytes;
-        private string _fileinfo_input_content_string, _fileinfo_output_content_string;
-        CancellationTokenSource _token_source;
+        #region Fields
+        public static ViewModelMain View_Model_Main;    // TODO check if property 100% doesnt work
+        public object[] viewmodels=new object[] {new ViewmodelClient(), new ViewmodelServer()};
+        private object _current_viewmodel;
+        #endregion
 
-        private Visibility _file_output_visiblity;
-        private Visibility _file_log_visiblity;
+        #region Fields_WPF
+        private RelayCommand _command_switch_view;
+        #endregion
 
-        //private RelayCommand _command_open_file;
-        private RelayCommandAsync _command_open_file;
-        private RelayCommandAsync _command_crypt_start;
-        private RelayCommand _command_crypt_stop;
-        private RelayCommand _command_show_log;
-
-        public FileInfo FileInfo_Input
+        #region Properties
+        public object CurrentViewmodel
         {
-            get {return _fileinfo_input;}
-            set {_fileinfo_input=value; FileInfo_Output=null; invokePropertiesChanged("FileInfo_Input", "FileInfo_Input_Name");}
+            get {return _current_viewmodel;}
+            set {_current_viewmodel=value; invokePropertyChanged("CurrentViewmodel");}
         }
-        public string FileInfo_Input_Name
+        #endregion
+        
+        #region Properties_WPF
+        public RelayCommand CommandSwitchView
         {
-            get {return FileInfo_Input==null ? "File: " : "File: "+FileInfo_Input.Name;}
+            get {return _command_switch_view??=new RelayCommand(switchView_execute, switchView_canExecute);}
         }
-        public string FileInfo_Input_Content_String
-        {
-            get {return _fileinfo_input_content_string;}
-            set {_fileinfo_input_content_string=value; invokePropertyChanged("FileInfo_Input_Content_String");}
-        }
-        public FileInfo FileInfo_Output
-        {
-            get {return _fileinfo_output;}
-            set {_fileinfo_output=value; File_Output_Visibility=Visibility.Hidden; invokePropertyChanged("FileInfo_Output");}
-        }
-        public string FileInfo_Output_Content_String
-        {
-            get {return _fileinfo_output_content_string;}
-            set {_fileinfo_output_content_string=value; invokePropertyChanged("FileInfo_Output_Content_String");}
-        }
-        public AlgorithmModel Algorithm_Model
-        {
-            get {return _algorithm_model;}
-            set {_algorithm_model=value; invokePropertyChanged("Algorithm_Model");}
-        }
-        public CryptionMode Cryption
-        {
-            get {return _cryption_mode;}
-            set {_cryption_mode=value;}
-        }
-
-        public Visibility File_Output_Visibility
-        {
-            get {return _file_output_visiblity;}
-            set {_file_output_visiblity=value; invokePropertyChanged("File_Output_Visibility");}
-        }
-        public Visibility File_Log_Visibility
-        {
-            get {return _file_log_visiblity;}
-            set {_file_log_visiblity=value; invokePropertyChanged("File_Log_Visibility");}
-        }
-
-        public RelayCommandAsync CommandOpenFile
-        {
-            get {return _command_open_file??=new RelayCommandAsync(openFile_execute, null, (ex) => {return;});}
-        }
-        public RelayCommandAsync CommandCryptStart
-        {
-            get {return _command_crypt_start??=new RelayCommandAsync(cryptStart_execute, cryptStart_canExecute, (ex) => {return;});}
-        }
-        public RelayCommand CommandCryptStop
-        {
-            get {return _command_crypt_stop??=new RelayCommand(cryptStop_execute, cryptStop_canExecute);}
-        }
-        public RelayCommand CommandShowLog
-        {
-            get {return _command_show_log??=new RelayCommand(showLog_execute, cryptStart_canExecute);}
-        }
+        #endregion
         
         public ViewModelMain()
         {
-            Algorithm_Model=new AlgorithmModel();
-            _token_source=new CancellationTokenSource();
-            File_Output_Visibility=Visibility.Hidden;
-            File_Log_Visibility=Visibility.Hidden;
+            CurrentViewmodel=viewmodels[0];
+            View_Model_Main=this;
         }
 
-        private async Task<byte[]> fileRead_async()
+        #region Command_methods
+        private void switchView_execute(object parameter)
         {
-            byte[] bytes;
-            using(FileStream file_stream=FileInfo_Input.OpenRead())
+            switch((ViemodelName)parameter)
             {
-                bytes=new byte[FileInfo_Input.Length];
-                
-                for(int length=(int)FileInfo_Input.Length, number_bytes_read_sum=0, number_bytes_read; length>0; length-=number_bytes_read, number_bytes_read_sum+=number_bytes_read)
-                {
-                    number_bytes_read=await file_stream.ReadAsync(bytes, number_bytes_read_sum, length);
-                    if(number_bytes_read==0)
-                        break;
-                }
-            }
-            return bytes;
-            //FileInfo_Input_Content_String=Encoding.UTF8.GetString(_fileinfo_input_content_bytes);
-        }
-
-        private async Task<string> getSS(string str, int i, int chunkSize)
-        {
-            return str.Substring(i, chunkSize);
-        }
-        private async void writeTextBoxAsync(string str)                    //TODO FlowDocumentReader instead of textbox
-        {
-            int chunkSize = 100;
-            int stringLength = str.Length;
-            _fileinfo_input_content_string=null;
-            for (int i = 0; i < stringLength ; i += chunkSize)
-            {
-                if (i + chunkSize > stringLength) chunkSize = stringLength  - i;
-                FileInfo_Input_Content_String+=await getSS(str, i, chunkSize);
-                await Task.Delay(10);
+                case ViemodelName.CLIENT:
+                    CurrentViewmodel=viewmodels[0];
+                    break;
+                case ViemodelName.SERVER:
+                    CurrentViewmodel=viewmodels[1];
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(parameter), parameter, null);
             }
         }
-        private async void writeTextBoxAsync2(string str)
-        {
-            int chunkSize = 100;
-            int stringLength = str.Length;
-            _fileinfo_output_content_string=null;
-            for (int i = 0; i < stringLength ; i += chunkSize)
-            {
-                if (i + chunkSize > stringLength) chunkSize = stringLength  - i;
-                FileInfo_Output_Content_String+=await getSS(str, i, chunkSize);
-                await Task.Delay(10);
-            }
-        }
-        
-        private async Task openFile_execute()
-        {
-            OpenFileDialog open_file_dialog = new OpenFileDialog();
-
-            if(open_file_dialog.ShowDialog()==false)
-                return;
-            
-            FileInfo_Input=new FileInfo(open_file_dialog.FileName);
-            _fileinfo_input_content_bytes=await fileRead_async();
-            //FileInfo_Input_Content_String=Encoding.UTF8.GetString(_fileinfo_input_content_bytes);
-            await Task.Run(()=>writeTextBoxAsync(Encoding.UTF8.GetString(_fileinfo_input_content_bytes)));
-
-            CommandManager.InvalidateRequerySuggested();
-        }
-        private bool openFile_canExecute(Exception e)
+        private bool switchView_canExecute(object parameter)
         {
             return true;
         }
-        
-        private async Task cryptStart_execute()
-        {
-            byte[][] bytes_output;
-            string file_extension=".encrypted";
-
-            if(_cryption_mode==CryptionMode.ENCRYPTION)
-            {
-                /*Task<byte[][]> tsk=Task.Run(()=>_algorithm_model.encrypt(_fileinfo_input_content_bytes, _token_source.Token));
-                bytes_output=tsk.Result;*/
-                bytes_output=await Task.Run(()=>_algorithm_model.encrypt(_fileinfo_input_content_bytes, _token_source.Token));
-                FileInfo_Output??=new FileInfo(FileInfo_Input.FullName+file_extension);
-            }
-            else
-            {
-                bytes_output=await Task.Run(()=>_algorithm_model.decrypt(_fileinfo_input_content_bytes, _token_source.Token));
-                FileInfo_Output??=new FileInfo(FileInfo_Input.FullName+".decrypted");
-                //FileInfo_Output??=new FileInfo(FileInfo_Input.FullName.Replace(file_extension, ""));
-            }
-
-            _fileinfo_output_content_bytes=bytes_output.SelectMany(a => a).ToArray();
-            await Task.Run(()=>writeTextBoxAsync2(Encoding.ASCII.GetString(_fileinfo_output_content_bytes)));
-            using (FileStream file_stream=_fileinfo_output.Create())
-            {
-                file_stream.Write(_fileinfo_output_content_bytes, 0, _fileinfo_output_content_bytes.Length);
-            }
-            File_Output_Visibility=Visibility.Visible;
-        }
-        private bool cryptStart_canExecute(object parameter)
-        {
-            return _fileinfo_input_content_bytes!=null && !CommandOpenFile.IsExecuting;
-        }
-        
-        private void cryptStop_execute(object parameter)
-        {
-            _token_source.Cancel();
-        }
-        private bool cryptStop_canExecute(object parameter)
-        {
-            return _command_crypt_start.IsExecuting;
-        }
-        
-        private void showLog_execute(object parameter)
-        {
-            
-        }
-        /*private bool showLog_canExecute(object parameter)
-        {
-            return true;
-        }*/
+        #endregion
     }
 }

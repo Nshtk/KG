@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="packages\Grpc.Tools.2.46.3\build\Grpc.Tools.props" Condition="Exists('packages\Grpc.Tools.2.46.3\build\Grpc.Tools.props')" />
     <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -35,17 +36,56 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
+        <Reference Include="Google.Protobuf, Version=3.21.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+          <HintPath>packages\Google.Protobuf.3.21.1\lib\net45\Google.Protobuf.dll</HintPath>
+        </Reference>
+        <Reference Include="Grpc.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
+          <HintPath>packages\Grpc.Core.2.46.3\lib\net45\Grpc.Core.dll</HintPath>
+        </Reference>
+        <Reference Include="Grpc.Core.Api, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
+          <HintPath>packages\Grpc.Core.Api.2.46.3\lib\net45\Grpc.Core.Api.dll</HintPath>
+        </Reference>
+        <Reference Include="Grpc.Net.Client, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
+          <HintPath>packages\Grpc.Net.Client.2.46.0\lib\netstandard2.0\Grpc.Net.Client.dll</HintPath>
+        </Reference>
+        <Reference Include="Grpc.Net.Common, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
+          <HintPath>packages\Grpc.Net.Common.2.46.0\lib\netstandard2.0\Grpc.Net.Common.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.CSharp" />
+        <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=6.0.0.1, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+          <HintPath>packages\Microsoft.Extensions.Logging.Abstractions.6.0.1\lib\net461\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+        </Reference>
+        <Reference Include="mscorlib" />
+        <Reference Include="PresentationCore" />
+        <Reference Include="PresentationFramework" />
         <Reference Include="System" />
+        <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+          <HintPath>packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+        </Reference>
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
+        <Reference Include="System.Diagnostics.DiagnosticSource, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+          <HintPath>packages\System.Diagnostics.DiagnosticSource.6.0.0\lib\net461\System.Diagnostics.DiagnosticSource.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+          <HintPath>packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Net.Http" />
+        <Reference Include="System.Net.Http.WinHttpHandler, Version=6.0.0.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <HintPath>packages\System.Net.Http.WinHttpHandler.6.0.1\lib\net461\System.Net.Http.WinHttpHandler.dll</HintPath>
+        </Reference>
         <Reference Include="System.Numerics" />
+        <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <HintPath>packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <HintPath>packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+        </Reference>
         <Reference Include="System.Xml" />
         <Reference Include="System.Xaml">
             <RequiredTargetFramework>4.0</RequiredTargetFramework>
         </Reference>
         <Reference Include="WindowsBase" />
-        <Reference Include="PresentationCore" />
-        <Reference Include="PresentationFramework" />
     </ItemGroup>
     <ItemGroup>
         <ApplicationDefinition Include="App.xaml">
@@ -64,10 +104,18 @@
         <Compile Include="Context\prime.cs" />
         <Compile Include="Context\utility.cs" />
         <Compile Include="Models\ModelAlgorithm.cs" />
+        <Compile Include="ViewModels\ViewmodelClient.cs" />
         <Compile Include="ViewModels\ViewModelMain.cs" />
+        <Compile Include="ViewModels\ViewmodelServer.cs" />
         <Compile Include="Views\MainWindow.xaml.cs">
           <DependentUpon>MainWindow.xaml</DependentUpon>
           <SubType>Code</SubType>
+        </Compile>
+        <Compile Include="Views\ViewClient.xaml.cs">
+          <DependentUpon>ViewClient.xaml</DependentUpon>
+        </Compile>
+        <Compile Include="Views\ViewServer.xaml.cs">
+          <DependentUpon>ViewServer.xaml</DependentUpon>
         </Compile>
     </ItemGroup>
     <ItemGroup>
@@ -86,12 +134,15 @@
     </ItemGroup>
     <ItemGroup>
         <None Include="App.config" />
+        <None Include="packages.config" />
     </ItemGroup>
     <ItemGroup>
       <Page Include="Views\MainWindow.xaml">
         <Generator>MSBuild:Compile</Generator>
         <SubType>Designer</SubType>
       </Page>
+      <Page Include="Views\ViewClient.xaml" />
+      <Page Include="Views\ViewServer.xaml" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\RPKS\RPKS_lab1,2\Soldatov.Wpf.MVVM.Core\Soldatov.Wpf.MVVM.Core.csproj">
@@ -102,6 +153,22 @@
         <Project>{79e2ec58-f4a1-468d-aa8c-d8970c7a1431}</Project>
         <Name>Soldatov.Wpf.MVVM</Name>
       </ProjectReference>
+      <ProjectReference Include="KP_Proto\KP_Proto.csproj">
+        <Project>{65650e50-5db2-400b-8dab-c5cff42a46e0}</Project>
+        <Name>KP_Proto</Name>
+      </ProjectReference>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+      <PropertyGroup>
+        <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
+      </PropertyGroup>
+      <Error Condition="!Exists('packages\Grpc.Tools.2.46.3\build\Grpc.Tools.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Grpc.Tools.2.46.3\build\Grpc.Tools.props'))" />
+      <Error Condition="!Exists('packages\Grpc.Tools.2.46.3\build\Grpc.Tools.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Grpc.Tools.2.46.3\build\Grpc.Tools.targets'))" />
+      <Error Condition="!Exists('packages\Microsoft.Extensions.Logging.Abstractions.6.0.1\build\Microsoft.Extensions.Logging.Abstractions.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.Extensions.Logging.Abstractions.6.0.1\build\Microsoft.Extensions.Logging.Abstractions.targets'))" />
+      <Error Condition="!Exists('packages\Grpc.Core.2.46.3\build\net45\Grpc.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Grpc.Core.2.46.3\build\net45\Grpc.Core.targets'))" />
+    </Target>
+    <Import Project="packages\Grpc.Tools.2.46.3\build\Grpc.Tools.targets" Condition="Exists('packages\Grpc.Tools.2.46.3\build\Grpc.Tools.targets')" />
+    <Import Project="packages\Microsoft.Extensions.Logging.Abstractions.6.0.1\build\Microsoft.Extensions.Logging.Abstractions.targets" Condition="Exists('packages\Microsoft.Extensions.Logging.Abstractions.6.0.1\build\Microsoft.Extensions.Logging.Abstractions.targets')" />
+    <Import Project="packages\Grpc.Core.2.46.3\build\net45\Grpc.Core.targets" Condition="Exists('packages\Grpc.Core.2.46.3\build\net45\Grpc.Core.targets')" />
 </Project>

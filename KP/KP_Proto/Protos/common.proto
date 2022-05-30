@@ -1,0 +1,9 @@
+syntax="proto3";
+option csharp_namespace="Proto";
+
+package common;
+
+message ResultReply {
+  bool result=1;
+  string info=2;
+}

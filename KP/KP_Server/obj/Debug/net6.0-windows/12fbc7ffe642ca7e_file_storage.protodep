@@ -1,0 +1,3 @@
+obj\Debug\net6.0-windows/FileStorage.cs \
+obj\Debug\net6.0-windows/FileStorageGrpc.cs: Protos/common.proto\
+ Protos/file_storage.proto

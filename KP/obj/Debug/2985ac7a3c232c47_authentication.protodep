@@ -1,0 +1,3 @@
+obj\Debug/Authentication.cs \
+obj\Debug/AuthenticationGrpc.cs: KP_Server/Protos/common.proto\
+ KP_Server/Protos/authentication.proto

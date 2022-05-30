@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Protobuf Include="..\KP_Proto\Protos\common.proto" GrpcServices="Server" ProtoRoot="..\KP_Proto\Protos\">
+            <Link>Protos\common.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\KP_Proto\Protos\authentication.proto" GrpcServices="Server" ProtoRoot="..\KP_Proto\Protos\">
+            <Link>Protos\authentication.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\KP_Proto\Protos\file_storage.proto" GrpcServices="Server" ProtoRoot="..\KP_Proto\Protos\">
+            <Link>Protos\file_storage.proto</Link>
+        </Protobuf>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.46.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Storage" />
+    </ItemGroup>
+
+</Project>

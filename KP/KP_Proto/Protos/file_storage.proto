@@ -1,0 +1,41 @@
+syntax="proto3";
+option csharp_namespace="Proto";
+
+import "common.proto";
+
+package standard;
+
+message FileStorageFilesStored {
+  repeated string file_names=1;
+}
+
+message FileStorageUploadRequest {
+  string file_name=1;
+  bytes content=2;
+}
+message FileStorageUploadReply {
+  common.ResultReply result=1;
+  FileStorageFilesStored files=2;
+}
+
+message FileStorageDownloadRequest {
+  string file_name=1;
+}
+message FileStorageDownloadReply {
+  common.ResultReply result=1;
+  bytes content=2;
+}
+
+message FileStorageRemoveRequest {
+  string file_name=1;
+}
+message FileStorageRemoveReply {
+  common.ResultReply result=1;
+  FileStorageFilesStored files=2;
+}
+
+service FileStorage {
+  rpc upload   (FileStorageUploadRequest)   returns(FileStorageUploadReply);
+  rpc download (FileStorageDownloadRequest) returns(FileStorageDownloadReply);
+  rpc remove   (FileStorageRemoveRequest)   returns(FileStorageRemoveReply);
+}

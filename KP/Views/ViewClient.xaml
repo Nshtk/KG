@@ -1,0 +1,91 @@
+<UserControl x:Class="KP.Views.ViewClient"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Context="clr-namespace:KP.Context"
+             xmlns:ContextInterface="clr-namespace:KP.Context.Interface"
+             xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:MVVM="clr-namespace:Soldatov.Wpf.MVVM;assembly=Soldatov.Wpf.MVVM"
+             xmlns:Viewmodels="clr-namespace:KP.ViewModels" 
+             mc:Ignorable="d"
+             d:DesignHeight="500" d:DesignWidth="500">
+    
+    <UserControl.Resources>
+        <ObjectDataProvider x:Key="data_from_enum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="Context:Utility+CipheringMode"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <MVVM:ConverterEnumBool x:Key="converter_enum_bool"/>
+        <MVVM:ConverterByteArrayString x:Key="byte_array_string_converter"/>
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="1"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        
+        <!--<GroupBox></GroupBox> TODO-->
+        <DockPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Stretch" LastChildFill="True">
+            <TextBlock Text="Preview" DockPanel.Dock="Top" HorizontalAlignment="Center"></TextBlock>
+            <TabControl>
+                <TabItem Header="Input file">
+                    <TabItem.Content>
+                        <TextBox Text="{Binding FileInfo_Input_Content_String, IsAsync=True, ValidatesOnDataErrors=False}" TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True"></TextBox>
+                    </TabItem.Content>
+                </TabItem>
+                <TabItem Header="Output file" Visibility="{Binding File_Output_Visibility}">
+                    <TabItem.Content>
+                        <TextBox Text="{Binding FileInfo_Output_Content_String, IsAsync=True}" TextWrapping="NoWrap" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True"></TextBox>
+                    </TabItem.Content>
+                </TabItem>
+            </TabControl>
+        </DockPanel>
+        <GridSplitter Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="False" Height="5"></GridSplitter>
+
+        <StackPanel Grid.Row="2" Grid.Column="0" VerticalAlignment="Top">
+            <TextBlock Text="Settings"></TextBlock>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding FileInfo_Input_Name}" Margin="0,0,5,0"></TextBlock>
+                <Button Content="Open file" Command="{Binding CommandOpenFile, IsAsync=True}" Visibility="Visible"></Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Algorithm: "></TextBlock>
+                <ComboBox Width="100" ItemsSource="{Binding Algorithm_Model.Algorithms}" SelectedItem="{Binding Algorithm_Model.Algorithm}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate DataType="ContextInterface:IAlgorithm">
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Visibility="{Binding Algorithm_Model.Cryption_Mode_Visibility}">
+                <TextBlock Text="Ciphering Mode: "></TextBlock>
+                <ComboBox Width="60" ItemsSource="{Binding Source={StaticResource data_from_enum}}" SelectedItem="{Binding Algorithm_Model.Ciphering}"></ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Visibility="{Binding Algorithm_Model.Key_Visibility}">
+                <TextBlock Text="Key: "></TextBlock>
+                <TextBox Width="200" Text="{Binding Algorithm_Model.Key, Converter={StaticResource byte_array_string_converter}}"></TextBox>
+            </StackPanel>
+            
+            
+            <RadioButton Content="Encryption" IsChecked="{Binding Cryption, Converter={StaticResource converter_enum_bool}, ConverterParameter={x:Static Viewmodels:ViewmodelClient+CryptionMode.ENCRYPTION}}"></RadioButton>
+            <RadioButton Content="Decryption" IsChecked="{Binding Cryption, Converter={StaticResource converter_enum_bool}, ConverterParameter={x:Static Viewmodels:ViewmodelClient+CryptionMode.DECRYPTION}}"></RadioButton>
+            <ProgressBar Value="{Binding Algorithm_Model.Bytes_Current_Message_Number, UpdateSourceTrigger=PropertyChanged}" Minimum="0" Maximum="{Binding Algorithm_Model.Bytes_Number_Messages, UpdateSourceTrigger=PropertyChanged}" Height="15"></ProgressBar>
+            <Button Content="Start" Command="{Binding CommandCryptStart}"></Button>
+            <Button Content="Stop" Command="{Binding CommandCryptStop}"></Button>
+            <Button Content="Show log" IsEnabled="False"></Button>
+        </StackPanel>
+        
+        <!--<Expander></Expander> TODO-->
+        <RichTextBox Grid.Row="3" Grid.Column="0" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" Visibility="{Binding File_Log_Visibility}">
+        </RichTextBox>
+    </Grid>
+</UserControl>

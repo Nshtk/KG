@@ -1,0 +1,3 @@
+obj\Debug\net6.0/FileStorage.cs \
+obj\Debug\net6.0/FileStorageGrpc.cs: ../KP_Proto/Protos/common.proto\
+ ../KP_Proto/Protos/file_storage.proto

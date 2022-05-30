@@ -77,7 +77,6 @@ namespace KP.Models
         public int I_Increment()
         {
             return Interlocked.Increment(ref _i);
-            invokePropertyChanged("Bytes_Current_Message_Number");
         }
         
         public Visibility Key_Visibility
