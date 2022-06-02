@@ -1,0 +1,11 @@
+// KRR
+tag_color rus 0 70 25
+tag_color ger 78 78 78
+tag_color fra 120 100 170
+tag_color eng 150 34 34
+// FRR
+tag_color chi 45 75 100
+tag_color usa 20 30 65
+tag_color nar 100 100 125	// great lakes
+tag_color sov 100 0 0
+tag_color nee 170 30 60	// new england

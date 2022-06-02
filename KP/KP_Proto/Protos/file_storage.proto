@@ -5,21 +5,18 @@ import "common.proto";
 
 package standard;
 
-message FileStorageFilesStored {
-  repeated string file_names=1;
-}
-
 message FileStorageUploadRequest {
-  string file_name=1;
-  bytes content=2;
+  uint32 id=1;
+  string file_name=2;
+  bytes content=3;
 }
 message FileStorageUploadReply {
   common.ResultReply result=1;
-  FileStorageFilesStored files=2;
 }
 
 message FileStorageDownloadRequest {
-  string file_name=1;
+  uint32 id=1;
+  string file_name=2;
 }
 message FileStorageDownloadReply {
   common.ResultReply result=1;
@@ -27,15 +24,39 @@ message FileStorageDownloadReply {
 }
 
 message FileStorageRemoveRequest {
-  string file_name=1;
+  uint32 id=1;
+  string file_name=2;
 }
 message FileStorageRemoveReply {
   common.ResultReply result=1;
-  FileStorageFilesStored files=2;
+}
+
+message FileStorageServerUser {
+  uint32 id=1;
+  string name=2;
+}
+message FileStorageServerDataRequest {
+  uint32 id=1;
+}
+message FileStorageServerDataReply {
+  common.ResultReply result=1;
+  uint32 id_connected_to=2;
+  repeated FileStorageServerUser users=3;
+  repeated string file_names=4;
+}
+
+message FileStorageJoinUserRequest {
+  uint32 id_from=1;
+  uint32 id_to=2;
+}
+message FileStorageJoinUserReply {
+  common.ResultReply result=1;
 }
 
 service FileStorage {
-  rpc upload   (FileStorageUploadRequest)   returns(FileStorageUploadReply);
-  rpc download (FileStorageDownloadRequest) returns(FileStorageDownloadReply);
-  rpc remove   (FileStorageRemoveRequest)   returns(FileStorageRemoveReply);
+  rpc upload        (FileStorageUploadRequest)     returns(FileStorageUploadReply);
+  rpc download      (FileStorageDownloadRequest)   returns(FileStorageDownloadReply);
+  rpc remove        (FileStorageRemoveRequest)     returns(FileStorageRemoveReply);
+  rpc getServerData (FileStorageServerDataRequest) returns(FileStorageServerDataReply);
+  rpc joinUser      (FileStorageJoinUserRequest)   returns(FileStorageJoinUserReply);
 }

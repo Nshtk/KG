@@ -25,218 +25,54 @@ namespace Proto {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ChJmaWxlX3N0b3JhZ2UucHJvdG8SCHN0YW5kYXJkGgxjb21tb24ucHJvdG8i",
-            "LAoWRmlsZVN0b3JhZ2VGaWxlc1N0b3JlZBISCgpmaWxlX25hbWVzGAEgAygJ",
-            "Ij4KGEZpbGVTdG9yYWdlVXBsb2FkUmVxdWVzdBIRCglmaWxlX25hbWUYASAB",
-            "KAkSDwoHY29udGVudBgCIAEoDCJuChZGaWxlU3RvcmFnZVVwbG9hZFJlcGx5",
-            "EiMKBnJlc3VsdBgBIAEoCzITLmNvbW1vbi5SZXN1bHRSZXBseRIvCgVmaWxl",
-            "cxgCIAEoCzIgLnN0YW5kYXJkLkZpbGVTdG9yYWdlRmlsZXNTdG9yZWQiLwoa",
-            "RmlsZVN0b3JhZ2VEb3dubG9hZFJlcXVlc3QSEQoJZmlsZV9uYW1lGAEgASgJ",
-            "IlAKGEZpbGVTdG9yYWdlRG93bmxvYWRSZXBseRIjCgZyZXN1bHQYASABKAsy",
-            "Ey5jb21tb24uUmVzdWx0UmVwbHkSDwoHY29udGVudBgCIAEoDCItChhGaWxl",
-            "U3RvcmFnZVJlbW92ZVJlcXVlc3QSEQoJZmlsZV9uYW1lGAEgASgJIm4KFkZp",
-            "bGVTdG9yYWdlUmVtb3ZlUmVwbHkSIwoGcmVzdWx0GAEgASgLMhMuY29tbW9u",
-            "LlJlc3VsdFJlcGx5Ei8KBWZpbGVzGAIgASgLMiAuc3RhbmRhcmQuRmlsZVN0",
-            "b3JhZ2VGaWxlc1N0b3JlZDKDAgoLRmlsZVN0b3JhZ2USTgoGdXBsb2FkEiIu",
-            "c3RhbmRhcmQuRmlsZVN0b3JhZ2VVcGxvYWRSZXF1ZXN0GiAuc3RhbmRhcmQu",
-            "RmlsZVN0b3JhZ2VVcGxvYWRSZXBseRJUCghkb3dubG9hZBIkLnN0YW5kYXJk",
-            "LkZpbGVTdG9yYWdlRG93bmxvYWRSZXF1ZXN0GiIuc3RhbmRhcmQuRmlsZVN0",
-            "b3JhZ2VEb3dubG9hZFJlcGx5Ek4KBnJlbW92ZRIiLnN0YW5kYXJkLkZpbGVT",
-            "dG9yYWdlUmVtb3ZlUmVxdWVzdBogLnN0YW5kYXJkLkZpbGVTdG9yYWdlUmVt",
-            "b3ZlUmVwbHlCCKoCBVByb3RvYgZwcm90bzM="));
+            "SgoYRmlsZVN0b3JhZ2VVcGxvYWRSZXF1ZXN0EgoKAmlkGAEgASgNEhEKCWZp",
+            "bGVfbmFtZRgCIAEoCRIPCgdjb250ZW50GAMgASgMIj0KFkZpbGVTdG9yYWdl",
+            "VXBsb2FkUmVwbHkSIwoGcmVzdWx0GAEgASgLMhMuY29tbW9uLlJlc3VsdFJl",
+            "cGx5IjsKGkZpbGVTdG9yYWdlRG93bmxvYWRSZXF1ZXN0EgoKAmlkGAEgASgN",
+            "EhEKCWZpbGVfbmFtZRgCIAEoCSJQChhGaWxlU3RvcmFnZURvd25sb2FkUmVw",
+            "bHkSIwoGcmVzdWx0GAEgASgLMhMuY29tbW9uLlJlc3VsdFJlcGx5Eg8KB2Nv",
+            "bnRlbnQYAiABKAwiOQoYRmlsZVN0b3JhZ2VSZW1vdmVSZXF1ZXN0EgoKAmlk",
+            "GAEgASgNEhEKCWZpbGVfbmFtZRgCIAEoCSI9ChZGaWxlU3RvcmFnZVJlbW92",
+            "ZVJlcGx5EiMKBnJlc3VsdBgBIAEoCzITLmNvbW1vbi5SZXN1bHRSZXBseSIx",
+            "ChVGaWxlU3RvcmFnZVNlcnZlclVzZXISCgoCaWQYASABKA0SDAoEbmFtZRgC",
+            "IAEoCSIqChxGaWxlU3RvcmFnZVNlcnZlckRhdGFSZXF1ZXN0EgoKAmlkGAEg",
+            "ASgNIp4BChpGaWxlU3RvcmFnZVNlcnZlckRhdGFSZXBseRIjCgZyZXN1bHQY",
+            "ASABKAsyEy5jb21tb24uUmVzdWx0UmVwbHkSFwoPaWRfY29ubmVjdGVkX3Rv",
+            "GAIgASgNEi4KBXVzZXJzGAMgAygLMh8uc3RhbmRhcmQuRmlsZVN0b3JhZ2VT",
+            "ZXJ2ZXJVc2VyEhIKCmZpbGVfbmFtZXMYBCADKAkiPAoaRmlsZVN0b3JhZ2VK",
+            "b2luVXNlclJlcXVlc3QSDwoHaWRfZnJvbRgBIAEoDRINCgVpZF90bxgCIAEo",
+            "DSI/ChhGaWxlU3RvcmFnZUpvaW5Vc2VyUmVwbHkSIwoGcmVzdWx0GAEgASgL",
+            "MhMuY29tbW9uLlJlc3VsdFJlcGx5MrgDCgtGaWxlU3RvcmFnZRJOCgZ1cGxv",
+            "YWQSIi5zdGFuZGFyZC5GaWxlU3RvcmFnZVVwbG9hZFJlcXVlc3QaIC5zdGFu",
+            "ZGFyZC5GaWxlU3RvcmFnZVVwbG9hZFJlcGx5ElQKCGRvd25sb2FkEiQuc3Rh",
+            "bmRhcmQuRmlsZVN0b3JhZ2VEb3dubG9hZFJlcXVlc3QaIi5zdGFuZGFyZC5G",
+            "aWxlU3RvcmFnZURvd25sb2FkUmVwbHkSTgoGcmVtb3ZlEiIuc3RhbmRhcmQu",
+            "RmlsZVN0b3JhZ2VSZW1vdmVSZXF1ZXN0GiAuc3RhbmRhcmQuRmlsZVN0b3Jh",
+            "Z2VSZW1vdmVSZXBseRJdCg1nZXRTZXJ2ZXJEYXRhEiYuc3RhbmRhcmQuRmls",
+            "ZVN0b3JhZ2VTZXJ2ZXJEYXRhUmVxdWVzdBokLnN0YW5kYXJkLkZpbGVTdG9y",
+            "YWdlU2VydmVyRGF0YVJlcGx5ElQKCGpvaW5Vc2VyEiQuc3RhbmRhcmQuRmls",
+            "ZVN0b3JhZ2VKb2luVXNlclJlcXVlc3QaIi5zdGFuZGFyZC5GaWxlU3RvcmFn",
+            "ZUpvaW5Vc2VyUmVwbHlCCKoCBVByb3RvYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Proto.CommonReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageFilesStored), global::Proto.FileStorageFilesStored.Parser, new[]{ "FileNames" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageUploadRequest), global::Proto.FileStorageUploadRequest.Parser, new[]{ "FileName", "Content" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageUploadReply), global::Proto.FileStorageUploadReply.Parser, new[]{ "Result", "Files" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageDownloadRequest), global::Proto.FileStorageDownloadRequest.Parser, new[]{ "FileName" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageUploadRequest), global::Proto.FileStorageUploadRequest.Parser, new[]{ "Id", "FileName", "Content" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageUploadReply), global::Proto.FileStorageUploadReply.Parser, new[]{ "Result" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageDownloadRequest), global::Proto.FileStorageDownloadRequest.Parser, new[]{ "Id", "FileName" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageDownloadReply), global::Proto.FileStorageDownloadReply.Parser, new[]{ "Result", "Content" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageRemoveRequest), global::Proto.FileStorageRemoveRequest.Parser, new[]{ "FileName" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageRemoveReply), global::Proto.FileStorageRemoveReply.Parser, new[]{ "Result", "Files" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageRemoveRequest), global::Proto.FileStorageRemoveRequest.Parser, new[]{ "Id", "FileName" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageRemoveReply), global::Proto.FileStorageRemoveReply.Parser, new[]{ "Result" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageServerUser), global::Proto.FileStorageServerUser.Parser, new[]{ "Id", "Name" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageServerDataRequest), global::Proto.FileStorageServerDataRequest.Parser, new[]{ "Id" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageServerDataReply), global::Proto.FileStorageServerDataReply.Parser, new[]{ "Result", "IdConnectedTo", "Users", "FileNames" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageJoinUserRequest), global::Proto.FileStorageJoinUserRequest.Parser, new[]{ "IdFrom", "IdTo" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageJoinUserReply), global::Proto.FileStorageJoinUserReply.Parser, new[]{ "Result" }, null, null, null, null)
           }));
     }
     #endregion
 
   }
   #region Messages
-  public sealed partial class FileStorageFilesStored : pb::IMessage<FileStorageFilesStored>
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      , pb::IBufferMessage
-  #endif
-  {
-    private static readonly pb::MessageParser<FileStorageFilesStored> _parser = new pb::MessageParser<FileStorageFilesStored>(() => new FileStorageFilesStored());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<FileStorageFilesStored> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[0]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FileStorageFilesStored() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FileStorageFilesStored(FileStorageFilesStored other) : this() {
-      fileNames_ = other.fileNames_.Clone();
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FileStorageFilesStored Clone() {
-      return new FileStorageFilesStored(this);
-    }
-
-    /// <summary>Field number for the "file_names" field.</summary>
-    public const int FileNamesFieldNumber = 1;
-    private static readonly pb::FieldCodec<string> _repeated_fileNames_codec
-        = pb::FieldCodec.ForString(10);
-    private readonly pbc::RepeatedField<string> fileNames_ = new pbc::RepeatedField<string>();
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<string> FileNames {
-      get { return fileNames_; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override bool Equals(object other) {
-      return Equals(other as FileStorageFilesStored);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(FileStorageFilesStored other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if(!fileNames_.Equals(other.fileNames_)) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override int GetHashCode() {
-      int hash = 1;
-      hash ^= fileNames_.GetHashCode();
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void WriteTo(pb::CodedOutputStream output) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      output.WriteRawMessage(this);
-    #else
-      fileNames_.WriteTo(output, _repeated_fileNames_codec);
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      fileNames_.WriteTo(ref output, _repeated_fileNames_codec);
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(ref output);
-      }
-    }
-    #endif
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int CalculateSize() {
-      int size = 0;
-      size += fileNames_.CalculateSize(_repeated_fileNames_codec);
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(FileStorageFilesStored other) {
-      if (other == null) {
-        return;
-      }
-      fileNames_.Add(other.fileNames_);
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(pb::CodedInputStream input) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      input.ReadRawMessage(this);
-    #else
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 10: {
-            fileNames_.AddEntriesFrom(input, _repeated_fileNames_codec);
-            break;
-          }
-        }
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
-            break;
-          case 10: {
-            fileNames_.AddEntriesFrom(ref input, _repeated_fileNames_codec);
-            break;
-          }
-        }
-      }
-    }
-    #endif
-
-  }
-
   public sealed partial class FileStorageUploadRequest : pb::IMessage<FileStorageUploadRequest>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -251,7 +87,7 @@ namespace Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[1]; }
+      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[0]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -271,6 +107,7 @@ namespace Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public FileStorageUploadRequest(FileStorageUploadRequest other) : this() {
+      id_ = other.id_;
       fileName_ = other.fileName_;
       content_ = other.content_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -282,8 +119,20 @@ namespace Proto {
       return new FileStorageUploadRequest(this);
     }
 
+    /// <summary>Field number for the "id" field.</summary>
+    public const int IdFieldNumber = 1;
+    private uint id_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint Id {
+      get { return id_; }
+      set {
+        id_ = value;
+      }
+    }
+
     /// <summary>Field number for the "file_name" field.</summary>
-    public const int FileNameFieldNumber = 1;
+    public const int FileNameFieldNumber = 2;
     private string fileName_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -295,7 +144,7 @@ namespace Proto {
     }
 
     /// <summary>Field number for the "content" field.</summary>
-    public const int ContentFieldNumber = 2;
+    public const int ContentFieldNumber = 3;
     private pb::ByteString content_ = pb::ByteString.Empty;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -321,6 +170,7 @@ namespace Proto {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (Id != other.Id) return false;
       if (FileName != other.FileName) return false;
       if (Content != other.Content) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -330,6 +180,7 @@ namespace Proto {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
+      if (Id != 0) hash ^= Id.GetHashCode();
       if (FileName.Length != 0) hash ^= FileName.GetHashCode();
       if (Content.Length != 0) hash ^= Content.GetHashCode();
       if (_unknownFields != null) {
@@ -350,12 +201,16 @@ namespace Proto {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
+      if (Id != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(Id);
+      }
       if (FileName.Length != 0) {
-        output.WriteRawTag(10);
+        output.WriteRawTag(18);
         output.WriteString(FileName);
       }
       if (Content.Length != 0) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(26);
         output.WriteBytes(Content);
       }
       if (_unknownFields != null) {
@@ -368,12 +223,16 @@ namespace Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Id != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(Id);
+      }
       if (FileName.Length != 0) {
-        output.WriteRawTag(10);
+        output.WriteRawTag(18);
         output.WriteString(FileName);
       }
       if (Content.Length != 0) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(26);
         output.WriteBytes(Content);
       }
       if (_unknownFields != null) {
@@ -386,6 +245,9 @@ namespace Proto {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
+      if (Id != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(Id);
+      }
       if (FileName.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(FileName);
       }
@@ -403,6 +265,9 @@ namespace Proto {
     public void MergeFrom(FileStorageUploadRequest other) {
       if (other == null) {
         return;
+      }
+      if (other.Id != 0) {
+        Id = other.Id;
       }
       if (other.FileName.Length != 0) {
         FileName = other.FileName;
@@ -425,11 +290,15 @@ namespace Proto {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 10: {
-            FileName = input.ReadString();
+          case 8: {
+            Id = input.ReadUInt32();
             break;
           }
           case 18: {
+            FileName = input.ReadString();
+            break;
+          }
+          case 26: {
             Content = input.ReadBytes();
             break;
           }
@@ -448,11 +317,15 @@ namespace Proto {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 10: {
-            FileName = input.ReadString();
+          case 8: {
+            Id = input.ReadUInt32();
             break;
           }
           case 18: {
+            FileName = input.ReadString();
+            break;
+          }
+          case 26: {
             Content = input.ReadBytes();
             break;
           }
@@ -477,7 +350,7 @@ namespace Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[2]; }
+      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[1]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -498,7 +371,6 @@ namespace Proto {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public FileStorageUploadReply(FileStorageUploadReply other) : this() {
       result_ = other.result_ != null ? other.result_.Clone() : null;
-      files_ = other.files_ != null ? other.files_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -520,18 +392,6 @@ namespace Proto {
       }
     }
 
-    /// <summary>Field number for the "files" field.</summary>
-    public const int FilesFieldNumber = 2;
-    private global::Proto.FileStorageFilesStored files_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Proto.FileStorageFilesStored Files {
-      get { return files_; }
-      set {
-        files_ = value;
-      }
-    }
-
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -548,7 +408,6 @@ namespace Proto {
         return true;
       }
       if (!object.Equals(Result, other.Result)) return false;
-      if (!object.Equals(Files, other.Files)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -557,7 +416,6 @@ namespace Proto {
     public override int GetHashCode() {
       int hash = 1;
       if (result_ != null) hash ^= Result.GetHashCode();
-      if (files_ != null) hash ^= Files.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -580,10 +438,6 @@ namespace Proto {
         output.WriteRawTag(10);
         output.WriteMessage(Result);
       }
-      if (files_ != null) {
-        output.WriteRawTag(18);
-        output.WriteMessage(Files);
-      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -598,10 +452,6 @@ namespace Proto {
         output.WriteRawTag(10);
         output.WriteMessage(Result);
       }
-      if (files_ != null) {
-        output.WriteRawTag(18);
-        output.WriteMessage(Files);
-      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -614,9 +464,6 @@ namespace Proto {
       int size = 0;
       if (result_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Result);
-      }
-      if (files_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Files);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -635,12 +482,6 @@ namespace Proto {
           Result = new global::Proto.ResultReply();
         }
         Result.MergeFrom(other.Result);
-      }
-      if (other.files_ != null) {
-        if (files_ == null) {
-          Files = new global::Proto.FileStorageFilesStored();
-        }
-        Files.MergeFrom(other.Files);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -662,13 +503,6 @@ namespace Proto {
               Result = new global::Proto.ResultReply();
             }
             input.ReadMessage(Result);
-            break;
-          }
-          case 18: {
-            if (files_ == null) {
-              Files = new global::Proto.FileStorageFilesStored();
-            }
-            input.ReadMessage(Files);
             break;
           }
         }
@@ -693,13 +527,6 @@ namespace Proto {
             input.ReadMessage(Result);
             break;
           }
-          case 18: {
-            if (files_ == null) {
-              Files = new global::Proto.FileStorageFilesStored();
-            }
-            input.ReadMessage(Files);
-            break;
-          }
         }
       }
     }
@@ -721,7 +548,7 @@ namespace Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[3]; }
+      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[2]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -741,6 +568,7 @@ namespace Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public FileStorageDownloadRequest(FileStorageDownloadRequest other) : this() {
+      id_ = other.id_;
       fileName_ = other.fileName_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -751,8 +579,20 @@ namespace Proto {
       return new FileStorageDownloadRequest(this);
     }
 
+    /// <summary>Field number for the "id" field.</summary>
+    public const int IdFieldNumber = 1;
+    private uint id_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint Id {
+      get { return id_; }
+      set {
+        id_ = value;
+      }
+    }
+
     /// <summary>Field number for the "file_name" field.</summary>
-    public const int FileNameFieldNumber = 1;
+    public const int FileNameFieldNumber = 2;
     private string fileName_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -778,6 +618,7 @@ namespace Proto {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (Id != other.Id) return false;
       if (FileName != other.FileName) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -786,6 +627,7 @@ namespace Proto {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
+      if (Id != 0) hash ^= Id.GetHashCode();
       if (FileName.Length != 0) hash ^= FileName.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -805,8 +647,12 @@ namespace Proto {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
+      if (Id != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(Id);
+      }
       if (FileName.Length != 0) {
-        output.WriteRawTag(10);
+        output.WriteRawTag(18);
         output.WriteString(FileName);
       }
       if (_unknownFields != null) {
@@ -819,8 +665,12 @@ namespace Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Id != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(Id);
+      }
       if (FileName.Length != 0) {
-        output.WriteRawTag(10);
+        output.WriteRawTag(18);
         output.WriteString(FileName);
       }
       if (_unknownFields != null) {
@@ -833,6 +683,9 @@ namespace Proto {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
+      if (Id != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(Id);
+      }
       if (FileName.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(FileName);
       }
@@ -847,6 +700,9 @@ namespace Proto {
     public void MergeFrom(FileStorageDownloadRequest other) {
       if (other == null) {
         return;
+      }
+      if (other.Id != 0) {
+        Id = other.Id;
       }
       if (other.FileName.Length != 0) {
         FileName = other.FileName;
@@ -866,7 +722,11 @@ namespace Proto {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 10: {
+          case 8: {
+            Id = input.ReadUInt32();
+            break;
+          }
+          case 18: {
             FileName = input.ReadString();
             break;
           }
@@ -885,7 +745,11 @@ namespace Proto {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 10: {
+          case 8: {
+            Id = input.ReadUInt32();
+            break;
+          }
+          case 18: {
             FileName = input.ReadString();
             break;
           }
@@ -910,7 +774,7 @@ namespace Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[4]; }
+      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[3]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1145,7 +1009,7 @@ namespace Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[5]; }
+      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[4]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1165,6 +1029,7 @@ namespace Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public FileStorageRemoveRequest(FileStorageRemoveRequest other) : this() {
+      id_ = other.id_;
       fileName_ = other.fileName_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -1175,8 +1040,20 @@ namespace Proto {
       return new FileStorageRemoveRequest(this);
     }
 
+    /// <summary>Field number for the "id" field.</summary>
+    public const int IdFieldNumber = 1;
+    private uint id_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint Id {
+      get { return id_; }
+      set {
+        id_ = value;
+      }
+    }
+
     /// <summary>Field number for the "file_name" field.</summary>
-    public const int FileNameFieldNumber = 1;
+    public const int FileNameFieldNumber = 2;
     private string fileName_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1202,6 +1079,7 @@ namespace Proto {
       if (ReferenceEquals(other, this)) {
         return true;
       }
+      if (Id != other.Id) return false;
       if (FileName != other.FileName) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1210,6 +1088,7 @@ namespace Proto {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
+      if (Id != 0) hash ^= Id.GetHashCode();
       if (FileName.Length != 0) hash ^= FileName.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -1229,8 +1108,12 @@ namespace Proto {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
+      if (Id != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(Id);
+      }
       if (FileName.Length != 0) {
-        output.WriteRawTag(10);
+        output.WriteRawTag(18);
         output.WriteString(FileName);
       }
       if (_unknownFields != null) {
@@ -1243,8 +1126,12 @@ namespace Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Id != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(Id);
+      }
       if (FileName.Length != 0) {
-        output.WriteRawTag(10);
+        output.WriteRawTag(18);
         output.WriteString(FileName);
       }
       if (_unknownFields != null) {
@@ -1257,6 +1144,9 @@ namespace Proto {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
+      if (Id != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(Id);
+      }
       if (FileName.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(FileName);
       }
@@ -1271,6 +1161,9 @@ namespace Proto {
     public void MergeFrom(FileStorageRemoveRequest other) {
       if (other == null) {
         return;
+      }
+      if (other.Id != 0) {
+        Id = other.Id;
       }
       if (other.FileName.Length != 0) {
         FileName = other.FileName;
@@ -1290,7 +1183,11 @@ namespace Proto {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 10: {
+          case 8: {
+            Id = input.ReadUInt32();
+            break;
+          }
+          case 18: {
             FileName = input.ReadString();
             break;
           }
@@ -1309,7 +1206,11 @@ namespace Proto {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 10: {
+          case 8: {
+            Id = input.ReadUInt32();
+            break;
+          }
+          case 18: {
             FileName = input.ReadString();
             break;
           }
@@ -1334,7 +1235,7 @@ namespace Proto {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[6]; }
+      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[5]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1355,7 +1256,6 @@ namespace Proto {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public FileStorageRemoveReply(FileStorageRemoveReply other) : this() {
       result_ = other.result_ != null ? other.result_.Clone() : null;
-      files_ = other.files_ != null ? other.files_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1377,18 +1277,6 @@ namespace Proto {
       }
     }
 
-    /// <summary>Field number for the "files" field.</summary>
-    public const int FilesFieldNumber = 2;
-    private global::Proto.FileStorageFilesStored files_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Proto.FileStorageFilesStored Files {
-      get { return files_; }
-      set {
-        files_ = value;
-      }
-    }
-
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -1405,7 +1293,6 @@ namespace Proto {
         return true;
       }
       if (!object.Equals(Result, other.Result)) return false;
-      if (!object.Equals(Files, other.Files)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1414,7 +1301,6 @@ namespace Proto {
     public override int GetHashCode() {
       int hash = 1;
       if (result_ != null) hash ^= Result.GetHashCode();
-      if (files_ != null) hash ^= Files.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1437,10 +1323,6 @@ namespace Proto {
         output.WriteRawTag(10);
         output.WriteMessage(Result);
       }
-      if (files_ != null) {
-        output.WriteRawTag(18);
-        output.WriteMessage(Files);
-      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1455,10 +1337,6 @@ namespace Proto {
         output.WriteRawTag(10);
         output.WriteMessage(Result);
       }
-      if (files_ != null) {
-        output.WriteRawTag(18);
-        output.WriteMessage(Files);
-      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1471,9 +1349,6 @@ namespace Proto {
       int size = 0;
       if (result_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Result);
-      }
-      if (files_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Files);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1492,12 +1367,6 @@ namespace Proto {
           Result = new global::Proto.ResultReply();
         }
         Result.MergeFrom(other.Result);
-      }
-      if (other.files_ != null) {
-        if (files_ == null) {
-          Files = new global::Proto.FileStorageFilesStored();
-        }
-        Files.MergeFrom(other.Files);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1519,13 +1388,6 @@ namespace Proto {
               Result = new global::Proto.ResultReply();
             }
             input.ReadMessage(Result);
-            break;
-          }
-          case 18: {
-            if (files_ == null) {
-              Files = new global::Proto.FileStorageFilesStored();
-            }
-            input.ReadMessage(Files);
             break;
           }
         }
@@ -1550,11 +1412,1130 @@ namespace Proto {
             input.ReadMessage(Result);
             break;
           }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class FileStorageServerUser : pb::IMessage<FileStorageServerUser>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<FileStorageServerUser> _parser = new pb::MessageParser<FileStorageServerUser>(() => new FileStorageServerUser());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<FileStorageServerUser> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[6]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FileStorageServerUser() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FileStorageServerUser(FileStorageServerUser other) : this() {
+      id_ = other.id_;
+      name_ = other.name_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FileStorageServerUser Clone() {
+      return new FileStorageServerUser(this);
+    }
+
+    /// <summary>Field number for the "id" field.</summary>
+    public const int IdFieldNumber = 1;
+    private uint id_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint Id {
+      get { return id_; }
+      set {
+        id_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 2;
+    private string name_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Name {
+      get { return name_; }
+      set {
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as FileStorageServerUser);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(FileStorageServerUser other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Id != other.Id) return false;
+      if (Name != other.Name) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Id != 0) hash ^= Id.GetHashCode();
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Id != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(Id);
+      }
+      if (Name.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Name);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Id != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(Id);
+      }
+      if (Name.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Name);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (Id != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(Id);
+      }
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(FileStorageServerUser other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Id != 0) {
+        Id = other.Id;
+      }
+      if (other.Name.Length != 0) {
+        Name = other.Name;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Id = input.ReadUInt32();
+            break;
+          }
           case 18: {
-            if (files_ == null) {
-              Files = new global::Proto.FileStorageFilesStored();
+            Name = input.ReadString();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            Id = input.ReadUInt32();
+            break;
+          }
+          case 18: {
+            Name = input.ReadString();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class FileStorageServerDataRequest : pb::IMessage<FileStorageServerDataRequest>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<FileStorageServerDataRequest> _parser = new pb::MessageParser<FileStorageServerDataRequest>(() => new FileStorageServerDataRequest());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<FileStorageServerDataRequest> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[7]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FileStorageServerDataRequest() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FileStorageServerDataRequest(FileStorageServerDataRequest other) : this() {
+      id_ = other.id_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FileStorageServerDataRequest Clone() {
+      return new FileStorageServerDataRequest(this);
+    }
+
+    /// <summary>Field number for the "id" field.</summary>
+    public const int IdFieldNumber = 1;
+    private uint id_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint Id {
+      get { return id_; }
+      set {
+        id_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as FileStorageServerDataRequest);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(FileStorageServerDataRequest other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Id != other.Id) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Id != 0) hash ^= Id.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Id != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(Id);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Id != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(Id);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (Id != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(Id);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(FileStorageServerDataRequest other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Id != 0) {
+        Id = other.Id;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Id = input.ReadUInt32();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            Id = input.ReadUInt32();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class FileStorageServerDataReply : pb::IMessage<FileStorageServerDataReply>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<FileStorageServerDataReply> _parser = new pb::MessageParser<FileStorageServerDataReply>(() => new FileStorageServerDataReply());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<FileStorageServerDataReply> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[8]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FileStorageServerDataReply() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FileStorageServerDataReply(FileStorageServerDataReply other) : this() {
+      result_ = other.result_ != null ? other.result_.Clone() : null;
+      idConnectedTo_ = other.idConnectedTo_;
+      users_ = other.users_.Clone();
+      fileNames_ = other.fileNames_.Clone();
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FileStorageServerDataReply Clone() {
+      return new FileStorageServerDataReply(this);
+    }
+
+    /// <summary>Field number for the "result" field.</summary>
+    public const int ResultFieldNumber = 1;
+    private global::Proto.ResultReply result_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Proto.ResultReply Result {
+      get { return result_; }
+      set {
+        result_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "id_connected_to" field.</summary>
+    public const int IdConnectedToFieldNumber = 2;
+    private uint idConnectedTo_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint IdConnectedTo {
+      get { return idConnectedTo_; }
+      set {
+        idConnectedTo_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "users" field.</summary>
+    public const int UsersFieldNumber = 3;
+    private static readonly pb::FieldCodec<global::Proto.FileStorageServerUser> _repeated_users_codec
+        = pb::FieldCodec.ForMessage(26, global::Proto.FileStorageServerUser.Parser);
+    private readonly pbc::RepeatedField<global::Proto.FileStorageServerUser> users_ = new pbc::RepeatedField<global::Proto.FileStorageServerUser>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pbc::RepeatedField<global::Proto.FileStorageServerUser> Users {
+      get { return users_; }
+    }
+
+    /// <summary>Field number for the "file_names" field.</summary>
+    public const int FileNamesFieldNumber = 4;
+    private static readonly pb::FieldCodec<string> _repeated_fileNames_codec
+        = pb::FieldCodec.ForString(34);
+    private readonly pbc::RepeatedField<string> fileNames_ = new pbc::RepeatedField<string>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pbc::RepeatedField<string> FileNames {
+      get { return fileNames_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as FileStorageServerDataReply);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(FileStorageServerDataReply other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!object.Equals(Result, other.Result)) return false;
+      if (IdConnectedTo != other.IdConnectedTo) return false;
+      if(!users_.Equals(other.users_)) return false;
+      if(!fileNames_.Equals(other.fileNames_)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (result_ != null) hash ^= Result.GetHashCode();
+      if (IdConnectedTo != 0) hash ^= IdConnectedTo.GetHashCode();
+      hash ^= users_.GetHashCode();
+      hash ^= fileNames_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (result_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(Result);
+      }
+      if (IdConnectedTo != 0) {
+        output.WriteRawTag(16);
+        output.WriteUInt32(IdConnectedTo);
+      }
+      users_.WriteTo(output, _repeated_users_codec);
+      fileNames_.WriteTo(output, _repeated_fileNames_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (result_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(Result);
+      }
+      if (IdConnectedTo != 0) {
+        output.WriteRawTag(16);
+        output.WriteUInt32(IdConnectedTo);
+      }
+      users_.WriteTo(ref output, _repeated_users_codec);
+      fileNames_.WriteTo(ref output, _repeated_fileNames_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (result_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Result);
+      }
+      if (IdConnectedTo != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(IdConnectedTo);
+      }
+      size += users_.CalculateSize(_repeated_users_codec);
+      size += fileNames_.CalculateSize(_repeated_fileNames_codec);
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(FileStorageServerDataReply other) {
+      if (other == null) {
+        return;
+      }
+      if (other.result_ != null) {
+        if (result_ == null) {
+          Result = new global::Proto.ResultReply();
+        }
+        Result.MergeFrom(other.Result);
+      }
+      if (other.IdConnectedTo != 0) {
+        IdConnectedTo = other.IdConnectedTo;
+      }
+      users_.Add(other.users_);
+      fileNames_.Add(other.fileNames_);
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            if (result_ == null) {
+              Result = new global::Proto.ResultReply();
             }
-            input.ReadMessage(Files);
+            input.ReadMessage(Result);
+            break;
+          }
+          case 16: {
+            IdConnectedTo = input.ReadUInt32();
+            break;
+          }
+          case 26: {
+            users_.AddEntriesFrom(input, _repeated_users_codec);
+            break;
+          }
+          case 34: {
+            fileNames_.AddEntriesFrom(input, _repeated_fileNames_codec);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            if (result_ == null) {
+              Result = new global::Proto.ResultReply();
+            }
+            input.ReadMessage(Result);
+            break;
+          }
+          case 16: {
+            IdConnectedTo = input.ReadUInt32();
+            break;
+          }
+          case 26: {
+            users_.AddEntriesFrom(ref input, _repeated_users_codec);
+            break;
+          }
+          case 34: {
+            fileNames_.AddEntriesFrom(ref input, _repeated_fileNames_codec);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class FileStorageJoinUserRequest : pb::IMessage<FileStorageJoinUserRequest>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<FileStorageJoinUserRequest> _parser = new pb::MessageParser<FileStorageJoinUserRequest>(() => new FileStorageJoinUserRequest());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<FileStorageJoinUserRequest> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[9]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FileStorageJoinUserRequest() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FileStorageJoinUserRequest(FileStorageJoinUserRequest other) : this() {
+      idFrom_ = other.idFrom_;
+      idTo_ = other.idTo_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FileStorageJoinUserRequest Clone() {
+      return new FileStorageJoinUserRequest(this);
+    }
+
+    /// <summary>Field number for the "id_from" field.</summary>
+    public const int IdFromFieldNumber = 1;
+    private uint idFrom_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint IdFrom {
+      get { return idFrom_; }
+      set {
+        idFrom_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "id_to" field.</summary>
+    public const int IdToFieldNumber = 2;
+    private uint idTo_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint IdTo {
+      get { return idTo_; }
+      set {
+        idTo_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as FileStorageJoinUserRequest);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(FileStorageJoinUserRequest other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (IdFrom != other.IdFrom) return false;
+      if (IdTo != other.IdTo) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (IdFrom != 0) hash ^= IdFrom.GetHashCode();
+      if (IdTo != 0) hash ^= IdTo.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (IdFrom != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(IdFrom);
+      }
+      if (IdTo != 0) {
+        output.WriteRawTag(16);
+        output.WriteUInt32(IdTo);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (IdFrom != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(IdFrom);
+      }
+      if (IdTo != 0) {
+        output.WriteRawTag(16);
+        output.WriteUInt32(IdTo);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (IdFrom != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(IdFrom);
+      }
+      if (IdTo != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(IdTo);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(FileStorageJoinUserRequest other) {
+      if (other == null) {
+        return;
+      }
+      if (other.IdFrom != 0) {
+        IdFrom = other.IdFrom;
+      }
+      if (other.IdTo != 0) {
+        IdTo = other.IdTo;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            IdFrom = input.ReadUInt32();
+            break;
+          }
+          case 16: {
+            IdTo = input.ReadUInt32();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            IdFrom = input.ReadUInt32();
+            break;
+          }
+          case 16: {
+            IdTo = input.ReadUInt32();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  public sealed partial class FileStorageJoinUserReply : pb::IMessage<FileStorageJoinUserReply>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<FileStorageJoinUserReply> _parser = new pb::MessageParser<FileStorageJoinUserReply>(() => new FileStorageJoinUserReply());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<FileStorageJoinUserReply> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Proto.FileStorageReflection.Descriptor.MessageTypes[10]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FileStorageJoinUserReply() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FileStorageJoinUserReply(FileStorageJoinUserReply other) : this() {
+      result_ = other.result_ != null ? other.result_.Clone() : null;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FileStorageJoinUserReply Clone() {
+      return new FileStorageJoinUserReply(this);
+    }
+
+    /// <summary>Field number for the "result" field.</summary>
+    public const int ResultFieldNumber = 1;
+    private global::Proto.ResultReply result_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Proto.ResultReply Result {
+      get { return result_; }
+      set {
+        result_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as FileStorageJoinUserReply);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(FileStorageJoinUserReply other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!object.Equals(Result, other.Result)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (result_ != null) hash ^= Result.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (result_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(Result);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (result_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(Result);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (result_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Result);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(FileStorageJoinUserReply other) {
+      if (other == null) {
+        return;
+      }
+      if (other.result_ != null) {
+        if (result_ == null) {
+          Result = new global::Proto.ResultReply();
+        }
+        Result.MergeFrom(other.Result);
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            if (result_ == null) {
+              Result = new global::Proto.ResultReply();
+            }
+            input.ReadMessage(Result);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            if (result_ == null) {
+              Result = new global::Proto.ResultReply();
+            }
+            input.ReadMessage(Result);
             break;
           }
         }

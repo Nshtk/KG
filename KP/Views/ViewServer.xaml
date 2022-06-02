@@ -3,50 +3,80 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:KP.Views"
+
              mc:Ignorable="d"
              d:DesignHeight="500" d:DesignWidth="500">
     
     <Grid>
+        <!--xmlns:local="clr-namespace:KP.Views"
+        xmlns:io="clr-namespace:System.IO;assembly=mscorlib"-->
         <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="400"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         
-        <ListBox Grid.Column="1" ItemsSource="{Binding}">
-            <ScrollViewer.VerticalScrollBarVisibility>Auto</ScrollViewer.VerticalScrollBarVisibility>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal" x:Name="stack_panel_files">
-                        <TextBlock Text="{Binding File_Name}" Width="100"/>
-                        <Button Content="Download" Command="{Binding CommandDownload}">
-                            <Button.Style>
-                                <Style TargetType="{x:Type Button}">
-                                    <Setter Property="Visibility" Value="Hidden" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsMouseOver, ElementName=stack_panel_files}" Value="True">
-                                            <Setter Property="Visibility" Value="Visible" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        
-        <StackPanel Grid.Row="1" Grid.Column="1">
-            <TextBlock Text="{Binding GRPC_Info}"></TextBlock>
-            <Button Content="Connect to server" Command="{Binding CommandConnectToServer}"></Button>
+        <StackPanel Grid.Column="1" Grid.RowSpan="3" Orientation="Horizontal">
+            <StackPanel>
+                <ListBox Height="300" Width="140" x:Name="ListBox_users" ItemsSource="{Binding Users}" SelectionMode="Single" SelectionChanged="ListBox_users_SelectionChanged">
+                    <ScrollViewer.VerticalScrollBarVisibility>Auto</ScrollViewer.VerticalScrollBarVisibility>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel x:Name="StackPanel_users" Orientation="Horizontal">
+                                <TextBlock Text="{Binding}" Width="100"/> <!--"{Binding RelativeSource={x:Static RelativeSource.Self}}"-->
+                                <Button Content="Connect" Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.CommandJoinUser}">
+                                    <Button.Style>
+                                        <Style TargetType="{x:Type Button}">
+                                            <Setter Property="Visibility" Value="Hidden" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <TextBox Text="{Binding Instance_User_Name, Mode=TwoWay}"></TextBox>
+                <Button Content="Connect to server" Command="{Binding CommandConnectToServer}" IsEnabled="{Binding Button_Connect_Status}"></Button>
+            </StackPanel>
+            
+            <StackPanel>
+            <ListBox Height="300" Width="140" x:Name="ListBox_files" ItemsSource="{Binding Files}" SelectionMode="Extended" SelectionChanged="ListBox_files_SelectionChanged" Visibility="{Binding Files_Visibility}">
+                <ScrollViewer.VerticalScrollBarVisibility>Auto</ScrollViewer.VerticalScrollBarVisibility>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel x:Name="StackPanel_files" Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}" Width="100"/>
+                            <Button Content="Download" Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.CommandDownloadFileFromServer}">
+                                <Button.Style>
+                                    <Style TargetType="{x:Type Button}">
+                                        <Setter Property="Visibility" Value="Hidden" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBlock Text="{Binding User_Linked}" Height="17.7"></TextBlock>
             <Button Content="Upload opened file" Command="{Binding CommandUploadFileToServer}"></Button>
+            </StackPanel>
         </StackPanel>
         
+        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding GRPC_Info}"></TextBlock>
     </Grid>
 </UserControl>

@@ -5,14 +5,22 @@ import "common.proto";
 
 package standard;
 
-message AuthenticationJoinRequest {
+message AuthenticationConnectRequest {
   string user_name=1;
 }
-message AuthenticationJoinReply {
+message AuthenticationConnectReply {
+  uint32 id=1;
+  common.ResultReply result=2;
+}
+
+message AuthenticationMaintainConnectionRequest {
+  uint32 id=1;
+}
+message AuthenticationMaintainConnectionReply {
   common.ResultReply result=1;
-  repeated string user_names=2;
 }
 
 service Authentication {
-  rpc connect(AuthenticationJoinRequest) returns(AuthenticationJoinReply);
+  rpc connect(AuthenticationConnectRequest) returns(AuthenticationConnectReply);
+  rpc maintainConnection(AuthenticationMaintainConnectionRequest) returns(AuthenticationMaintainConnectionReply);
 }

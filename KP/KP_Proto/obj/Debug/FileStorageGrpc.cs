@@ -57,6 +57,14 @@ namespace Proto {
     static readonly grpc::Marshaller<global::Proto.FileStorageRemoveRequest> __Marshaller_standard_FileStorageRemoveRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Proto.FileStorageRemoveRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Proto.FileStorageRemoveReply> __Marshaller_standard_FileStorageRemoveReply = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Proto.FileStorageRemoveReply.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Proto.FileStorageServerDataRequest> __Marshaller_standard_FileStorageServerDataRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Proto.FileStorageServerDataRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Proto.FileStorageServerDataReply> __Marshaller_standard_FileStorageServerDataReply = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Proto.FileStorageServerDataReply.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Proto.FileStorageJoinUserRequest> __Marshaller_standard_FileStorageJoinUserRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Proto.FileStorageJoinUserRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Proto.FileStorageJoinUserReply> __Marshaller_standard_FileStorageJoinUserReply = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Proto.FileStorageJoinUserReply.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::Proto.FileStorageUploadRequest, global::Proto.FileStorageUploadReply> __Method_upload = new grpc::Method<global::Proto.FileStorageUploadRequest, global::Proto.FileStorageUploadReply>(
@@ -81,6 +89,22 @@ namespace Proto {
         "remove",
         __Marshaller_standard_FileStorageRemoveRequest,
         __Marshaller_standard_FileStorageRemoveReply);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Proto.FileStorageServerDataRequest, global::Proto.FileStorageServerDataReply> __Method_getServerData = new grpc::Method<global::Proto.FileStorageServerDataRequest, global::Proto.FileStorageServerDataReply>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "getServerData",
+        __Marshaller_standard_FileStorageServerDataRequest,
+        __Marshaller_standard_FileStorageServerDataReply);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Proto.FileStorageJoinUserRequest, global::Proto.FileStorageJoinUserReply> __Method_joinUser = new grpc::Method<global::Proto.FileStorageJoinUserRequest, global::Proto.FileStorageJoinUserReply>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "joinUser",
+        __Marshaller_standard_FileStorageJoinUserRequest,
+        __Marshaller_standard_FileStorageJoinUserReply);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
@@ -174,6 +198,46 @@ namespace Proto {
       public virtual grpc::AsyncUnaryCall<global::Proto.FileStorageRemoveReply> removeAsync(global::Proto.FileStorageRemoveRequest request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_remove, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Proto.FileStorageServerDataReply getServerData(global::Proto.FileStorageServerDataRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return getServerData(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Proto.FileStorageServerDataReply getServerData(global::Proto.FileStorageServerDataRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_getServerData, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Proto.FileStorageServerDataReply> getServerDataAsync(global::Proto.FileStorageServerDataRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return getServerDataAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Proto.FileStorageServerDataReply> getServerDataAsync(global::Proto.FileStorageServerDataRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_getServerData, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Proto.FileStorageJoinUserReply joinUser(global::Proto.FileStorageJoinUserRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return joinUser(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Proto.FileStorageJoinUserReply joinUser(global::Proto.FileStorageJoinUserRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_joinUser, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Proto.FileStorageJoinUserReply> joinUserAsync(global::Proto.FileStorageJoinUserRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return joinUserAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Proto.FileStorageJoinUserReply> joinUserAsync(global::Proto.FileStorageJoinUserRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_joinUser, null, options, request);
       }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]

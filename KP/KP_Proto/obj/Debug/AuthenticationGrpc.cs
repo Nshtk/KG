@@ -46,17 +46,29 @@ namespace Proto {
     }
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Proto.AuthenticationJoinRequest> __Marshaller_standard_AuthenticationJoinRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Proto.AuthenticationJoinRequest.Parser));
+    static readonly grpc::Marshaller<global::Proto.AuthenticationConnectRequest> __Marshaller_standard_AuthenticationConnectRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Proto.AuthenticationConnectRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Proto.AuthenticationJoinReply> __Marshaller_standard_AuthenticationJoinReply = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Proto.AuthenticationJoinReply.Parser));
+    static readonly grpc::Marshaller<global::Proto.AuthenticationConnectReply> __Marshaller_standard_AuthenticationConnectReply = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Proto.AuthenticationConnectReply.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Proto.AuthenticationMaintainConnectionRequest> __Marshaller_standard_AuthenticationMaintainConnectionRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Proto.AuthenticationMaintainConnectionRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Proto.AuthenticationMaintainConnectionReply> __Marshaller_standard_AuthenticationMaintainConnectionReply = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Proto.AuthenticationMaintainConnectionReply.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Proto.AuthenticationJoinRequest, global::Proto.AuthenticationJoinReply> __Method_connect = new grpc::Method<global::Proto.AuthenticationJoinRequest, global::Proto.AuthenticationJoinReply>(
+    static readonly grpc::Method<global::Proto.AuthenticationConnectRequest, global::Proto.AuthenticationConnectReply> __Method_connect = new grpc::Method<global::Proto.AuthenticationConnectRequest, global::Proto.AuthenticationConnectReply>(
         grpc::MethodType.Unary,
         __ServiceName,
         "connect",
-        __Marshaller_standard_AuthenticationJoinRequest,
-        __Marshaller_standard_AuthenticationJoinReply);
+        __Marshaller_standard_AuthenticationConnectRequest,
+        __Marshaller_standard_AuthenticationConnectReply);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Proto.AuthenticationMaintainConnectionRequest, global::Proto.AuthenticationMaintainConnectionReply> __Method_maintainConnection = new grpc::Method<global::Proto.AuthenticationMaintainConnectionRequest, global::Proto.AuthenticationMaintainConnectionReply>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "maintainConnection",
+        __Marshaller_standard_AuthenticationMaintainConnectionRequest,
+        __Marshaller_standard_AuthenticationMaintainConnectionReply);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
@@ -92,24 +104,44 @@ namespace Proto {
       }
 
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Proto.AuthenticationJoinReply connect(global::Proto.AuthenticationJoinRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::Proto.AuthenticationConnectReply connect(global::Proto.AuthenticationConnectRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return connect(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Proto.AuthenticationJoinReply connect(global::Proto.AuthenticationJoinRequest request, grpc::CallOptions options)
+      public virtual global::Proto.AuthenticationConnectReply connect(global::Proto.AuthenticationConnectRequest request, grpc::CallOptions options)
       {
         return CallInvoker.BlockingUnaryCall(__Method_connect, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Proto.AuthenticationJoinReply> connectAsync(global::Proto.AuthenticationJoinRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncUnaryCall<global::Proto.AuthenticationConnectReply> connectAsync(global::Proto.AuthenticationConnectRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return connectAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Proto.AuthenticationJoinReply> connectAsync(global::Proto.AuthenticationJoinRequest request, grpc::CallOptions options)
+      public virtual grpc::AsyncUnaryCall<global::Proto.AuthenticationConnectReply> connectAsync(global::Proto.AuthenticationConnectRequest request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_connect, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Proto.AuthenticationMaintainConnectionReply maintainConnection(global::Proto.AuthenticationMaintainConnectionRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return maintainConnection(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Proto.AuthenticationMaintainConnectionReply maintainConnection(global::Proto.AuthenticationMaintainConnectionRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_maintainConnection, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Proto.AuthenticationMaintainConnectionReply> maintainConnectionAsync(global::Proto.AuthenticationMaintainConnectionRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return maintainConnectionAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Proto.AuthenticationMaintainConnectionReply> maintainConnectionAsync(global::Proto.AuthenticationMaintainConnectionRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_maintainConnection, null, options, request);
       }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]

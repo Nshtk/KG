@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Storage" />
+      <Folder Include="fIle_storage\user_chat" />
     </ItemGroup>
 
 </Project>
