@@ -8,6 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using Grpc.Core;
 using Google.Protobuf;
+using Google.Protobuf.Collections;
+using KP.Context;
 using Soldatov.Wpf.MVVM.Core;
 using Proto;
 
@@ -30,18 +32,23 @@ namespace KP.ViewModels
         private FileStorageJoinUserReply _reply_file_storage_join_user;
         
         private SynchronizationContext ui_context = SynchronizationContext.Current;
+        private ElGamal _instance_session_algorithm=new ElGamal(KeyExpansionElGamal.PrimalityTestingMode.FERMAT, 0.999, 128);
         private string _instance_files_folder="..\\..\\file_storage\\";
         private string _instance_user_name="User";
         private uint _instance_id;
+        private byte[][] _instance_session_key;
+        private byte[] _instance_symmetric_key;
+        private byte[][] _instance_public_key;
+        private byte[][] _instance_private_key=new byte[2][];
         private ObservableCollection<string> _users;
         private ObservableCollection<string> _users_selected;
         private ObservableCollection<FileInfo> _files;
         private ObservableCollection<FileInfo> _files_files_selected;
         private string _grpc_info;
-
-        private bool _button_connect_status=true;
+        
         private Visibility _files_visibility;
         
+        private bool _connect_can_execute=true;
         private RelayCommandAsync _command_connect_to_server;
         private RelayCommandAsync _command_join_user;
         private RelayCommandAsync _command_upload_file_to_server;
@@ -64,8 +71,7 @@ namespace KP.ViewModels
                     GRPC_Info="ERROR: Cannot set this user name!";
                     return;
                 }
-                else
-                    GRPC_Info="";
+                GRPC_Info="";
                    
                 _instance_user_name=value;
                 invokePropertyChanged("Instance_User_Name");
@@ -91,12 +97,7 @@ namespace KP.ViewModels
             get {return _files_files_selected;}
             set {_files_files_selected=value; invokePropertyChanged("ListBox_Files_Selected_Items");}
         }
-
-        public bool Button_Connect_Status
-        {
-            get {return _button_connect_status;}
-            set {_button_connect_status=value; invokePropertyChanged("Button_Connect_Status");}
-        }
+        
         public Visibility Files_Visibility
         {
             get {return _files_visibility;}
@@ -144,7 +145,6 @@ namespace KP.ViewModels
             _reply_file_storage_data=new FileStorageServerDataReply();
             _request_file_storage_join_user=new FileStorageJoinUserRequest();
             _reply_file_storage_join_user=new FileStorageJoinUserReply();
-
             _users=new ObservableCollection<string>();
             _files=new ObservableCollection<FileInfo>();
         }
@@ -152,6 +152,8 @@ namespace KP.ViewModels
         {
             Users=new ObservableCollection<string>();
             Files=new ObservableCollection<FileInfo>();
+            
+            _request_file_storage_data.Id=_instance_id;
             if(amount_times!=0)
             {
                 for(int i=0; i<amount_times; i++)
@@ -166,7 +168,25 @@ namespace KP.ViewModels
                 {
                     _reply_file_storage_data=await _client_file_storage.getServerDataAsync(_request_file_storage_data);
                     if(_reply_file_storage_data.Result.Result==false)
-                        return;
+                        continue;
+                    if(_reply_file_storage_data.PublicKey.Count!=0)
+                    {
+                        _instance_public_key=new byte[3][];
+                        for(int i=0; i<3; i++)
+                            _instance_public_key[i]=_reply_file_storage_data.PublicKey[i].ToByteArray();
+                        ((ViewmodelClient)ViewModelMain.View_Model_Main.viewmodels[0]).Algorithm_Model.generateSymmetricKey(0, 1);
+                        _instance_private_key[0]=((ViewmodelClient)ViewModelMain.View_Model_Main.viewmodels[0]).Algorithm_Model.Key;
+                        _instance_session_algorithm.encrypt(_instance_private_key[0], ref _instance_private_key[1], _instance_public_key);
+                        _request_file_storage_data.Key=ByteString.CopyFrom(_instance_private_key[1]);
+                    }
+                    if(_reply_file_storage_data.SymmetricKey.Length!=0)
+                    {
+                        _instance_private_key[1]=_reply_file_storage_data.SymmetricKey.ToByteArray();
+                        _instance_session_algorithm.decrypt(_instance_private_key[1], ref _instance_private_key[0], _instance_session_key);
+                        ((ViewmodelClient)ViewModelMain.View_Model_Main.viewmodels[0]).Algorithm_Model.Key=_instance_private_key[0];
+                        GRPC_Info="Successfully connected to other user.";
+                    }
+                    
                     foreach (var file_name in _reply_file_storage_data.FileNames)
                     {
                         if(Files.FirstOrDefault(i=> i.Name==file_name)==null)
@@ -178,8 +198,7 @@ namespace KP.ViewModels
                         if(Users.FirstOrDefault(i=> i==name)==null)
                             ui_context.Send(x => Users.Add(name), null);
                     }
-                    Users.Remove($"{_instance_user_name}#{_instance_id}");
-                    
+
                     await Task.Delay(delay);
                 }
             }
@@ -191,23 +210,37 @@ namespace KP.ViewModels
 
             reply=await _client_authentication.connectAsync(new AuthenticationConnectRequest
                                             {UserName=Instance_User_Name});
-            //System.Diagnostics.Trace.WriteLine($"Server answer: {reply.Result.Info}");      // TODO check
-            _instance_id=reply.Id;
+            
             GRPC_Info=reply.Result.Info;
-
+            if(reply.Result.Result==false)
+                return;
+            
+            _instance_id=reply.Id;
+            _connect_can_execute=false;
             initializeGRPC();
             await Task.Run(() => updateDataFromServer(0));
-            Button_Connect_Status=false;
         }
         private bool connectToServer_canExecute(object parameter)
         {
-            return true;
+            return _connect_can_execute;
         }
         private async Task joinUser_execute()
         {
             _request_file_storage_join_user.IdFrom=_instance_id;
-            _request_file_storage_join_user.IdTo=Convert.ToUInt32(ListBox_Users_Selected_Items[0].Substring(ListBox_Users_Selected_Items[0].IndexOf("#")));
+            /*uint a=Convert.ToUInt32(ListBox_Users_Selected_Items[0].Substring(ListBox_Users_Selected_Items[0].IndexOf("#")+1));
+            System.Diagnostics.Trace.WriteLine($"{a}");*/
+            _request_file_storage_join_user.IdTo=Convert.ToUInt32(ListBox_Users_Selected_Items[0].Substring(ListBox_Users_Selected_Items[0].IndexOf("#")+1));
+            _instance_session_key=_instance_session_algorithm.getKeysRound(null);
+            _request_file_storage_join_user.PublicKey.Add(ByteString.CopyFrom(_instance_session_key[0]));
+            _request_file_storage_join_user.PublicKey.Add(ByteString.CopyFrom(_instance_session_key[1]));
+            _request_file_storage_join_user.PublicKey.Add(ByteString.CopyFrom(_instance_session_key[2]));
             _reply_file_storage_join_user=await _client_file_storage.joinUserAsync(_request_file_storage_join_user);
+            if(_reply_file_storage_join_user.Result.Result==false)
+            {
+                _instance_session_key=null;
+                _instance_public_key=null;
+                _instance_private_key=null;
+            }
             GRPC_Info=_reply_file_storage_join_user.Result.Info;
         }
         private bool joinUser_canExecute(object parameter)
@@ -232,7 +265,7 @@ namespace KP.ViewModels
         }
         private async Task downloadFileFromServer_execute()
         {
-            await Task.Run(() =>                    // hehheeheh
+            await Task.Run(() => 
             {
                 Parallel.ForEach(ListBox_Files_Selected_Items, file =>
                 {
@@ -251,12 +284,6 @@ namespace KP.ViewModels
                     }
                 });
             });
-            
-            /*foreach (var file in ListBox_Files_Selected_Items)
-            {
-                _request_file_storage_download.FileName=file.Name;
-                _reply_file_storage_download=await _client_file_storage.downloadAsync(_request_file_storage_download);
-            }*/
         }
         private bool downloadFileFromServer_canExecute(object parameter)
         {

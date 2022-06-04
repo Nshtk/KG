@@ -356,7 +356,7 @@ namespace KP.Context
         }
         public byte[][] getKeysRound(byte[] key)
         {
-            BigInteger p=getPrimeNumber(_prime_numbers_length_bits, _prime_numbers_length_bits), p_minus_one=p-1, q=p_minus_one/2, g=1, x, y; //g=2
+            BigInteger p=getPrimeNumber(_prime_numbers_length_bits, _prime_numbers_length_bits), p_minus_one=p-1, q=p_minus_one/2, g=1, x, y;
 
             for( ; g<p_minus_one; g++)
                 if(BigInteger.ModPow(g, 2, p)!=1 && BigInteger.ModPow(g, q, p)!=1)

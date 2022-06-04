@@ -37,17 +37,21 @@ message FileStorageServerUser {
 }
 message FileStorageServerDataRequest {
   uint32 id=1;
+  bytes key=2;
 }
 message FileStorageServerDataReply {
   common.ResultReply result=1;
   uint32 id_connected_to=2;
   repeated FileStorageServerUser users=3;
   repeated string file_names=4;
+  repeated bytes public_key=5;
+  bytes symmetric_key=6;
 }
 
 message FileStorageJoinUserRequest {
   uint32 id_from=1;
   uint32 id_to=2;
+  repeated bytes public_key=3;
 }
 message FileStorageJoinUserReply {
   common.ResultReply result=1;

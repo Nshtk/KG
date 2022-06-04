@@ -100,6 +100,12 @@ namespace KP.Models
             Algorithm=Algorithms[0];
         }
 
+        public void generateSymmetricKey(int min=0, int max=3)
+        {
+            byte[] number_bytes_possible=new byte[] {16, 24, 32}, tmp=new byte[number_bytes_possible[Utility.Rng.Next(min, max)]];
+            Utility.Rng.NextBytes(tmp);
+            Key=tmp;
+        }
         public void initialize()
         {
             if(_algorithm.IsSymmetric)
@@ -109,9 +115,10 @@ namespace KP.Models
                     case Camellia:
                         if(_key==null)
                         {
-                            byte[] number_bytes_possible=new byte[] {16, 24, 32}, tmp=new byte[number_bytes_possible[Utility.Rng.Next(3)]];
+                            generateSymmetricKey();
+                            /*byte[] number_bytes_possible=new byte[] {16, 24, 32}, tmp=new byte[number_bytes_possible[Utility.Rng.Next(3)]];
                             Utility.Rng.NextBytes(tmp);
-                            Key=tmp;
+                            Key=getSymmetricKey();*/
                         }
                         break;
                     default:
@@ -129,7 +136,7 @@ namespace KP.Models
                     _keys_round=_algorithm.getKeysRound(_key);
         }
 
-        public async Task<byte[][]> encrypt(byte[] bytes_input, CancellationToken token) // TODO refactor
+        public async Task<byte[][]> encrypt(byte[] bytes_input, CancellationToken token)
         {
             initialize();
 
@@ -207,7 +214,6 @@ namespace KP.Models
                         });
                         break;
                     case Utility.CipheringMode.RD:
-                        _mask=Utility.getNBitMask(_message_length/2);
                         _bytes_input_parts=bytes_input.toArray2D(_message_length);
                         bytes_input_part_init_biginteger=new BigInteger(_init_vector);
                         bytes_output=new byte[bytes_output.Length+1][];
@@ -220,16 +226,34 @@ namespace KP.Models
                             _bytes_input_parts[j]=(bytes_input_part_init_biginteger^new BigInteger(_bytes_input_parts[j])).ToByteArray();
                             Utility.pad(ref _bytes_input_parts[j], _message_length);
                             _algorithm.encrypt(in _bytes_input_parts[j], ref bytes_output[Bytes_Current_Message_Number], _keys_round);
-                            bytes_input_part_init_biginteger+=bytes_input_part_init_biginteger&_mask;
+                            bytes_input_part_init_biginteger+=bytes_input_part_init_biginteger;
                         }
                         break;
                     case Utility.CipheringMode.RD_H:
+                        _bytes_input_parts=bytes_input.toArray2D(_message_length);
+                        bytes_input_part_init_biginteger=new BigInteger(_init_vector);
+                        bytes_output=new byte[bytes_output.Length+2][];
+
+                        tmp=bytes_input_part_init_biginteger.ToByteArray();
+                        Utility.pad(ref tmp, _message_length);
+                        _algorithm.encrypt(in tmp, ref bytes_output[Bytes_Current_Message_Number++], _keys_round);
+                        tmp=BitConverter.GetBytes(bytes_input.GetHashCode());
+                        Utility.pad(ref tmp, _message_length, Utility.PaddingType.RKCS7);
+                        bytes_output[Bytes_Current_Message_Number++]=(bytes_input_part_init_biginteger^new BigInteger(tmp)).ToByteArray();
+                        //_algorithm.encrypt(in tmp, ref bytes_output[Bytes_Current_Message_Number++], _keys_round);
+                        for(int j=0; Bytes_Current_Message_Number<_bytes_number_messages+2; Bytes_Current_Message_Number++, j++)
+                        {
+                            bytes_input_part_init_biginteger+=bytes_input_part_init_biginteger;
+                            tmp=(bytes_input_part_init_biginteger^new BigInteger(_bytes_input_parts[j])).ToByteArray();
+                            Utility.pad(ref tmp, _message_length);
+                            _algorithm.encrypt(in tmp, ref bytes_output[Bytes_Current_Message_Number], _keys_round);
+                        }
                         break;
                 }
             }
             else
             {
-                _bytes_input_parts=bytes_input.toArray2D(_message_length);
+                _bytes_input_parts=bytes_input.toArray2D(_message_length);              // TODO parallel
                 for( ; Bytes_Current_Message_Number<_bytes_number_messages; Bytes_Current_Message_Number++)
                 {
                     _algorithm.encrypt(in _bytes_input_parts[Bytes_Current_Message_Number], ref bytes_output[Bytes_Current_Message_Number], _keys_round);
@@ -237,14 +261,13 @@ namespace KP.Models
             }
             return bytes_output;
         }
-        public async Task<byte[][]> decrypt(byte[] bytes_input, CancellationToken token)                      // TODO refactor
+        public async Task<byte[][]> decrypt(byte[] bytes_input, CancellationToken token)
         {
             initialize();
 
             _message_length=_algorithm.MessageLength;
             Bytes_Number_Messages=(bytes_input.Length+_message_length-1)/_message_length;
-            //_tasks=new Task[_bytes_number_messages];
-            
+
             byte[][] bytes_output=new byte[_bytes_number_messages][];
             Bytes_Current_Message_Number=0;
             if(_algorithm.IsSymmetric)
@@ -313,7 +336,6 @@ namespace KP.Models
                         });
                         break;
                     case Utility.CipheringMode.RD:
-                        _mask=Utility.getNBitMask(_message_length/2);
                         _bytes_input_parts=bytes_input.toArray2D(_message_length);
                         _algorithm.decrypt(in _bytes_input_parts[Bytes_Current_Message_Number], ref bytes_output[Bytes_Current_Message_Number], _keys_round);
                         bytes_input_part_init_biginteger=new BigInteger(bytes_output[Bytes_Current_Message_Number++]);
@@ -321,13 +343,29 @@ namespace KP.Models
 
                         for(int j=0; Bytes_Current_Message_Number<_bytes_number_messages; Bytes_Current_Message_Number++, j++)
                         {
-                            _bytes_input_parts[Bytes_Current_Message_Number]=(bytes_input_part_init_biginteger^new BigInteger(_bytes_input_parts[Bytes_Current_Message_Number])).ToByteArray();
-                            Utility.pad(ref _bytes_input_parts[Bytes_Current_Message_Number], _message_length);
-                            _algorithm.encrypt(in _bytes_input_parts[Bytes_Current_Message_Number], ref bytes_output[j], _keys_round);
-                            bytes_input_part_init_biginteger+=bytes_input_part_init_biginteger&_mask;
+                            _algorithm.decrypt(in _bytes_input_parts[Bytes_Current_Message_Number], ref bytes_output[j], _keys_round);
+                            bytes_output[j]=(bytes_input_part_init_biginteger^new BigInteger(bytes_output[j])).ToByteArray();
+                            Utility.pad(ref bytes_output[j], _message_length);
+                            bytes_input_part_init_biginteger+=bytes_input_part_init_biginteger;
                         }
                         break;
                     case Utility.CipheringMode.RD_H:
+                        _bytes_input_parts=bytes_input.toArray2D(_message_length);
+                        bytes_input_part_init_biginteger=new BigInteger(_init_vector);
+                        bytes_output=new byte[bytes_output.Length-2][];
+                        
+                        tmp=BitConverter.GetBytes(bytes_input.GetHashCode());
+                        Utility.pad(ref tmp, _message_length, Utility.PaddingType.RKCS7);
+                        tmp=(bytes_input_part_init_biginteger^new BigInteger(tmp)).ToByteArray();
+
+                        for(int j=2; Bytes_Current_Message_Number<_bytes_number_messages-2; Bytes_Current_Message_Number++, j++)
+                        {
+                            bytes_input_part_init_biginteger+=bytes_input_part_init_biginteger;
+                            _algorithm.decrypt(in _bytes_input_parts[j], ref tmp, _keys_round);
+                            bytes_output[Bytes_Current_Message_Number]=(bytes_input_part_init_biginteger^new BigInteger(tmp)).ToByteArray();
+                            Utility.pad(ref bytes_output[Bytes_Current_Message_Number], _message_length);
+                        }
+                        Bytes_Current_Message_Number+=2;
                         break;
                 }
             }
@@ -340,6 +378,31 @@ namespace KP.Models
                 {
                     _algorithm.decrypt(in _bytes_input_parts[Bytes_Current_Message_Number], ref bytes_output[Bytes_Current_Message_Number], _keys_round);
                 }
+            }
+            return bytes_output;
+        }
+
+        public byte[][] encryptSession(byte[] bytes_input, byte[][] keys_round)
+        {
+            _message_length=8;
+            Bytes_Number_Messages=(bytes_input.Length+_message_length-1)/_message_length;
+            byte[][] bytes_output=new byte[_bytes_number_messages][];
+            _bytes_input_parts=bytes_input.toArray2D(_message_length);
+            for(int i=0; i<_bytes_number_messages; i++)
+            {
+                Algorithms[1].encrypt(in _bytes_input_parts[i], ref bytes_output[i], keys_round);
+            }
+            return bytes_output;
+        }
+        public byte[][] decryptSession(byte[] bytes_input, byte[][] keys_round)
+        {
+            _message_length=8;
+            _bytes_number_messages=(bytes_input.Length+_message_length*2-1)/(_message_length*2);
+            byte[][] bytes_output=new byte[_bytes_number_messages][];
+            _bytes_input_parts=bytes_input.toArray2D(_message_length*2);
+            for(int i=0; i<_bytes_number_messages; i++)
+            {
+                Algorithms[1].decrypt(in _bytes_input_parts[i], ref bytes_output[i], keys_round);
             }
             return bytes_output;
         }

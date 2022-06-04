@@ -35,24 +35,26 @@ namespace Proto {
             "GAEgASgNEhEKCWZpbGVfbmFtZRgCIAEoCSI9ChZGaWxlU3RvcmFnZVJlbW92",
             "ZVJlcGx5EiMKBnJlc3VsdBgBIAEoCzITLmNvbW1vbi5SZXN1bHRSZXBseSIx",
             "ChVGaWxlU3RvcmFnZVNlcnZlclVzZXISCgoCaWQYASABKA0SDAoEbmFtZRgC",
-            "IAEoCSIqChxGaWxlU3RvcmFnZVNlcnZlckRhdGFSZXF1ZXN0EgoKAmlkGAEg",
-            "ASgNIp4BChpGaWxlU3RvcmFnZVNlcnZlckRhdGFSZXBseRIjCgZyZXN1bHQY",
-            "ASABKAsyEy5jb21tb24uUmVzdWx0UmVwbHkSFwoPaWRfY29ubmVjdGVkX3Rv",
-            "GAIgASgNEi4KBXVzZXJzGAMgAygLMh8uc3RhbmRhcmQuRmlsZVN0b3JhZ2VT",
-            "ZXJ2ZXJVc2VyEhIKCmZpbGVfbmFtZXMYBCADKAkiPAoaRmlsZVN0b3JhZ2VK",
-            "b2luVXNlclJlcXVlc3QSDwoHaWRfZnJvbRgBIAEoDRINCgVpZF90bxgCIAEo",
-            "DSI/ChhGaWxlU3RvcmFnZUpvaW5Vc2VyUmVwbHkSIwoGcmVzdWx0GAEgASgL",
-            "MhMuY29tbW9uLlJlc3VsdFJlcGx5MrgDCgtGaWxlU3RvcmFnZRJOCgZ1cGxv",
-            "YWQSIi5zdGFuZGFyZC5GaWxlU3RvcmFnZVVwbG9hZFJlcXVlc3QaIC5zdGFu",
-            "ZGFyZC5GaWxlU3RvcmFnZVVwbG9hZFJlcGx5ElQKCGRvd25sb2FkEiQuc3Rh",
-            "bmRhcmQuRmlsZVN0b3JhZ2VEb3dubG9hZFJlcXVlc3QaIi5zdGFuZGFyZC5G",
-            "aWxlU3RvcmFnZURvd25sb2FkUmVwbHkSTgoGcmVtb3ZlEiIuc3RhbmRhcmQu",
-            "RmlsZVN0b3JhZ2VSZW1vdmVSZXF1ZXN0GiAuc3RhbmRhcmQuRmlsZVN0b3Jh",
-            "Z2VSZW1vdmVSZXBseRJdCg1nZXRTZXJ2ZXJEYXRhEiYuc3RhbmRhcmQuRmls",
-            "ZVN0b3JhZ2VTZXJ2ZXJEYXRhUmVxdWVzdBokLnN0YW5kYXJkLkZpbGVTdG9y",
-            "YWdlU2VydmVyRGF0YVJlcGx5ElQKCGpvaW5Vc2VyEiQuc3RhbmRhcmQuRmls",
-            "ZVN0b3JhZ2VKb2luVXNlclJlcXVlc3QaIi5zdGFuZGFyZC5GaWxlU3RvcmFn",
-            "ZUpvaW5Vc2VyUmVwbHlCCKoCBVByb3RvYgZwcm90bzM="));
+            "IAEoCSI3ChxGaWxlU3RvcmFnZVNlcnZlckRhdGFSZXF1ZXN0EgoKAmlkGAEg",
+            "ASgNEgsKA2tleRgCIAEoDCLJAQoaRmlsZVN0b3JhZ2VTZXJ2ZXJEYXRhUmVw",
+            "bHkSIwoGcmVzdWx0GAEgASgLMhMuY29tbW9uLlJlc3VsdFJlcGx5EhcKD2lk",
+            "X2Nvbm5lY3RlZF90bxgCIAEoDRIuCgV1c2VycxgDIAMoCzIfLnN0YW5kYXJk",
+            "LkZpbGVTdG9yYWdlU2VydmVyVXNlchISCgpmaWxlX25hbWVzGAQgAygJEhIK",
+            "CnB1YmxpY19rZXkYBSADKAwSFQoNc3ltbWV0cmljX2tleRgGIAEoDCJQChpG",
+            "aWxlU3RvcmFnZUpvaW5Vc2VyUmVxdWVzdBIPCgdpZF9mcm9tGAEgASgNEg0K",
+            "BWlkX3RvGAIgASgNEhIKCnB1YmxpY19rZXkYAyADKAwiPwoYRmlsZVN0b3Jh",
+            "Z2VKb2luVXNlclJlcGx5EiMKBnJlc3VsdBgBIAEoCzITLmNvbW1vbi5SZXN1",
+            "bHRSZXBseTK4AwoLRmlsZVN0b3JhZ2USTgoGdXBsb2FkEiIuc3RhbmRhcmQu",
+            "RmlsZVN0b3JhZ2VVcGxvYWRSZXF1ZXN0GiAuc3RhbmRhcmQuRmlsZVN0b3Jh",
+            "Z2VVcGxvYWRSZXBseRJUCghkb3dubG9hZBIkLnN0YW5kYXJkLkZpbGVTdG9y",
+            "YWdlRG93bmxvYWRSZXF1ZXN0GiIuc3RhbmRhcmQuRmlsZVN0b3JhZ2VEb3du",
+            "bG9hZFJlcGx5Ek4KBnJlbW92ZRIiLnN0YW5kYXJkLkZpbGVTdG9yYWdlUmVt",
+            "b3ZlUmVxdWVzdBogLnN0YW5kYXJkLkZpbGVTdG9yYWdlUmVtb3ZlUmVwbHkS",
+            "XQoNZ2V0U2VydmVyRGF0YRImLnN0YW5kYXJkLkZpbGVTdG9yYWdlU2VydmVy",
+            "RGF0YVJlcXVlc3QaJC5zdGFuZGFyZC5GaWxlU3RvcmFnZVNlcnZlckRhdGFS",
+            "ZXBseRJUCghqb2luVXNlchIkLnN0YW5kYXJkLkZpbGVTdG9yYWdlSm9pblVz",
+            "ZXJSZXF1ZXN0GiIuc3RhbmRhcmQuRmlsZVN0b3JhZ2VKb2luVXNlclJlcGx5",
+            "QgiqAgVQcm90b2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Proto.CommonReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -63,9 +65,9 @@ namespace Proto {
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageRemoveRequest), global::Proto.FileStorageRemoveRequest.Parser, new[]{ "Id", "FileName" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageRemoveReply), global::Proto.FileStorageRemoveReply.Parser, new[]{ "Result" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageServerUser), global::Proto.FileStorageServerUser.Parser, new[]{ "Id", "Name" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageServerDataRequest), global::Proto.FileStorageServerDataRequest.Parser, new[]{ "Id" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageServerDataReply), global::Proto.FileStorageServerDataReply.Parser, new[]{ "Result", "IdConnectedTo", "Users", "FileNames" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageJoinUserRequest), global::Proto.FileStorageJoinUserRequest.Parser, new[]{ "IdFrom", "IdTo" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageServerDataRequest), global::Proto.FileStorageServerDataRequest.Parser, new[]{ "Id", "Key" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageServerDataReply), global::Proto.FileStorageServerDataReply.Parser, new[]{ "Result", "IdConnectedTo", "Users", "FileNames", "PublicKey", "SymmetricKey" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageJoinUserRequest), global::Proto.FileStorageJoinUserRequest.Parser, new[]{ "IdFrom", "IdTo", "PublicKey" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Proto.FileStorageJoinUserReply), global::Proto.FileStorageJoinUserReply.Parser, new[]{ "Result" }, null, null, null, null)
           }));
     }
@@ -1680,6 +1682,7 @@ namespace Proto {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public FileStorageServerDataRequest(FileStorageServerDataRequest other) : this() {
       id_ = other.id_;
+      key_ = other.key_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1701,6 +1704,18 @@ namespace Proto {
       }
     }
 
+    /// <summary>Field number for the "key" field.</summary>
+    public const int KeyFieldNumber = 2;
+    private pb::ByteString key_ = pb::ByteString.Empty;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pb::ByteString Key {
+      get { return key_; }
+      set {
+        key_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -1717,6 +1732,7 @@ namespace Proto {
         return true;
       }
       if (Id != other.Id) return false;
+      if (Key != other.Key) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1725,6 +1741,7 @@ namespace Proto {
     public override int GetHashCode() {
       int hash = 1;
       if (Id != 0) hash ^= Id.GetHashCode();
+      if (Key.Length != 0) hash ^= Key.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1747,6 +1764,10 @@ namespace Proto {
         output.WriteRawTag(8);
         output.WriteUInt32(Id);
       }
+      if (Key.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteBytes(Key);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1761,6 +1782,10 @@ namespace Proto {
         output.WriteRawTag(8);
         output.WriteUInt32(Id);
       }
+      if (Key.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteBytes(Key);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1773,6 +1798,9 @@ namespace Proto {
       int size = 0;
       if (Id != 0) {
         size += 1 + pb::CodedOutputStream.ComputeUInt32Size(Id);
+      }
+      if (Key.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(Key);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1788,6 +1816,9 @@ namespace Proto {
       }
       if (other.Id != 0) {
         Id = other.Id;
+      }
+      if (other.Key.Length != 0) {
+        Key = other.Key;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1808,6 +1839,10 @@ namespace Proto {
             Id = input.ReadUInt32();
             break;
           }
+          case 18: {
+            Key = input.ReadBytes();
+            break;
+          }
         }
       }
     #endif
@@ -1825,6 +1860,10 @@ namespace Proto {
             break;
           case 8: {
             Id = input.ReadUInt32();
+            break;
+          }
+          case 18: {
+            Key = input.ReadBytes();
             break;
           }
         }
@@ -1872,6 +1911,8 @@ namespace Proto {
       idConnectedTo_ = other.idConnectedTo_;
       users_ = other.users_.Clone();
       fileNames_ = other.fileNames_.Clone();
+      publicKey_ = other.publicKey_.Clone();
+      symmetricKey_ = other.symmetricKey_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1927,6 +1968,29 @@ namespace Proto {
       get { return fileNames_; }
     }
 
+    /// <summary>Field number for the "public_key" field.</summary>
+    public const int PublicKeyFieldNumber = 5;
+    private static readonly pb::FieldCodec<pb::ByteString> _repeated_publicKey_codec
+        = pb::FieldCodec.ForBytes(42);
+    private readonly pbc::RepeatedField<pb::ByteString> publicKey_ = new pbc::RepeatedField<pb::ByteString>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pbc::RepeatedField<pb::ByteString> PublicKey {
+      get { return publicKey_; }
+    }
+
+    /// <summary>Field number for the "symmetric_key" field.</summary>
+    public const int SymmetricKeyFieldNumber = 6;
+    private pb::ByteString symmetricKey_ = pb::ByteString.Empty;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pb::ByteString SymmetricKey {
+      get { return symmetricKey_; }
+      set {
+        symmetricKey_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -1946,6 +2010,8 @@ namespace Proto {
       if (IdConnectedTo != other.IdConnectedTo) return false;
       if(!users_.Equals(other.users_)) return false;
       if(!fileNames_.Equals(other.fileNames_)) return false;
+      if(!publicKey_.Equals(other.publicKey_)) return false;
+      if (SymmetricKey != other.SymmetricKey) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1957,6 +2023,8 @@ namespace Proto {
       if (IdConnectedTo != 0) hash ^= IdConnectedTo.GetHashCode();
       hash ^= users_.GetHashCode();
       hash ^= fileNames_.GetHashCode();
+      hash ^= publicKey_.GetHashCode();
+      if (SymmetricKey.Length != 0) hash ^= SymmetricKey.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1985,6 +2053,11 @@ namespace Proto {
       }
       users_.WriteTo(output, _repeated_users_codec);
       fileNames_.WriteTo(output, _repeated_fileNames_codec);
+      publicKey_.WriteTo(output, _repeated_publicKey_codec);
+      if (SymmetricKey.Length != 0) {
+        output.WriteRawTag(50);
+        output.WriteBytes(SymmetricKey);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -2005,6 +2078,11 @@ namespace Proto {
       }
       users_.WriteTo(ref output, _repeated_users_codec);
       fileNames_.WriteTo(ref output, _repeated_fileNames_codec);
+      publicKey_.WriteTo(ref output, _repeated_publicKey_codec);
+      if (SymmetricKey.Length != 0) {
+        output.WriteRawTag(50);
+        output.WriteBytes(SymmetricKey);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -2023,6 +2101,10 @@ namespace Proto {
       }
       size += users_.CalculateSize(_repeated_users_codec);
       size += fileNames_.CalculateSize(_repeated_fileNames_codec);
+      size += publicKey_.CalculateSize(_repeated_publicKey_codec);
+      if (SymmetricKey.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(SymmetricKey);
+      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -2046,6 +2128,10 @@ namespace Proto {
       }
       users_.Add(other.users_);
       fileNames_.Add(other.fileNames_);
+      publicKey_.Add(other.publicKey_);
+      if (other.SymmetricKey.Length != 0) {
+        SymmetricKey = other.SymmetricKey;
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -2080,6 +2166,14 @@ namespace Proto {
             fileNames_.AddEntriesFrom(input, _repeated_fileNames_codec);
             break;
           }
+          case 42: {
+            publicKey_.AddEntriesFrom(input, _repeated_publicKey_codec);
+            break;
+          }
+          case 50: {
+            SymmetricKey = input.ReadBytes();
+            break;
+          }
         }
       }
     #endif
@@ -2112,6 +2206,14 @@ namespace Proto {
           }
           case 34: {
             fileNames_.AddEntriesFrom(ref input, _repeated_fileNames_codec);
+            break;
+          }
+          case 42: {
+            publicKey_.AddEntriesFrom(ref input, _repeated_publicKey_codec);
+            break;
+          }
+          case 50: {
+            SymmetricKey = input.ReadBytes();
             break;
           }
         }
@@ -2157,6 +2259,7 @@ namespace Proto {
     public FileStorageJoinUserRequest(FileStorageJoinUserRequest other) : this() {
       idFrom_ = other.idFrom_;
       idTo_ = other.idTo_;
+      publicKey_ = other.publicKey_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -2190,6 +2293,17 @@ namespace Proto {
       }
     }
 
+    /// <summary>Field number for the "public_key" field.</summary>
+    public const int PublicKeyFieldNumber = 3;
+    private static readonly pb::FieldCodec<pb::ByteString> _repeated_publicKey_codec
+        = pb::FieldCodec.ForBytes(26);
+    private readonly pbc::RepeatedField<pb::ByteString> publicKey_ = new pbc::RepeatedField<pb::ByteString>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pbc::RepeatedField<pb::ByteString> PublicKey {
+      get { return publicKey_; }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -2207,6 +2321,7 @@ namespace Proto {
       }
       if (IdFrom != other.IdFrom) return false;
       if (IdTo != other.IdTo) return false;
+      if(!publicKey_.Equals(other.publicKey_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -2216,6 +2331,7 @@ namespace Proto {
       int hash = 1;
       if (IdFrom != 0) hash ^= IdFrom.GetHashCode();
       if (IdTo != 0) hash ^= IdTo.GetHashCode();
+      hash ^= publicKey_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -2242,6 +2358,7 @@ namespace Proto {
         output.WriteRawTag(16);
         output.WriteUInt32(IdTo);
       }
+      publicKey_.WriteTo(output, _repeated_publicKey_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -2260,6 +2377,7 @@ namespace Proto {
         output.WriteRawTag(16);
         output.WriteUInt32(IdTo);
       }
+      publicKey_.WriteTo(ref output, _repeated_publicKey_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -2276,6 +2394,7 @@ namespace Proto {
       if (IdTo != 0) {
         size += 1 + pb::CodedOutputStream.ComputeUInt32Size(IdTo);
       }
+      size += publicKey_.CalculateSize(_repeated_publicKey_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -2294,6 +2413,7 @@ namespace Proto {
       if (other.IdTo != 0) {
         IdTo = other.IdTo;
       }
+      publicKey_.Add(other.publicKey_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -2317,6 +2437,10 @@ namespace Proto {
             IdTo = input.ReadUInt32();
             break;
           }
+          case 26: {
+            publicKey_.AddEntriesFrom(input, _repeated_publicKey_codec);
+            break;
+          }
         }
       }
     #endif
@@ -2338,6 +2462,10 @@ namespace Proto {
           }
           case 16: {
             IdTo = input.ReadUInt32();
+            break;
+          }
+          case 26: {
+            publicKey_.AddEntriesFrom(ref input, _repeated_publicKey_codec);
             break;
           }
         }

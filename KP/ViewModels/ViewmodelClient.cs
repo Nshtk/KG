@@ -118,7 +118,6 @@ namespace KP.ViewModels
         }
 
         #region Methods
-        
         private async Task<byte[]> fileRead_async()
         {
             byte[] bytes;

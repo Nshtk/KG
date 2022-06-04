@@ -9,11 +9,20 @@ public class AuthenticationService : Authentication.AuthenticationBase          
 
     public class User
     {
+        public enum Status
+        {
+            DEFAULT,
+            PENDING
+        }
+        
         public uint id;
         public uint id_connected_to;
         public string? name;
         public DateTime last_time_connected;
-        public DirectoryInfo chat_directory;
+        public DirectoryInfo? chat_directory;
+        public byte[][]? public_key=null;
+        public byte[]? symmetric_key=null;
+        public Status status;
         //public List<FileInfo> files;
     }
     
@@ -25,7 +34,7 @@ public class AuthenticationService : Authentication.AuthenticationBase          
     public AuthenticationService()
     {
         _file_info_users=new FileInfo(_data_folder+"Users.txt");
-        Task.Run(() => invalidateUsers());
+        //Task.Run(() => invalidateUsers());
     }
     
     private async void invalidateUsers(int delay=500)
@@ -52,10 +61,14 @@ public class AuthenticationService : Authentication.AuthenticationBase          
                                 name=request.UserName,
                                 last_time_connected=DateTime.Now});
 
-        return Task.FromResult(new AuthenticationConnectReply
-                               {Result=new ResultReply
-                                {Result=true,
-                                 Info=$"Connected as {request.UserName} #{_id_counter++}"}});
+        AuthenticationConnectReply reply=new AuthenticationConnectReply
+        { Result=new ResultReply
+          { Result=true,
+            Info=$"Connected as {request.UserName} #{_id_counter}" },
+          Id=_id_counter };
+        
+        _id_counter++;
+        return Task.FromResult(reply);
     }
     public override Task<AuthenticationMaintainConnectionReply> maintainConnection(AuthenticationMaintainConnectionRequest request, ServerCallContext context)
     {

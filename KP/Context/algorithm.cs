@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using System.Windows.Media.Animation;
 using KP.Context.Interface;
 
 namespace KP.Context
@@ -193,7 +194,7 @@ namespace KP.Context
             _key_expansion=new KeyExpansionElGamal(primality_testing_mode, probability_minimal, prime_numbers_length_bits);
             MessageLength=prime_numbers_length_bits/8;
         }
-
+    
         public byte[][] getKeysRound(byte[] key)
         {
             return _key_expansion.getKeysRound(key);
@@ -203,6 +204,7 @@ namespace KP.Context
             BigInteger p=new BigInteger(keys_round[0]), p_minus_one=p-1, k;
             byte[] tmp;
 
+            begin:
             do
                 k=Utility.getRandomBigInteger(2, p_minus_one-1);
             while(BigInteger.GreatestCommonDivisor(k, p_minus_one)!=1);
@@ -211,7 +213,11 @@ namespace KP.Context
             tmp=BigInteger.ModPow(new BigInteger(keys_round[1]), k, p).ToByteArray();
             tmp.CopyTo(bytes_output, 0);
 
-            tmp=Utility.modMultiplyBigInteger(BigInteger.ModPow(new BigInteger(keys_round[2]), k, p), new BigInteger(bytes_input), p).ToByteArray().Where((source, index) => index!=9).ToArray();
+            var a=Utility.modMultiplyBigInteger(BigInteger.ModPow(new BigInteger(keys_round[2]), k, p), new BigInteger(bytes_input), p);
+            if(a==0)
+                goto begin;
+
+            tmp=a.ToByteArray().Where((source, index) => index!=MessageLength+1).ToArray();
             tmp.CopyTo(bytes_output, MessageLength);
         }
         public void decrypt(in byte[] bytes_input, ref byte[] bytes_output, byte[][] keys_round)
