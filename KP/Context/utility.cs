@@ -108,7 +108,10 @@ namespace KP.Context
             {
                 byte[] bytes_padded=new byte[block_length];
 
-                bytes.CopyTo(bytes_padded, 0);
+                if(bytes.Length>block_length)
+                    Array.Copy(bytes, 0, bytes_padded, 0, block_length);
+                else
+                    bytes.CopyTo(bytes_padded, 0);
                 for(int i=bytes.Length; i<block_length; i++)
                     bytes_padded[i]=value;
                 bytes=bytes_padded;

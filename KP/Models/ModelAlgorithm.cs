@@ -1,5 +1,9 @@
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,13 +18,11 @@ namespace KP.Models
     {
         private IAlgorithm _algorithm;
         private Utility.CipheringMode _ciphering_mode;
-        //private Task[] _tasks;
         private byte[] _key;
-        private byte[][] _keys_round, _bytes_input_parts;
+        private byte[][] _keys_round;
         private ulong _init_vector=0;
         private int _message_length, _bytes_number_messages=100, _i=0;
-        private BigInteger _mask;
-        
+
         private Visibility _key_visibility;
         private Visibility _cryption_mode_visibility;
 
@@ -74,11 +76,7 @@ namespace KP.Models
             get {return _i;}
             set {_i=value; invokePropertyChanged("Bytes_Current_Message_Number");}
         }
-        public int I_Increment()
-        {
-            return Interlocked.Increment(ref _i);
-        }
-        
+
         public Visibility Key_Visibility
         {
             get {return _key_visibility;}
@@ -116,12 +114,7 @@ namespace KP.Models
                         if(_key==null)
                         {
                             generateSymmetricKey();
-                            /*byte[] number_bytes_possible=new byte[] {16, 24, 32}, tmp=new byte[number_bytes_possible[Utility.Rng.Next(3)]];
-                            Utility.Rng.NextBytes(tmp);
-                            Key=getSymmetricKey();*/
                         }
-                        break;
-                    default:
                         break;
                 }
                 if(_init_vector==0)
@@ -136,234 +129,474 @@ namespace KP.Models
                     _keys_round=_algorithm.getKeysRound(_key);
         }
 
-        public async Task<byte[][]> encrypt(byte[] bytes_input, CancellationToken token)
+        public async Task<int> encrypt(FileInfo file_input, FileInfo file_output, CancellationToken token)
         {
             initialize();
 
             _message_length=_algorithm.MessageLength;
-            Bytes_Number_Messages=(bytes_input.Length+_message_length-1)/_message_length;
-            //_tasks=new Task[_bytes_number_messages];
+            Bytes_Number_Messages=((int)file_input.Length+_message_length-1)/_message_length;
+            ConcurrentDictionary<int, byte[]> dict=new ConcurrentDictionary<int, byte[]>();
+            byte[] bytes_input_part=new byte[_message_length], bytes_output_part=new byte[_message_length], bytes_output;
+            object locker=new object();
+            using FileStream file_stream_input=file_input.OpenRead();
+            using FileStream file_stream_output=file_output.Create();
+            int bytes_read, thread_count=20;;
 
-            byte[][] bytes_output=new byte[_bytes_number_messages][];
             Bytes_Current_Message_Number=0;
             if(_algorithm.IsSymmetric)
             {
                 switch(Ciphering)
                 {
                     case Utility.CipheringMode.ECB:
-                        _bytes_input_parts=bytes_input.toArray2D(_message_length, Utility.PaddingType.RKCS7);
-                        Parallel.For(Bytes_Current_Message_Number, _bytes_number_messages, i => 
+                        for(int j=0; j<_bytes_number_messages && file_stream_input.CanRead; j+=thread_count)
                         {
-                            _algorithm.encrypt(in _bytes_input_parts[i], ref bytes_output[i], _keys_round);
-                            Bytes_Current_Message_Number=Interlocked.Increment(ref _i);
-                        });
+                            Parallel.For(j,  Math.Min(j+thread_count, _bytes_number_messages), new ParallelOptions {MaxDegreeOfParallelism=thread_count}, (i, state) =>
+                            {
+                                int bytes_read_parallel, seek=i*_message_length;
+                                byte[] bytes_input_part_parallel=new byte[_message_length], bytes_output_part_parallel=new byte[_message_length];
+
+                                lock(locker)
+                                {
+                                    file_stream_input.Seek(seek, SeekOrigin.Begin);
+                                    if((bytes_read_parallel=file_stream_input.Read(bytes_input_part_parallel, 0, _message_length))==0)
+                                        state.Break();
+                                    else if(bytes_read_parallel<_message_length)
+                                        Utility.pad(ref bytes_input_part_parallel, _message_length, Utility.PaddingType.RKCS7);
+                                }
+                                
+                                _algorithm.encrypt(in bytes_input_part_parallel, ref bytes_output_part_parallel, _keys_round);
+                                
+                                dict.TryAdd(i, bytes_output_part_parallel);
+                                Bytes_Current_Message_Number=Interlocked.Increment(ref _i);
+                            });
+                            bytes_output=dict.Values.ToArray().SelectMany(a => a).ToArray();
+                            file_stream_output.Write(bytes_output, 0, bytes_output.Length);
+                            dict.Clear();
+                        }
+                        Bytes_Current_Message_Number++;
                         break;
                     case Utility.CipheringMode.CBC:
-                        _bytes_input_parts=bytes_input.toArray2D(_message_length, Utility.PaddingType.RKCS7);
-                        BigInteger bytes_input_part_init_biginteger=new BigInteger(_init_vector);
                         byte[] tmp;
-
-                        for(; Bytes_Current_Message_Number<_bytes_number_messages; Bytes_Current_Message_Number++)
+                        bytes_output_part=new byte[_message_length];
+                        BigInteger bytes_input_part_init_biginteger=new BigInteger(_init_vector);
+                        
+                        tmp=bytes_input_part_init_biginteger.ToByteArray();
+                        Utility.pad(ref tmp, _message_length);
+                        _algorithm.encrypt(in tmp, ref bytes_output_part, _keys_round);
+                        
+                        await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
+                        
+                        for(Bytes_Current_Message_Number++; Bytes_Current_Message_Number<_bytes_number_messages+1; Bytes_Current_Message_Number++)
                         {
-                            tmp=(new BigInteger(_bytes_input_parts[Bytes_Current_Message_Number])^bytes_input_part_init_biginteger).ToByteArray();
+                            bytes_input_part=new byte[_message_length]; bytes_output_part=new byte[_message_length];
+                            
+                            if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                                break;
+                            if(bytes_read<_message_length)
+                                Utility.pad(ref bytes_input_part, _message_length, Utility.PaddingType.RKCS7);
+                            
+                            tmp=(new BigInteger(bytes_input_part)^bytes_input_part_init_biginteger).ToByteArray();
                             Utility.pad(ref tmp, _message_length);
-                            _algorithm.encrypt(in tmp, ref bytes_output[Bytes_Current_Message_Number], _keys_round);
-                            bytes_input_part_init_biginteger=new BigInteger(bytes_output[Bytes_Current_Message_Number]);
+                            _algorithm.encrypt(in tmp, ref bytes_output_part, _keys_round);
+                            bytes_input_part_init_biginteger=new BigInteger(bytes_output_part);
+                            
+                            await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
                         }
                         break;
                     case Utility.CipheringMode.CFB:
-                        _bytes_input_parts=bytes_input.toArray2D(_message_length);
-
+                        bytes_input_part=new byte[_message_length]; bytes_output_part=new byte[_message_length];
+                        
+                        if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                            break;
+                        if(bytes_read<_message_length)
+                            Utility.pad(ref bytes_input_part, _message_length, Utility.PaddingType.RKCS7);
+                        
                         tmp=new BigInteger(_init_vector).ToByteArray();
                         Utility.pad(ref tmp, _message_length);
-                        _algorithm.encrypt(in tmp, ref bytes_output[Bytes_Current_Message_Number], _keys_round);
-                        bytes_output[Bytes_Current_Message_Number]=(new BigInteger(bytes_output[Bytes_Current_Message_Number])^new BigInteger(_bytes_input_parts[Bytes_Current_Message_Number])).ToByteArray();
+                        _algorithm.encrypt(in tmp, ref bytes_output_part, _keys_round);
+                        bytes_output_part=(new BigInteger(bytes_output_part)^new BigInteger(bytes_input_part)).ToByteArray();
+                        
+                        await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
 
+                        byte[] bytes_output_part_prev;
                         for(Bytes_Current_Message_Number++; Bytes_Current_Message_Number<_bytes_number_messages; Bytes_Current_Message_Number++)
                         {
-                            _algorithm.encrypt(in bytes_output[Bytes_Current_Message_Number-1], ref bytes_output[Bytes_Current_Message_Number], _keys_round);
-                            bytes_output[Bytes_Current_Message_Number]=(new BigInteger(bytes_output[Bytes_Current_Message_Number])^new BigInteger(_bytes_input_parts[Bytes_Current_Message_Number])).ToByteArray();
+                            bytes_output_part_prev=bytes_output_part;
+                            Utility.pad(ref bytes_output_part_prev, _message_length);
+                            bytes_input_part=new byte[_message_length]; bytes_output_part=new byte[_message_length];
+                            
+                            if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                                break;
+                            if(bytes_read<_message_length)
+                                Utility.pad(ref bytes_input_part, _message_length, Utility.PaddingType.RKCS7);
+                            
+                            _algorithm.encrypt(in bytes_output_part_prev, ref bytes_output_part, _keys_round);
+                            bytes_output_part=(new BigInteger(bytes_output_part)^new BigInteger(bytes_input_part)).ToByteArray();
+                            
+                            await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
                         }
+
                         break;
                     case Utility.CipheringMode.OFB:
-                        _bytes_input_parts=bytes_input.toArray2D(_message_length);
-
+                        bytes_input_part=new byte[_message_length]; bytes_output_part=new byte[_message_length];
+                        
+                        if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                            break;
+                        if(bytes_read<_message_length)
+                            Utility.pad(ref bytes_input_part, _message_length, Utility.PaddingType.RKCS7);
+                        
                         tmp=new BigInteger(_init_vector).ToByteArray();
                         Utility.pad(ref tmp, _message_length);
-                        _algorithm.encrypt(in tmp, ref bytes_output[_i], _keys_round);
-                        tmp=bytes_output[_i];
-                        bytes_output[_i]=(new BigInteger(bytes_output[_i])^new BigInteger(_bytes_input_parts[_i])).ToByteArray();
+                        _algorithm.encrypt(in tmp, ref bytes_output_part, _keys_round);
+                        tmp=bytes_output_part;
+                        bytes_output_part=(new BigInteger(bytes_output_part)^new BigInteger(bytes_input_part)).ToByteArray();
+                        
+                        await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
+
                         for(Bytes_Current_Message_Number++; _i<_bytes_number_messages; Bytes_Current_Message_Number++)
                         {
-                            _algorithm.encrypt(in tmp, ref bytes_output[_i], _keys_round);
-                            tmp=bytes_output[_i];
-                            bytes_output[_i]=(new BigInteger(bytes_output[_i])^new BigInteger(_bytes_input_parts[_i])).ToByteArray();
+                            bytes_input_part=new byte[_message_length]; bytes_output_part=new byte[_message_length];
+                            
+                            if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                                break;
+                            if(bytes_read<_message_length)
+                                Utility.pad(ref bytes_input_part, _message_length, Utility.PaddingType.RKCS7);
+                            
+                            Utility.pad(ref tmp, _message_length);
+                            _algorithm.encrypt(in tmp, ref bytes_output_part, _keys_round);
+                            tmp=bytes_output_part;
+                            bytes_output_part=(new BigInteger(bytes_output_part)^new BigInteger(bytes_input_part)).ToByteArray();
+                            
+                            await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
                         }
                         break;
                     case Utility.CipheringMode.CTR:
-                        _bytes_input_parts=bytes_input.toArray2D(_message_length);
                         bytes_input_part_init_biginteger=new BigInteger(_init_vector);
-
-                        Parallel.For(Bytes_Current_Message_Number, _bytes_number_messages, i => 
+                        for(int j=0; j<_bytes_number_messages && file_stream_input.CanRead; j+=thread_count)
                         {
-                            tmp=(bytes_input_part_init_biginteger^i).ToByteArray();
-                            Utility.pad(ref tmp, _message_length);
-                            _algorithm.encrypt(in tmp, ref bytes_output[i], _keys_round);
-                            bytes_output[i]=(new BigInteger(bytes_output[i])^new BigInteger(_bytes_input_parts[i])).ToByteArray();
-                            Bytes_Current_Message_Number=Interlocked.Increment(ref _i);
-                        });
-                        break;
-                    case Utility.CipheringMode.RD:
-                        _bytes_input_parts=bytes_input.toArray2D(_message_length);
-                        bytes_input_part_init_biginteger=new BigInteger(_init_vector);
-                        bytes_output=new byte[bytes_output.Length+1][];
+                            Parallel.For(j, Math.Min(j+thread_count, _bytes_number_messages), new ParallelOptions {MaxDegreeOfParallelism=thread_count}, (i, state) => 
+                            {
+                                int bytes_read_parallel, seek=i*_message_length;
+                                byte[] bytes_input_part_parallel=new byte[_message_length], bytes_output_part_parallel=new byte[_message_length], tmp_parallel;
 
-                        tmp=bytes_input_part_init_biginteger.ToByteArray();
-                        Utility.pad(ref tmp, _message_length);
-                        _algorithm.encrypt(in tmp, ref bytes_output[Bytes_Current_Message_Number++], _keys_round);
-                        for(int j=0; Bytes_Current_Message_Number<_bytes_number_messages+1; Bytes_Current_Message_Number++, j++)
-                        {
-                            _bytes_input_parts[j]=(bytes_input_part_init_biginteger^new BigInteger(_bytes_input_parts[j])).ToByteArray();
-                            Utility.pad(ref _bytes_input_parts[j], _message_length);
-                            _algorithm.encrypt(in _bytes_input_parts[j], ref bytes_output[Bytes_Current_Message_Number], _keys_round);
-                            bytes_input_part_init_biginteger+=bytes_input_part_init_biginteger;
+                                lock(locker)
+                                    file_stream_input.Seek(seek, SeekOrigin.Begin);
+                                if((bytes_read_parallel=file_stream_input.Read(bytes_input_part_parallel, 0, _message_length))==0)
+                                    state.Break();
+                                else if(bytes_read_parallel<_message_length)
+                                    Utility.pad(ref bytes_input_part_parallel, _message_length, Utility.PaddingType.RKCS7);
+                            
+                                tmp_parallel=(bytes_input_part_init_biginteger^i).ToByteArray();
+                                Utility.pad(ref tmp_parallel, _message_length);
+                                _algorithm.encrypt(in tmp_parallel, ref bytes_output_part_parallel, _keys_round);
+                                bytes_output_part_parallel=(new BigInteger(bytes_output_part_parallel)^new BigInteger(bytes_input_part_parallel)).ToByteArray();
+                                
+                                dict.TryAdd(i, bytes_output_part_parallel);
+                                Bytes_Current_Message_Number=Interlocked.Increment(ref _i);
+                            });
+                            bytes_output=dict.Values.ToArray().SelectMany(a => a).ToArray();
+                            file_stream_output.Write(bytes_output, 0, bytes_output.Length);
+                            dict.Clear();
                         }
                         break;
-                    case Utility.CipheringMode.RD_H:
-                        _bytes_input_parts=bytes_input.toArray2D(_message_length);
-                        bytes_input_part_init_biginteger=new BigInteger(_init_vector);
-                        bytes_output=new byte[bytes_output.Length+2][];
+                    case Utility.CipheringMode.RD:
+                        bytes_output_part=new byte[_message_length];
 
+                        bytes_input_part_init_biginteger=new BigInteger(_init_vector);
                         tmp=bytes_input_part_init_biginteger.ToByteArray();
                         Utility.pad(ref tmp, _message_length);
-                        _algorithm.encrypt(in tmp, ref bytes_output[Bytes_Current_Message_Number++], _keys_round);
-                        tmp=BitConverter.GetBytes(bytes_input.GetHashCode());
-                        Utility.pad(ref tmp, _message_length, Utility.PaddingType.RKCS7);
-                        bytes_output[Bytes_Current_Message_Number++]=(bytes_input_part_init_biginteger^new BigInteger(tmp)).ToByteArray();
-                        //_algorithm.encrypt(in tmp, ref bytes_output[Bytes_Current_Message_Number++], _keys_round);
-                        for(int j=0; Bytes_Current_Message_Number<_bytes_number_messages+2; Bytes_Current_Message_Number++, j++)
+                        _algorithm.encrypt(in tmp, ref bytes_output_part, _keys_round);
+                        
+                        await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
+                        
+                        for(int j=0; Bytes_Current_Message_Number<_bytes_number_messages+1; Bytes_Current_Message_Number++, j++, bytes_input_part_init_biginteger+=bytes_input_part_init_biginteger)
                         {
+                            bytes_input_part=new byte[_message_length]; bytes_output_part=new byte[_message_length];
+                            
+                            if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                                break;
+                            if(bytes_read<_message_length)
+                                Utility.pad(ref bytes_input_part, _message_length, Utility.PaddingType.RKCS7);
+                                
+                            bytes_input_part=(bytes_input_part_init_biginteger^new BigInteger(bytes_input_part)).ToByteArray();
+                            Utility.pad(ref bytes_input_part, _message_length);
+                            _algorithm.encrypt(in bytes_input_part, ref bytes_output_part, _keys_round);
+                            
+                            await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
+                        }
+
+                        break;
+                    case Utility.CipheringMode.RD_H:
+                        byte[] buf=new byte[file_stream_input.Length];
+                        bytes_output_part=new byte[_message_length];
+
+                        bytes_input_part_init_biginteger=new BigInteger(_init_vector);
+                        tmp=bytes_input_part_init_biginteger.ToByteArray();
+                        Utility.pad(ref tmp, _message_length);
+                        _algorithm.encrypt(in tmp, ref bytes_output_part, _keys_round);
+                        
+                        await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
+                        
+                        file_stream_input.Read(buf, 0, (int)file_stream_input.Length);
+                        tmp=BitConverter.GetBytes(buf.GetHashCode());
+                        Utility.pad(ref tmp, _message_length, Utility.PaddingType.RKCS7);
+                        tmp=(bytes_input_part_init_biginteger^new BigInteger(tmp)).ToByteArray();
+                        _algorithm.encrypt(in tmp, ref bytes_output_part, _keys_round);
+                        file_stream_input.Seek(0, SeekOrigin.Begin);
+
+                        await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
+                        
+                        for( ; Bytes_Current_Message_Number<_bytes_number_messages+2; Bytes_Current_Message_Number++)
+                        {
+                            bytes_input_part=new byte[_message_length]; bytes_output_part=new byte[_message_length];
+                            
+                            if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                                break;
+                            if(bytes_read<_message_length)
+                                Utility.pad(ref bytes_input_part, _message_length, Utility.PaddingType.RKCS7);
+                            
                             bytes_input_part_init_biginteger+=bytes_input_part_init_biginteger;
-                            tmp=(bytes_input_part_init_biginteger^new BigInteger(_bytes_input_parts[j])).ToByteArray();
+                            tmp=(bytes_input_part_init_biginteger^new BigInteger(bytes_input_part)).ToByteArray();
                             Utility.pad(ref tmp, _message_length);
-                            _algorithm.encrypt(in tmp, ref bytes_output[Bytes_Current_Message_Number], _keys_round);
+                            _algorithm.encrypt(in tmp, ref bytes_output_part, _keys_round);
+                            
+                            await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
                         }
                         break;
                 }
             }
             else
             {
-                _bytes_input_parts=bytes_input.toArray2D(_message_length);              // TODO parallel
                 for( ; Bytes_Current_Message_Number<_bytes_number_messages; Bytes_Current_Message_Number++)
                 {
-                    _algorithm.encrypt(in _bytes_input_parts[Bytes_Current_Message_Number], ref bytes_output[Bytes_Current_Message_Number], _keys_round);
+                    bytes_input_part=new byte[_message_length]; bytes_output_part=new byte[_message_length];
+                            
+                    if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                        break;
+                    if(bytes_read<_message_length)
+                        Utility.pad(ref bytes_input_part, _message_length, Utility.PaddingType.RKCS7);
+                    
+                    _algorithm.encrypt(in bytes_input_part, ref bytes_output_part, _keys_round);
+                    await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
                 }
             }
-            return bytes_output;
+            return 0;
         }
-        public async Task<byte[][]> decrypt(byte[] bytes_input, CancellationToken token)
+        public async Task<int> decrypt(FileInfo file_input, FileInfo file_output, CancellationToken token)
         {
             initialize();
-
+            
             _message_length=_algorithm.MessageLength;
-            Bytes_Number_Messages=(bytes_input.Length+_message_length-1)/_message_length;
-
-            byte[][] bytes_output=new byte[_bytes_number_messages][];
+            Bytes_Number_Messages=((int)file_input.Length+_message_length-1)/_message_length;
+            ConcurrentDictionary<int, byte[]> dict=new ConcurrentDictionary<int, byte[]>();
+            byte[] bytes_input_part=new byte[_message_length], bytes_output_part=new byte[_message_length], bytes_output;
+            object locker=new object();
+            using FileStream file_stream_input=file_input.OpenRead();
+            using FileStream file_stream_output=file_output.Create();
+            int bytes_read, thread_count=20;
+            
             Bytes_Current_Message_Number=0;
             if(_algorithm.IsSymmetric)
             {
                 switch(Ciphering)
                 {
                     case Utility.CipheringMode.ECB:
-                        _bytes_input_parts=bytes_input.toArray2D(_message_length);
-                        Parallel.For(Bytes_Current_Message_Number, _bytes_number_messages, i => 
+                        for(int j=0; j<_bytes_number_messages && file_stream_input.CanRead; j+=thread_count)
                         {
-                            _algorithm.decrypt(in _bytes_input_parts[i], ref bytes_output[i], _keys_round);
-                            Bytes_Current_Message_Number=Interlocked.Increment(ref _i);
-                        });
+                            Parallel.For(j, Math.Min(j+thread_count, _bytes_number_messages), new ParallelOptions {MaxDegreeOfParallelism=thread_count}, (i, state) =>
+                            {
+                                int bytes_read_parallel, seek=i*_message_length;
+                                byte[] bytes_input_part_parallel=new byte[_message_length], bytes_output_part_parallel=new byte[_message_length];
+
+                                lock(locker)
+                                    file_stream_input.Seek(seek, SeekOrigin.Begin);
+                                if((bytes_read_parallel=file_stream_input.Read(bytes_input_part_parallel, 0, _message_length))==0)
+                                    state.Break();
+                                else if(bytes_read_parallel<_message_length)
+                                    Utility.pad(ref bytes_input_part_parallel, _message_length, Utility.PaddingType.RKCS7);
+
+                                _algorithm.decrypt(in bytes_input_part_parallel, ref bytes_output_part_parallel, _keys_round);
+                                
+                                dict.TryAdd(i, bytes_output_part_parallel);
+                                Bytes_Current_Message_Number=Interlocked.Increment(ref _i);
+                            });
+                            bytes_output=dict.Values.ToArray().SelectMany(a => a).ToArray();
+                            file_stream_output.Write(bytes_output, 0, bytes_output.Length);
+                            dict.Clear();
+                        }
+                        Bytes_Current_Message_Number++;
                         break;
                     case Utility.CipheringMode.CBC:
-                        _bytes_input_parts=bytes_input.toArray2D(_message_length);
-                        BigInteger bytes_input_part_init_biginteger=new BigInteger(_init_vector);
+                        BigInteger bytes_input_part_init_biginteger;
+                        
+                        if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                            break;
 
-                        for(; Bytes_Current_Message_Number<_bytes_number_messages; Bytes_Current_Message_Number++)
+                        _algorithm.decrypt(in bytes_input_part, ref bytes_output_part, _keys_round);
+                        bytes_input_part_init_biginteger=new BigInteger(bytes_output_part);
+                        
+                        for(Bytes_Current_Message_Number++; Bytes_Current_Message_Number<_bytes_number_messages+1; Bytes_Current_Message_Number++)
                         {
-                            _algorithm.decrypt(in _bytes_input_parts[Bytes_Current_Message_Number], ref bytes_output[Bytes_Current_Message_Number], _keys_round);
-                            bytes_output[Bytes_Current_Message_Number]=(new BigInteger(bytes_output[Bytes_Current_Message_Number])^bytes_input_part_init_biginteger).ToByteArray();
-                            bytes_input_part_init_biginteger=new BigInteger(_bytes_input_parts[Bytes_Current_Message_Number]);
+                            bytes_input_part=new byte[_message_length]; bytes_output_part=new byte[_message_length];
+                            
+                            if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                                break;
+                            if(bytes_read<_message_length)
+                                Utility.pad(ref bytes_input_part, _message_length, Utility.PaddingType.RKCS7);
+                            
+                            _algorithm.decrypt(in bytes_input_part, ref bytes_output_part, _keys_round);
+                            bytes_output_part=(new BigInteger(bytes_output_part)^bytes_input_part_init_biginteger).ToByteArray();
+                            bytes_input_part_init_biginteger=new BigInteger(bytes_input_part);
+                            
+                            await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
                         }
                         break;
                     case Utility.CipheringMode.CFB:
-                        _bytes_input_parts=bytes_input.toArray2D(_message_length);
+                        bytes_input_part=new byte[_message_length]; bytes_output_part=new byte[_message_length];
+                            
+                        if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                            break;
 
                         byte[] tmp=new BigInteger(_init_vector).ToByteArray();
                         Utility.pad(ref tmp, _message_length);
-                        _algorithm.encrypt(in tmp, ref bytes_output[Bytes_Current_Message_Number], _keys_round);
-                        bytes_output[Bytes_Current_Message_Number]=(new BigInteger(bytes_output[Bytes_Current_Message_Number])^new BigInteger(_bytes_input_parts[Bytes_Current_Message_Number])).ToByteArray();
+                        _algorithm.encrypt(in tmp, ref bytes_output_part, _keys_round);
+                        bytes_output_part=(new BigInteger(bytes_output_part)^new BigInteger(bytes_input_part)).ToByteArray();
 
+                        await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
+
+                        byte[] bytes_input_part_prev;
                         for(Bytes_Current_Message_Number++; Bytes_Current_Message_Number<_bytes_number_messages; Bytes_Current_Message_Number++)
                         {
-                            _algorithm.encrypt(in _bytes_input_parts[Bytes_Current_Message_Number-1], ref bytes_output[Bytes_Current_Message_Number], _keys_round);
-                            bytes_output[Bytes_Current_Message_Number]=(new BigInteger(bytes_output[Bytes_Current_Message_Number])^new BigInteger(_bytes_input_parts[Bytes_Current_Message_Number])).ToByteArray();
+                            bytes_input_part_prev=bytes_input_part;
+                            Utility.pad(ref bytes_input_part_prev, _message_length);
+                            bytes_input_part=new byte[_message_length]; bytes_output_part=new byte[_message_length];
+                            
+                            if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                                break;
+                            if(bytes_read<_message_length)
+                                Utility.pad(ref bytes_input_part, _message_length, Utility.PaddingType.RKCS7);
+                            
+                            _algorithm.encrypt(in bytes_input_part_prev, ref bytes_output_part, _keys_round);
+                            bytes_output_part=(new BigInteger(bytes_output_part)^new BigInteger(bytes_input_part)).ToByteArray();
+                            
+                            await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
                         }
                         break;
                     case Utility.CipheringMode.OFB:
-                        _bytes_input_parts=bytes_input.toArray2D(_message_length);
+                        bytes_input_part=new byte[_message_length]; bytes_output_part=new byte[_message_length];
+                            
+                        if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                            break;
 
                         tmp=new BigInteger(_init_vector).ToByteArray();
                         Utility.pad(ref tmp, _message_length);
-                        _algorithm.encrypt(in tmp, ref bytes_output[_i], _keys_round);
-                        tmp=bytes_output[_i];
-                        bytes_output[_i]=(new BigInteger(bytes_output[_i])^new BigInteger(_bytes_input_parts[_i])).ToByteArray();
+                        _algorithm.encrypt(in tmp, ref bytes_output_part, _keys_round);
+                        tmp=bytes_output_part;
+                        bytes_output_part=(new BigInteger(bytes_output_part)^new BigInteger(bytes_input_part)).ToByteArray();
+                        
+                        await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
                         for(Bytes_Current_Message_Number++; _i<_bytes_number_messages; Bytes_Current_Message_Number++)
                         {
-                            _algorithm.encrypt(in tmp, ref bytes_output[_i], _keys_round);
-                            tmp=bytes_output[_i];
-                            bytes_output[_i]=(new BigInteger(bytes_output[_i])^new BigInteger(_bytes_input_parts[_i])).ToByteArray();
+                            bytes_input_part=new byte[_message_length]; bytes_output_part=new byte[_message_length];
+                            
+                            if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                                break;
+                            if(bytes_read<_message_length)
+                                Utility.pad(ref bytes_input_part, _message_length, Utility.PaddingType.RKCS7);
+                            
+                            Utility.pad(ref tmp, _message_length);
+                            _algorithm.encrypt(in tmp, ref bytes_output_part, _keys_round);
+                            tmp=bytes_output_part;
+                            bytes_output_part=(new BigInteger(bytes_output_part)^new BigInteger(bytes_input_part)).ToByteArray();
+                            
+                            await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
                         }
                         break;
-                    case Utility.CipheringMode.CTR:                                     // BUG random block error
-                        _bytes_input_parts=bytes_input.toArray2D(_message_length);
+                    case Utility.CipheringMode.CTR:
                         bytes_input_part_init_biginteger=new BigInteger(_init_vector);
-
-                        Parallel.For(Bytes_Current_Message_Number, _bytes_number_messages, i => 
+                        for(int j=0; j<_bytes_number_messages && file_stream_input.CanRead; j+=thread_count)
                         {
-                            tmp=(bytes_input_part_init_biginteger^i).ToByteArray();
-                            Utility.pad(ref tmp, _message_length);
-                            _algorithm.encrypt(in tmp, ref bytes_output[i], _keys_round);
-                            bytes_output[i]=(new BigInteger(bytes_output[i])^new BigInteger(_bytes_input_parts[i])).ToByteArray();
-                            Bytes_Current_Message_Number=Interlocked.Increment(ref _i);
-                        });
+                            Parallel.For(j, Math.Min(j+thread_count, _bytes_number_messages), new ParallelOptions {MaxDegreeOfParallelism=thread_count}, (i, state) => 
+                            {
+                                int bytes_read_parallel, seek=i*_message_length;
+                                byte[] bytes_input_part_parallel=new byte[_message_length], bytes_output_part_parallel=new byte[_message_length], tmp_parallel;
+
+                                lock(locker)
+                                    file_stream_input.Seek(seek, SeekOrigin.Begin);
+                                if((bytes_read_parallel=file_stream_input.Read(bytes_input_part_parallel, 0, _message_length))==0)
+                                    state.Break();
+                                else if(bytes_read_parallel<_message_length)
+                                    Utility.pad(ref bytes_input_part_parallel, _message_length, Utility.PaddingType.RKCS7);
+                            
+                                tmp_parallel=(bytes_input_part_init_biginteger^i).ToByteArray();
+                                Utility.pad(ref tmp_parallel, _message_length);
+                                _algorithm.encrypt(in tmp_parallel, ref bytes_output_part_parallel, _keys_round);
+                                bytes_output_part_parallel=(new BigInteger(bytes_output_part_parallel)^new BigInteger(bytes_input_part_parallel)).ToByteArray();
+                                
+                                dict.TryAdd(i, bytes_output_part_parallel);
+                                Bytes_Current_Message_Number=Interlocked.Increment(ref _i);
+                            });
+                            bytes_output=dict.Values.ToArray().SelectMany(a => a).ToArray();
+                            file_stream_output.Write(bytes_output, 0, bytes_output.Length);
+                            dict.Clear();
+                        }
                         break;
                     case Utility.CipheringMode.RD:
-                        _bytes_input_parts=bytes_input.toArray2D(_message_length);
-                        _algorithm.decrypt(in _bytes_input_parts[Bytes_Current_Message_Number], ref bytes_output[Bytes_Current_Message_Number], _keys_round);
-                        bytes_input_part_init_biginteger=new BigInteger(bytes_output[Bytes_Current_Message_Number++]);
-                        bytes_output=new byte[bytes_output.Length-1][];
+                        bytes_input_part=new byte[_message_length]; bytes_output_part=new byte[_message_length];
+                            
+                        if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                            break;
 
-                        for(int j=0; Bytes_Current_Message_Number<_bytes_number_messages; Bytes_Current_Message_Number++, j++)
+                        _algorithm.decrypt(in bytes_input_part, ref bytes_output_part, _keys_round);
+                        bytes_input_part_init_biginteger=new BigInteger(bytes_output_part);
+
+                        for(Bytes_Current_Message_Number++; Bytes_Current_Message_Number<_bytes_number_messages; Bytes_Current_Message_Number++, bytes_input_part_init_biginteger+=bytes_input_part_init_biginteger)
                         {
-                            _algorithm.decrypt(in _bytes_input_parts[Bytes_Current_Message_Number], ref bytes_output[j], _keys_round);
-                            bytes_output[j]=(bytes_input_part_init_biginteger^new BigInteger(bytes_output[j])).ToByteArray();
-                            Utility.pad(ref bytes_output[j], _message_length);
-                            bytes_input_part_init_biginteger+=bytes_input_part_init_biginteger;
+                            bytes_input_part=new byte[_message_length]; bytes_output_part=new byte[_message_length];
+                            
+                            if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                                break;
+                            if(bytes_read<_message_length)
+                                Utility.pad(ref bytes_input_part, _message_length, Utility.PaddingType.RKCS7);
+                            
+                            Utility.pad(ref bytes_input_part, _message_length);
+                            _algorithm.decrypt(in bytes_input_part, ref bytes_output_part, _keys_round);
+                            bytes_output_part=(bytes_input_part_init_biginteger^new BigInteger(bytes_output_part)).ToByteArray();
+                            Utility.pad(ref bytes_output_part, _message_length);
+
+                            await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
                         }
                         break;
                     case Utility.CipheringMode.RD_H:
-                        _bytes_input_parts=bytes_input.toArray2D(_message_length);
-                        bytes_input_part_init_biginteger=new BigInteger(_init_vector);
-                        bytes_output=new byte[bytes_output.Length-2][];
+                        tmp=new byte[_message_length];
+                        bytes_input_part=new byte[_message_length]; bytes_output_part=new byte[_message_length];
+                            
+                        if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                            break;
+
+                        _algorithm.decrypt(in bytes_input_part, ref bytes_output_part, _keys_round);
+                        bytes_input_part_init_biginteger=new BigInteger(bytes_output_part);
                         
-                        tmp=BitConverter.GetBytes(bytes_input.GetHashCode());
-                        Utility.pad(ref tmp, _message_length, Utility.PaddingType.RKCS7);
+                        if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                            break;
+                        _algorithm.decrypt(in bytes_input_part, ref tmp, _keys_round);
+                        Utility.pad(ref tmp, _message_length);
                         tmp=(bytes_input_part_init_biginteger^new BigInteger(tmp)).ToByteArray();
 
-                        for(int j=2; Bytes_Current_Message_Number<_bytes_number_messages-2; Bytes_Current_Message_Number++, j++)
+                        for( ; Bytes_Current_Message_Number<_bytes_number_messages-2; Bytes_Current_Message_Number++)
                         {
+                            bytes_input_part=new byte[_message_length]; bytes_output_part=new byte[_message_length+1];
+                            
+                            if((bytes_read=file_stream_input.Read(bytes_input_part, 0, _message_length))==0)
+                                break;
+                            if(bytes_read<_message_length)
+                                Utility.pad(ref bytes_input_part, _message_length, Utility.PaddingType.RKCS7);
+                            
                             bytes_input_part_init_biginteger+=bytes_input_part_init_biginteger;
-                            _algorithm.decrypt(in _bytes_input_parts[j], ref tmp, _keys_round);
-                            bytes_output[Bytes_Current_Message_Number]=(bytes_input_part_init_biginteger^new BigInteger(tmp)).ToByteArray();
-                            Utility.pad(ref bytes_output[Bytes_Current_Message_Number], _message_length);
+                            _algorithm.decrypt(in bytes_input_part, ref tmp, _keys_round);
+                            bytes_output_part=(bytes_input_part_init_biginteger^new BigInteger(tmp)).ToByteArray();
+
+                            await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
                         }
                         Bytes_Current_Message_Number+=2;
                         break;
@@ -371,40 +604,24 @@ namespace KP.Models
             }
             else
             {
-                _bytes_number_messages=(bytes_input.Length+_message_length*2-1)/(_message_length*2);
-                _bytes_input_parts=bytes_input.toArray2D(_message_length*2);
-                bytes_output=new byte[_bytes_number_messages][];
+                int message_length=_message_length*2;
+                _bytes_number_messages=((int)file_input.Length+message_length-1)/message_length;
+                
                 for( ; Bytes_Current_Message_Number<_bytes_number_messages; Bytes_Current_Message_Number++)
                 {
-                    _algorithm.decrypt(in _bytes_input_parts[Bytes_Current_Message_Number], ref bytes_output[Bytes_Current_Message_Number], _keys_round);
+                    bytes_input_part=new byte[message_length]; bytes_output_part=new byte[message_length];
+                            
+                    if((bytes_read=file_stream_input.Read(bytes_input_part, 0, message_length))==0)
+                        break;
+                    if(bytes_read<message_length)
+                        Utility.pad(ref bytes_input_part, message_length, Utility.PaddingType.RKCS7);
+                    
+                    _algorithm.decrypt(in bytes_input_part, ref bytes_output_part, _keys_round);
+                    await file_stream_output.WriteAsync(bytes_output_part, 0, bytes_output_part.Length);
                 }
-            }
-            return bytes_output;
-        }
 
-        public byte[][] encryptSession(byte[] bytes_input, byte[][] keys_round)
-        {
-            _message_length=8;
-            Bytes_Number_Messages=(bytes_input.Length+_message_length-1)/_message_length;
-            byte[][] bytes_output=new byte[_bytes_number_messages][];
-            _bytes_input_parts=bytes_input.toArray2D(_message_length);
-            for(int i=0; i<_bytes_number_messages; i++)
-            {
-                Algorithms[1].encrypt(in _bytes_input_parts[i], ref bytes_output[i], keys_round);
             }
-            return bytes_output;
-        }
-        public byte[][] decryptSession(byte[] bytes_input, byte[][] keys_round)
-        {
-            _message_length=8;
-            _bytes_number_messages=(bytes_input.Length+_message_length*2-1)/(_message_length*2);
-            byte[][] bytes_output=new byte[_bytes_number_messages][];
-            _bytes_input_parts=bytes_input.toArray2D(_message_length*2);
-            for(int i=0; i<_bytes_number_messages; i++)
-            {
-                Algorithms[1].decrypt(in _bytes_input_parts[i], ref bytes_output[i], keys_round);
-            }
-            return bytes_output;
+            return 0;
         }
     }
 }

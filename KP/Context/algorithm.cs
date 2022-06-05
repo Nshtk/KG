@@ -203,6 +203,7 @@ namespace KP.Context
         {
             BigInteger p=new BigInteger(keys_round[0]), p_minus_one=p-1, k;
             byte[] tmp;
+            int ie=0;
 
             begin:
             do
@@ -214,11 +215,16 @@ namespace KP.Context
             tmp.CopyTo(bytes_output, 0);
 
             var a=Utility.modMultiplyBigInteger(BigInteger.ModPow(new BigInteger(keys_round[2]), k, p), new BigInteger(bytes_input), p);
-            if(a==0)
+            if(a==0 && ie<1000)
+            {
+                ie++;
                 goto begin;
+            }
+                    
 
             tmp=a.ToByteArray().Where((source, index) => index!=MessageLength+1).ToArray();
             tmp.CopyTo(bytes_output, MessageLength);
+
         }
         public void decrypt(in byte[] bytes_input, ref byte[] bytes_output, byte[][] keys_round)
         {

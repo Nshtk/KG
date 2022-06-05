@@ -118,14 +118,14 @@ namespace KP.ViewModels
         }
 
         #region Methods
-        private async Task<byte[]> fileRead_async()
+        private async Task<byte[]> fileRead_async(FileInfo file)
         {
             byte[] bytes;
-            using(FileStream file_stream=FileInfo_Input.OpenRead())
+            using(FileStream file_stream=file.OpenRead())
             {
-                bytes=new byte[FileInfo_Input.Length];
+                bytes=new byte[file.Length];
                 
-                for(int length=(int)FileInfo_Input.Length, number_bytes_read_sum=0, number_bytes_read; length>0; length-=number_bytes_read, number_bytes_read_sum+=number_bytes_read)
+                for(int length=(int)file.Length, number_bytes_read_sum=0, number_bytes_read; length>0; length-=number_bytes_read, number_bytes_read_sum+=number_bytes_read)
                 {
                     number_bytes_read=await file_stream.ReadAsync(bytes, number_bytes_read_sum, length);
                     if(number_bytes_read==0)
@@ -140,31 +140,19 @@ namespace KP.ViewModels
         {
             return str.Substring(i, chunkSize);
         }
-        private async void writeTextBoxAsync(string str)                    //TODO FlowDocumentReader instead of textbox
+        private async void writeTextBoxAsync(string content_string, Action<string> setValue) //TODO FlowDocumentReader instead of textbox
         {
-            int chunkSize = 100;
-            int stringLength = str.Length;
-            _fileinfo_input_content_string=null;
-            for (int i = 0; i < stringLength ; i += chunkSize)
+            int content_string_length=content_string.Length;
+            int block_length=100;
+            
+            for(int i=0; i<content_string_length ; i+=block_length)
             {
-                if (i + chunkSize > stringLength) chunkSize = stringLength  - i;
-                FileInfo_Input_Content_String+=await getSS(str, i, chunkSize);
+                if (i+block_length>content_string_length)
+                    block_length=content_string_length-i;
+                setValue(await getSS(content_string, i, block_length));
                 await Task.Delay(10);
             }
         }
-        private async void writeTextBoxAsync2(string str)
-        {
-            int chunkSize = 100;
-            int stringLength = str.Length;
-            _fileinfo_output_content_string=null;
-            for (int i = 0; i < stringLength ; i += chunkSize)
-            {
-                if (i + chunkSize > stringLength) chunkSize = stringLength  - i;
-                FileInfo_Output_Content_String+=await getSS(str, i, chunkSize);
-                await Task.Delay(10);
-            }
-        }
-        
         #endregion
 
         #region Command_methods
@@ -176,17 +164,13 @@ namespace KP.ViewModels
                 return;
             
             FileInfo_Input=new FileInfo(open_file_dialog.FileName);
-            fileinfo_input_content_bytes=await fileRead_async();
-            //FileInfo_Input_Content_String=Encoding.UTF8.GetString(fileinfo_input_content_bytes);
-            await Task.Run(()=>writeTextBoxAsync(Encoding.UTF8.GetString(fileinfo_input_content_bytes)));
+            fileinfo_input_content_bytes=await fileRead_async(FileInfo_Input);
+            _fileinfo_input_content_string=null;
+            await Task.Run(()=>writeTextBoxAsync(Encoding.UTF8.GetString(fileinfo_input_content_bytes), value => FileInfo_Input_Content_String+=value));
 
             CommandManager.InvalidateRequerySuggested();
         }
-        private bool openFile_canExecute(Exception e)
-        {
-            return true;
-        }
-        
+
         private async Task cryptStart_execute()
         {
             byte[][] bytes_output;
@@ -194,24 +178,22 @@ namespace KP.ViewModels
 
             if(_cryption_mode==CryptionMode.ENCRYPTION)
             {
-                /*Task<byte[][]> tsk=Task.Run(()=>_algorithm_model.encrypt(fileinfo_input_content_bytes, _token_source.Token));
-                bytes_output=tsk.Result;*/
-                bytes_output=await Task.Run(()=>_algorithm_model.encrypt(fileinfo_input_content_bytes, _token_source.Token));
                 FileInfo_Output??=new FileInfo(FileInfo_Input.FullName+file_extension);
+                await Task.Run(()=>_algorithm_model.encrypt(FileInfo_Input, FileInfo_Output, _token_source.Token));
             }
             else
             {
-                bytes_output=await Task.Run(()=>_algorithm_model.decrypt(fileinfo_input_content_bytes, _token_source.Token));
                 FileInfo_Output??=new FileInfo(FileInfo_Input.FullName+".decrypted");
-                //FileInfo_Output??=new FileInfo(FileInfo_Input.FullName.Replace(file_extension, ""));
+                await Task.Run(()=>_algorithm_model.decrypt(FileInfo_Input, FileInfo_Output, _token_source.Token));
             }
 
-            _fileinfo_output_content_bytes=bytes_output.SelectMany(a => a).ToArray();
-            await Task.Run(()=>writeTextBoxAsync2(Encoding.ASCII.GetString(_fileinfo_output_content_bytes)));
-            using (FileStream file_stream=_fileinfo_output.Create())
+            _fileinfo_output_content_bytes=await fileRead_async(FileInfo_Output);
+            _fileinfo_output_content_string=null;
+            await Task.Run(()=>writeTextBoxAsync(Encoding.ASCII.GetString(_fileinfo_output_content_bytes), value => FileInfo_Output_Content_String+=value));
+            /*using (FileStream file_stream=_fileinfo_output.Create())
             {
                 file_stream.Write(_fileinfo_output_content_bytes, 0, _fileinfo_output_content_bytes.Length);
-            }
+            }*/
             File_Output_Visibility=Visibility.Visible;
         }
         private bool cryptStart_canExecute(object parameter)
