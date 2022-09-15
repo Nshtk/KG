@@ -9,7 +9,7 @@ public:
     Interface_Algorithm(){}
     virtual ~Interface_Algorithm(){};
     
-    virtual uint8_t **getKeysRound(uint8_t *key) = 0;
+    virtual uint8_t **getKeysRound(uint8_t *key) = 0;       // TODO метод должен быть void
     virtual void encrypt(uint8_t *bytes_input, uint8_t **bytes_output, uint8_t **keys_round) = 0;
     virtual void decrypt(uint8_t *bytes_input, uint8_t **bytes_output, uint8_t **keys_round) = 0;
 };

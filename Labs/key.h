@@ -75,10 +75,11 @@ private:
     }
     
 public:
-    uint8_t *perform(uint8_t *bytes, uint8_t *key_round) override
+    uint8_t *performRound(uint8_t *bytes, uint8_t *key_round) override
     {
         uint32_t *bits_parts=splitBits64To32(joinBits<uint64_t>(bytes));
         uint32_t tmp=bits_parts[1];
+        
         bits_parts[1]=functionF(bits_parts[1], joinBits<uint64_t>(key_round))^bits_parts[0];
         bits_parts[0]=tmp;
         
@@ -114,6 +115,7 @@ public:
         delete primality_test;
     }
     
+    
     uint8_t **generateKeysRound(uint8_t *key) override
     {
         cpp_int prime_numbers[2];
@@ -123,26 +125,20 @@ public:
         for(uint8_t i=0; i<2; )
             if(primality_test->performTest((prime_numbers[i]=getNBitNumber<cpp_int>(prime_numbers_length_bits)), probability_minimal))
                 i++;
-        cout<<"p:"<<prime_numbers[0]<<endl<<"q:"<<prime_numbers[1]<<endl;
+
         n=prime_numbers[0]*prime_numbers[1];
         euler_f=(prime_numbers[0]-1)*(prime_numbers[1]-1);
-
+        
         do
+        {
             e=rand()%(euler_f-2)+2;
+        }
         while(gcd_utility<cpp_int>(e, euler_f)!=1);
         d=boost::integer::extended_euclidean<cpp_int>(e, euler_f).x;
-        cout<<"euler_f:"<<euler_f<<endl<<"e:"<<e<<endl<<"d:"<<d<<endl<<"n:"<<n<<endl<<"mod:"<<(d*e)%euler_f<<endl;
-    
+
         edn[0]=splitBitsTo8_cppInt(e);
         edn[1]=splitBitsTo8_cppInt(d);
         edn[2]=splitBitsTo8_cppInt(n);
-        /*edn[0]=splitBitsTo8_cppInt(e, prime_numbers_length_bits);
-        edn[1]=splitBitsTo8_cppInt(d, prime_numbers_length_bits);
-        edn[2]=splitBitsTo8_cppInt(n, prime_numbers_length_bits);*/
-        /*vector<vector<uint8_t>> edn_v;
-        export_bits(e, back_inserter(edn_v[0]), 8);
-        export_bits(d, back_inserter(edn_v[1]), 8);
-        export_bits(n, back_inserter(edn_v[2]), 8);*/
         
         return edn;
     }

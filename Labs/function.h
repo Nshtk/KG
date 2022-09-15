@@ -44,57 +44,7 @@ uint8_t *substitute(const uint8_t *bytes, const uint8_t s_boxes[8][4][16], uint8
         threads[w].join();
     
     return bytes_s;
-    /*const unsigned length = k / 8;
-    uint8_t *bytes_s = new uint8_t[length];
-    uint8_t first_last;
-    uint8_t middle;
-    vector<bool> bits(k);
-
-    for (int i = 0; i < length; i++)
-        for (int j = 7; j > -1; j--)
-            bits[i * 8 + j] = getBit(bytes[i], j);
-
-    unsigned i_t, i_next = 0, i_mod, num = 0;
-    uint8_t marker = 0, marker_t, tmp;
-
-    for (int i = 0, num = 0; i < k; i += 6)
-    {
-        first_last=middle=0;
-        i_next += 6;
-        i_mod = i % 8;
-        if (i_next < 8)
-        {
-            first_last = (first_last + getBit(bytes[num], i_mod)) << 1;
-            int j = i_mod + 1;
-            for (; j < i_mod + 5; j++)
-                middle = (middle << 1) + getBit(bytes[num], j);
-            first_last += getBit(bytes[num], j);
-            bytes_s[num] += s_box[first_last][middle];
-        }
-        else
-        {
-            i_next = i_mod;
-            first_last = (first_last + getBit(bytes[num], i)) << 1;
-            int j = i_mod + 1, c = 0;
-            for (; j % 8 != 0; j++, c++)
-                middle = (middle << 1) + getBit(bytes[num], j);
-            num += 1;
-            for (j = 0; j < c; j++)
-                middle = (middle << 1) + getBit(bytes[num], j);
-            first_last += getBit(bytes[num], j);
-            int w = 5;
-            for (j = i_mod; j < 8; j++, w--)
-                if (getBit(s_box[first_last][middle], w))
-                    bytes_s[num] ^= 1U << j;
-        }
-    }
-    return bytes_s;*/
 }
-
-/*int getGCD(int a, int b)
-{
-    return b ? gcd_utility(b, a % b) : a;
-}*/
 
 template <typename T>
 int8_t getJacobiSymbol(T a, T b)

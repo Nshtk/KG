@@ -16,7 +16,7 @@ public:
     Interface_RoundCiphering(){}
     virtual ~Interface_RoundCiphering(){}
     
-    virtual uint8_t *perform(uint8_t *bytes, uint8_t *key_round) = 0;
+    virtual uint8_t *performRound(uint8_t *bytes, uint8_t *key_round) = 0;
 };
 
 #endif

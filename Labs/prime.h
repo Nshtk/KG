@@ -16,10 +16,8 @@ public:
     
     bool performTest(T number, float probability_minimal) override
     {
-        if(number==0)
+        if(number==0)   // TODO убрать проверку на 1, сделать класс
             return false;
-        if(number==1)
-            return true;
         
         long long i=1;
         for(T a; (1-pow(0.5, i))<=probability_minimal; i++)
@@ -44,8 +42,6 @@ public:
     {
         if(number==0)
             return false;
-        if(number==1)
-            return true;
     
         long long i=1;
         for(T a, j; (1-pow(0.5, i))<=probability_minimal; i++)

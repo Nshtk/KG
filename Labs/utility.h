@@ -324,7 +324,7 @@ T gcd_extended_utility(T a, T b, T *x, T *y)
     return result;
 }
 
-/*template<typename T>
+template<typename T>
 T pow_big(T number, T power)
 {
     T result=1;
@@ -334,14 +334,14 @@ T pow_big(T number, T power)
             result*=number;
     
     return result;
-}*/
+}
 
 template<typename T>
 T pow_big_modulo(T number, T power, T modulo)
 {
     T result=1;
     
-    for(number=number%modulo; power>0; power/=2)
+    for(number=number%modulo; power>0; power/=2)            // TODO check if wrong and reverse какая цифра читается первой?
     {
         if(power%2==1)
             result=(result*number)%modulo;
@@ -356,6 +356,8 @@ T getNBitNumber(size_t n)
 {
     T t=1;
     n--;
+    //T res=(t<<n)|(rand()%(t<<n));;
+    //cout<<"res:"<<res<<"aaaa";
     return (t<<n)|(rand()%(t<<n));
 }
 
